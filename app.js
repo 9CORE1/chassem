@@ -311,7 +311,7 @@ function initApp() {
     initEmailJS();
     renderCompetencies();
     renderPortfolioGrid();
-    renderTimeline();
+    renderTimeline('career');
     setupFilters();
     setupModal();
     setupThemeToggle();
@@ -392,14 +392,18 @@ function renderPortfolioGrid(filter = 'all') {
 // Timeline Rendering (Chronological order)
 // ==========================================================================
 
-function renderTimeline() {
+function renderTimeline(filter = 'career') {
     const container = document.getElementById('timeline-container');
     if (!container) return;
     
     container.innerHTML = '';
     
+    const filteredData = filter === 'all'
+        ? journeyData
+        : journeyData.filter(item => item.category === filter);
+        
     // Sort timeline items chronologically (descending), newest first.
-    const sortedData = [...journeyData].sort((a, b) => {
+    const sortedData = [...filteredData].sort((a, b) => {
         const getSortableValue = (periodStr) => {
             const startStr = periodStr.split('-')[0].trim();
             const parts = startStr.split('.');
@@ -468,6 +472,11 @@ function renderTimeline() {
 // Setup Filter Buttons
 // ==========================================================================
 
+function getActiveJourneyFilter() {
+    const activeBtn = document.querySelector('#journey-filters .filter-btn.active');
+    return activeBtn ? activeBtn.getAttribute('data-filter') : 'career';
+}
+
 function setupFilters() {
     const filters = document.querySelectorAll('#portfolio-filters .filter-btn');
     filters.forEach(btn => {
@@ -492,6 +501,35 @@ function setupFilters() {
                 // Re-initialize intersection observers for new elements
                 setupScrollEffects();
             }, 300);
+        });
+    });
+    
+    // Journey (Timeline) filters
+    const jFilters = document.querySelectorAll('#journey-filters .filter-btn');
+    jFilters.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            // Remove active class from all
+            jFilters.forEach(f => f.classList.remove('active'));
+            
+            // Add active to clicked
+            btn.classList.add('active');
+            
+            const filterValue = btn.getAttribute('data-filter');
+            
+            // Re-render timeline with transition
+            const container = document.getElementById('timeline-container');
+            if (container) {
+                container.style.opacity = '0';
+                container.style.transform = 'translateY(10px)';
+                container.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                
+                setTimeout(() => {
+                    renderTimeline(filterValue);
+                    container.style.opacity = '1';
+                    container.style.transform = 'translateY(0)';
+                    setupScrollEffects();
+                }, 300);
+            }
         });
     });
 }
@@ -791,7 +829,7 @@ function setupAdminMode() {
         // Re-render to show admin actions on page load
         renderCompetencies();
         renderPortfolioGrid();
-        renderTimeline();
+        renderTimeline(getActiveJourneyFilter());
     }
     
     if (adminToggle) {
@@ -810,7 +848,7 @@ function setupAdminMode() {
                 
                 renderCompetencies();
                 renderPortfolioGrid();
-                renderTimeline();
+                renderTimeline(getActiveJourneyFilter());
                 alert('관리자 모드가 해제되었습니다.');
             } else {
                 openAuthModal();
@@ -1092,7 +1130,7 @@ function verifyAuthCode() {
         
         renderCompetencies();
         renderPortfolioGrid();
-        renderTimeline();
+        renderTimeline(getActiveJourneyFilter());
         
         closeAuthModal();
         alert('관리자 인증이 성공했습니다. 관리자 편집 모드가 활성화됩니다.');
@@ -1387,7 +1425,6 @@ function renderProjectForm(project = null, modalTitleStr) {
         localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
         
         renderPortfolioGrid();
-        renderTimeline();
         closeAdminModal();
     });
 }
@@ -1494,7 +1531,7 @@ function renderJourneyForm(journeyItem = null, modalTitleStr) {
         }
         
         localStorage.setItem('journeyData', JSON.stringify(journeyData));
-        renderTimeline();
+        renderTimeline(getActiveJourneyFilter());
         closeAdminModal();
     });
 }
@@ -1503,6 +1540,6 @@ window.deleteJourneyItem = function(journeyId) {
     if (confirm('이 타임라인 항목을 삭제하시겠습니까?')) {
         journeyData = journeyData.filter(j => j.id !== journeyId);
         localStorage.setItem('journeyData', JSON.stringify(journeyData));
-        renderTimeline();
+        renderTimeline(getActiveJourneyFilter());
     }
 };

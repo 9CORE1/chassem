@@ -224,6 +224,16 @@
                     <p class="section-subtitle">주요 활동과 경력을 시간 흐름에 따라 확인하실 수 있습니다.</p>
                 </div>
                 
+                <!-- Journey Filters -->
+                <div class="filter-wrapper reveal-on-scroll" style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 3rem;">
+                    <ul class="portfolio-filters" id="journey-filters" style="margin-bottom: 0;">
+                        <li><button class="filter-btn" data-filter="all" id="btn-jfilter-all">전체보기</button></li>
+                        <li><button class="filter-btn active" data-filter="career" id="btn-jfilter-career"><i class="fa-solid fa-briefcase icon-left"></i>경력사항</button></li>
+                        <li><button class="filter-btn" data-filter="education" id="btn-jfilter-education"><i class="fa-solid fa-graduation-cap icon-left"></i>학력사항</button></li>
+                        <li><button class="filter-btn" data-filter="cert" id="btn-jfilter-cert"><i class="fa-solid fa-award icon-left"></i>자격 및 수료사항</button></li>
+                    </ul>
+                </div>
+
                 <!-- Admin Journey Actions -->
                 <div id="admin-journey-actions" style="display: none; text-align: center; margin-bottom: 3.5rem;">
                     <button class="btn btn-primary" onclick="openAddJourneyModal()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;"><i class="fa-solid fa-plus icon-left"></i>타임라인 추가</button>
