@@ -211,6 +211,54 @@ if (!portfolioData) {
     localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
 }
 
+let journeyData = JSON.parse(localStorage.getItem('journeyData'));
+if (!journeyData) {
+    journeyData = [
+        {
+            id: 'journey-1',
+            category: 'career',
+            title: '청년인재 커리어 빌드업 프로그램 컨설턴트',
+            institution: '대학일자리플러스센터',
+            period: '2025.03 - 2026.02',
+            description: '대학 청년들을 대상으로 맞춤형 커리어 로드맵을 설계하고, 자기소개서 첨삭 및 면접 코칭 전담.'
+        },
+        {
+            id: 'journey-2',
+            category: 'education',
+            title: '미디어커뮤니케이션학과 학사 졸업',
+            institution: '부산대학교',
+            period: '2018.03 - 2022.02',
+            description: '언론 정보, 미디어 스토리텔링 및 영상콘텐츠 기획/제작 심화 학습.'
+        },
+        {
+            id: 'journey-3',
+            category: 'career',
+            title: '진로 설계 강사 및 코치',
+            institution: '청소년진로지원센터',
+            period: '2024.05 - 현재',
+            description: '고등학교 및 대학교 대상 직업 트렌드 소개, 적성 분석 및 자기주도적 진로 탐색 강연 진행.'
+        },
+        {
+            id: 'journey-4',
+            category: 'cert',
+            title: '직업상담사 2급 자격증 취득',
+            institution: '한국산업인력공단',
+            period: '2025.08',
+            description: '직업상담학, 직업심리학, 직업정보론, 노동시장론 및 노동관계법규 검증 완료.'
+        },
+        {
+            id: 'journey-5',
+            category: 'cert',
+            title: '웹디자인기능사 자격증 취득',
+            institution: '한국산업인력공단',
+            period: '2024.11',
+            description: 'HTML5, CSS3 웹 표준 퍼블리싱 및 UI/UX 레이아웃 구현 능력 검증.'
+        }
+    ];
+    localStorage.setItem('journeyData', JSON.stringify(journeyData));
+}
+
+
 let competenciesData = JSON.parse(localStorage.getItem('competenciesData'));
 if (!competenciesData) {
     competenciesData = [
@@ -350,12 +398,16 @@ function renderTimeline() {
     
     container.innerHTML = '';
     
-    // Sort timeline items chronologically (descending or ascending)
-    // Here we'll order by period start date, newest first.
-    const sortedData = [...portfolioData].sort((a, b) => {
-        const dateA = a.period.split(' - ')[0].replace('.', '');
-        const dateB = b.period.split(' - ')[0].replace('.', '');
-        return dateB - dateA;
+    // Sort timeline items chronologically (descending), newest first.
+    const sortedData = [...journeyData].sort((a, b) => {
+        const getSortableValue = (periodStr) => {
+            const startStr = periodStr.split('-')[0].trim();
+            const parts = startStr.split('.');
+            const year = parseInt(parts[0]) || 0;
+            const month = parts[1] ? parseInt(parts[1]) : 0;
+            return (year * 12) + month;
+        };
+        return getSortableValue(b.period) - getSortableValue(a.period);
     });
     
     sortedData.forEach((item, index) => {
@@ -365,29 +417,48 @@ function renderTimeline() {
         itemEl.className = `timeline-item ${side}`;
         
         let catName = '';
-        if (item.category === 'career') catName = '취업진로';
-        else if (item.category === 'media') catName = '영상콘텐츠';
-        else if (item.category === 'it') catName = 'IT 미래기술';
+        let categoryClass = '';
+        let accentColor = '';
         
-        itemEl.style.setProperty('--dot-accent', item.accentColor);
-        itemEl.style.setProperty('--timeline-accent', item.accentColor);
+        if (item.category === 'education') {
+            catName = '학력사항';
+            categoryClass = 'it';
+            accentColor = 'var(--color-it-end)';
+        } else if (item.category === 'career') {
+            catName = '경력사항';
+            categoryClass = 'career';
+            accentColor = 'var(--color-career-end)';
+        } else if (item.category === 'cert') {
+            catName = '자격 및 수료사항';
+            categoryClass = 'media';
+            accentColor = 'var(--color-media-end)';
+        }
+        
+        itemEl.style.setProperty('--dot-accent', accentColor);
+        itemEl.style.setProperty('--timeline-accent', accentColor);
+        
+        let adminBtns = '';
+        if (isAdminMode) {
+            adminBtns = `
+                <div class="admin-card-actions" style="position: absolute; top: 1rem; right: 1rem; display: flex; gap: 0.5rem; z-index: 10;">
+                    <button class="admin-edit-btn" onclick="event.stopPropagation(); openEditJourneyModal('${item.id}')" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--accent-primary-start); width: 32px; height: 32px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="편집"><i class="fa-solid fa-pen"></i></button>
+                    <button class="admin-delete-btn" onclick="event.stopPropagation(); deleteJourneyItem('${item.id}')" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); color: #f43f5e; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="삭제"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `;
+        }
         
         itemEl.innerHTML = `
             <div class="timeline-dot"></div>
             <div class="timeline-content-wrapper">
-                <div class="timeline-card glass-panel">
+                <div class="timeline-card glass-panel" style="position: relative;">
+                    ${adminBtns}
                     <span class="time">${item.period}</span>
                     <h3>${item.title}</h3>
-                    <span class="subtitle text-${item.category}">${catName} · ${item.techStack.slice(0, 2).join(', ')}</span>
-                    <p>${item.summary}</p>
+                    <span class="subtitle text-${categoryClass}">${catName} · ${item.institution}</span>
+                    <p>${item.description}</p>
                 </div>
             </div>
         `;
-        
-        // Timeline card also clickable to modal
-        itemEl.querySelector('.timeline-card').addEventListener('click', () => {
-            openDetailsModal(item.id);
-        });
         
         container.appendChild(itemEl);
     });
@@ -703,6 +774,7 @@ function setupAdminMode() {
     const adminToggle = document.getElementById('admin-toggle');
     const adminBanner = document.getElementById('admin-banner');
     const adminPortfolioActions = document.getElementById('admin-portfolio-actions');
+    const adminJourneyActions = document.getElementById('admin-journey-actions');
     
     const savedAdmin = sessionStorage.getItem('isAdminMode') === 'true';
     if (savedAdmin) {
@@ -713,7 +785,13 @@ function setupAdminMode() {
         }
         if (adminBanner) adminBanner.style.display = 'flex';
         if (adminPortfolioActions) adminPortfolioActions.style.display = 'block';
+        if (adminJourneyActions) adminJourneyActions.style.display = 'block';
         document.body.classList.add('admin-active');
+        
+        // Re-render to show admin actions on page load
+        renderCompetencies();
+        renderPortfolioGrid();
+        renderTimeline();
     }
     
     if (adminToggle) {
@@ -727,10 +805,12 @@ function setupAdminMode() {
                 adminToggle.innerHTML = '<i class="fa-solid fa-lock"></i>';
                 if (adminBanner) adminBanner.style.display = 'none';
                 if (adminPortfolioActions) adminPortfolioActions.style.display = 'none';
+                if (adminJourneyActions) adminJourneyActions.style.display = 'none';
                 document.body.classList.remove('admin-active');
                 
                 renderCompetencies();
                 renderPortfolioGrid();
+                renderTimeline();
                 alert('관리자 모드가 해제되었습니다.');
             } else {
                 openAuthModal();
@@ -999,6 +1079,7 @@ function verifyAuthCode() {
         const adminToggle = document.getElementById('admin-toggle');
         const adminBanner = document.getElementById('admin-banner');
         const adminPortfolioActions = document.getElementById('admin-portfolio-actions');
+        const adminJourneyActions = document.getElementById('admin-journey-actions');
         
         if (adminToggle) {
             adminToggle.classList.add('active');
@@ -1006,10 +1087,12 @@ function verifyAuthCode() {
         }
         if (adminBanner) adminBanner.style.display = 'flex';
         if (adminPortfolioActions) adminPortfolioActions.style.display = 'block';
+        if (adminJourneyActions) adminJourneyActions.style.display = 'block';
         document.body.classList.add('admin-active');
         
         renderCompetencies();
         renderPortfolioGrid();
+        renderTimeline();
         
         closeAuthModal();
         alert('관리자 인증이 성공했습니다. 관리자 편집 모드가 활성화됩니다.');
@@ -1310,11 +1393,10 @@ function renderProjectForm(project = null, modalTitleStr) {
 }
 
 window.deleteProject = function(projectId) {
-    if (confirm('이 프로젝트를 삭제하시겠습니까? (삭제 시 성장 스토리 타임라인에서도 함께 삭제됩니다.)')) {
+    if (confirm('이 프로젝트를 삭제하시겠습니까?')) {
         portfolioData = portfolioData.filter(p => p.id !== projectId);
         localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
         renderPortfolioGrid();
-        renderTimeline();
     }
 };
 
@@ -1322,6 +1404,105 @@ window.resetAllToDefault = function() {
     if (confirm('모든 데이터를 원래 템플릿의 초기값으로 초기화하시겠습니까? 작성하거나 수정한 데이터는 모두 소실됩니다.')) {
         localStorage.removeItem('competenciesData');
         localStorage.removeItem('portfolioData');
+        localStorage.removeItem('journeyData');
         window.location.reload();
+    }
+};
+
+window.openEditJourneyModal = function(journeyId) {
+    const item = journeyData.find(j => j.id === journeyId);
+    if (!item) return;
+    
+    renderJourneyForm(item, `타임라인 편집 - ${item.title}`);
+};
+
+window.openAddJourneyModal = function() {
+    renderJourneyForm(null, '새 타임라인 항목 추가');
+};
+
+function renderJourneyForm(journeyItem = null, modalTitleStr) {
+    const isEdit = !!journeyItem;
+    
+    const formHtml = `
+        <form id="journey-form" style="display: flex; flex-direction: column; gap: 1.2rem;">
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                <div class="form-group">
+                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">구분</label>
+                    <select id="journ-category" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+                        <option value="education" ${isEdit && journeyItem.category === 'education' ? 'selected' : ''}>학력사항</option>
+                        <option value="career" ${isEdit && journeyItem.category === 'career' ? 'selected' : ''}>경력사항</option>
+                        <option value="cert" ${isEdit && journeyItem.category === 'cert' ? 'selected' : ''}>자격 및 수료사항</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">기간</label>
+                    <input type="text" id="journ-period" value="${isEdit ? journeyItem.period : ''}" placeholder="예: 2025.03 - 2026.02" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                <div class="form-group">
+                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">항목명 (학위/직무/자격증 등)</label>
+                    <input type="text" id="journ-title" value="${isEdit ? journeyItem.title : ''}" placeholder="예: 직업상담사 2급 자격증 취득" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+                </div>
+                <div class="form-group">
+                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">학교 / 기관 / 회사명</label>
+                    <input type="text" id="journ-institution" value="${isEdit ? journeyItem.institution : ''}" placeholder="예: 한국산업인력공단" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">상세 설명</label>
+                <textarea id="journ-description" rows="3" placeholder="내용 및 수행 실적을 입력하세요." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); resize: vertical;" required>${isEdit ? journeyItem.description : ''}</textarea>
+            </div>
+            
+            <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                <button type="button" onclick="closeAdminModal()" class="btn btn-outline" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">취소</button>
+                <button type="submit" class="btn btn-primary" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">저장</button>
+            </div>
+        </form>
+    `;
+    
+    openAdminModal(modalTitleStr, formHtml);
+    
+    const form = document.getElementById('journey-form');
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const categoryVal = document.getElementById('journ-category').value;
+        const periodVal = document.getElementById('journ-period').value.trim();
+        const titleVal = document.getElementById('journ-title').value.trim();
+        const institutionVal = document.getElementById('journ-institution').value.trim();
+        const descriptionVal = document.getElementById('journ-description').value.trim();
+        
+        if (isEdit) {
+            journeyItem.category = categoryVal;
+            journeyItem.period = periodVal;
+            journeyItem.title = titleVal;
+            journeyItem.institution = institutionVal;
+            journeyItem.description = descriptionVal;
+        } else {
+            const newItem = {
+                id: `journey-${Date.now()}`,
+                category: categoryVal,
+                period: periodVal,
+                title: titleVal,
+                institution: institutionVal,
+                description: descriptionVal
+            };
+            journeyData.push(newItem);
+        }
+        
+        localStorage.setItem('journeyData', JSON.stringify(journeyData));
+        renderTimeline();
+        closeAdminModal();
+    });
+}
+
+window.deleteJourneyItem = function(journeyId) {
+    if (confirm('이 타임라인 항목을 삭제하시겠습니까?')) {
+        journeyData = journeyData.filter(j => j.id !== journeyId);
+        localStorage.setItem('journeyData', JSON.stringify(journeyData));
+        renderTimeline();
     }
 };
