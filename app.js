@@ -317,6 +317,7 @@ function initApp() {
     setupThemeToggle();
     setupMobileMenu();
     setupScrollEffects();
+    setupFloatingNavigator();
     setupContactForm();
     setupAdminMode();
 }
@@ -758,6 +759,62 @@ function setupScrollEffects() {
                 link.classList.add('active');
             }
         });
+    });
+}
+
+// ==========================================================================
+// Floating Navigator
+// ==========================================================================
+
+function setupFloatingNavigator() {
+    const navigatorEl = document.getElementById('floating-navigator');
+    const fabBtn = document.getElementById('nav-toggle-fab');
+    const scrollTopBtn = document.getElementById('btn-scroll-top');
+
+    if (!navigatorEl || !fabBtn) return;
+
+    // Scroll-triggered visibility (appear after scrolling down 300px)
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            navigatorEl.classList.add('visible');
+        } else {
+            navigatorEl.classList.remove('visible');
+            navigatorEl.classList.remove('active');
+        }
+    });
+
+    // Toggle menu panel
+    fabBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        navigatorEl.classList.toggle('active');
+    });
+
+    // Smooth scroll to top
+    if (scrollTopBtn) {
+        scrollTopBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+            navigatorEl.classList.remove('active');
+        });
+    }
+
+    // Close menu when clicking navigation items
+    const panelItems = navigatorEl.querySelectorAll('.panel-item:not(.scroll-top)');
+    panelItems.forEach(item => {
+        item.addEventListener('click', () => {
+            navigatorEl.classList.remove('active');
+        });
+    });
+
+    // Close menu when clicking outside of the floating navigator
+    document.addEventListener('click', (e) => {
+        if (!navigatorEl.contains(e.target)) {
+            navigatorEl.classList.remove('active');
+        }
     });
 }
 
