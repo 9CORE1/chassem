@@ -1,0 +1,615 @@
+// ==========================================================================
+// Portfolio & Experience Data Definition
+// ==========================================================================
+
+const portfolioData = [
+    {
+        id: 'career-1',
+        category: 'career',
+        title: '청년인재 커리어 빌드업 프로그램 컨설턴트',
+        period: '2025.03 - 2026.02',
+        year: '2025',
+        summary: '대학 청년들을 대상으로 맞춤형 커리어 로드맵을 설계하고, 자기소개서 첨삭 및 면접 코칭을 전담하여 실질적인 취업률 향상에 기여했습니다.',
+        description: '대학 청년들의 취업난을 해소하기 위해 마련된 정부 지원 대학 연계 사업에서 전담 취업 컨설턴트로 활동했습니다. 개인의 역량과 희망 분야를 객과적으로 분석하여 맞춤형 목표를 도출하고 실행 전략을 제공했습니다.',
+        role: '주요 역량 분석 및 단계별 커리어 로드맵 설계, 이력서/자기소개서 정밀 클리닉, AI 및 대면 면접 시뮬레이션 및 피드백 제공, 취업 동향 트렌드 강의 운영.',
+        highlights: [
+            '1:1 전담 관리 학생 120명 중 85%의 대기업 및 우수 중견기업 서류 전형 합격률 달성',
+            '참여자 설문 조사 기준 전문 상담 만족도 점수 4.9 / 5.0 획득',
+            '모의 면접 프로세스를 체계화하여 학생들의 실전 면접 불안감 지수 평균 40% 감소 유도',
+            '비대면 면접 대비용 1인 피드백 가이드북 자체 제작 및 배포 (누적 다운로드 500건+)'
+        ],
+        techStack: ['커리어 컨설팅', '직무 역량 분석', '강의/스피치', '취업 진단 Tool'],
+        accentColor: 'var(--color-career-end)',
+        accentBg: 'rgba(79, 172, 254, 0.1)',
+        accentBorder: 'rgba(79, 172, 254, 0.2)',
+        icon: 'fa-graduation-cap'
+    },
+    {
+        id: 'career-2',
+        category: 'career',
+        title: '커리어 코칭 및 청소년 진로 지도 강사',
+        period: '2024.05 - 현재',
+        year: '2024',
+        summary: '진로 탐색 시기의 고등학생 및 대학 새내기들을 위해 동기부여 강연과 미래 직업 트렌드를 소개하며 스스로 커리어 로드맵을 구축할 수 있도록 도왔습니다.',
+        description: '다변화하는 디지털 시대 속 직업의 패러다임 변화를 쉽게 설명하고, 학생들이 자기주도적으로 미래를 준비할 수 있도록 돕는 진로 탐색 교육 프로그램입니다. 이론에 치우치지 않고 워크숍과 카드 게임 등을 활용한 참여형 교육을 기획했습니다.',
+        role: '진로 설계 강연 기획 및 연사 참여, MBTI 및 홀랜드 적성 검사 기반 직무 매핑 워크숍 진행, 직업 트렌드 교재 공동 개발.',
+        highlights: [
+            '수도권 및 강원 지역 15개교 대상 총 30회 이상의 진로 탐색 특강 진행 (수혜 학생 1,500명 이상)',
+            '기존 텍스트 위주 교재를 인포그래픽 기반의 진로 맞춤형 실습 워크북으로 개편하여 수업 집중도 대폭 개선',
+            '실제 강연 만족도 조사 우수 강사 2회 선정',
+            '1:N 그룹 멘토링 프로그램 설계를 통해 소외 학생들의 진로 설계 자신감 점수 향상'
+        ],
+        techStack: ['진로 설계 강연', '워크숍 기획', 'Holland 적성 분석', '교재 개발'],
+        accentColor: 'var(--color-career-end)',
+        accentBg: 'rgba(79, 172, 254, 0.1)',
+        accentBorder: 'rgba(79, 172, 254, 0.2)',
+        icon: 'fa-graduation-cap'
+    },
+    {
+        id: 'career-3',
+        category: 'career',
+        title: '고용노동부 청년고용정책 서포터즈 팀장',
+        period: '2023.03 - 2023.11',
+        year: '2023',
+        summary: '정부의 청년 일자리 지원 정책을 직접 스터디하고, 청년 눈높이에 맞는 카드뉴스 및 오프라인 캠페인을 기획하여 정책 수혜 장벽을 낮추었습니다.',
+        description: '청년들이 혜택을 놓치기 쉬운 다양한 국가 고용 지원 정책(청년도전지원사업, 청년내일채움공제 등)을 조사하여, 이를 효과적으로 도달시키기 위한 온/오프라인 홍보 서포터즈 활동의 팀장 역할을 수행했습니다.',
+        role: '서포터즈 팀 기획 리딩, 고용센터 연계 오프라인 홍보 부스 운영 기획, 정책 소개 콘텐츠 스토리보딩, 정기 아이디어 회의 주재.',
+        highlights: [
+            '어려운 정책 용어를 실생활툰 형식의 카드뉴스로 변형하여 인스타그램 공식 채널 업로드 (최고 조회수 3만회 달성)',
+            '오프라인 정책 퀴즈 쇼 및 상담 부스 기획을 통해 500명 이상의 지역 대학생 현장 참여 유치',
+            '서포터즈 활동 평가 전국 최우수 팀 선정 및 고용노동부 장관상 수상',
+            '활동 종료 시 청년 맞춤형 정책 도달 프로세스 개선 제안서 고용센터에 직접 전달'
+        ],
+        techStack: ['정책 분석', '콘텐츠 마케팅', '오프라인 캠페인', '프로젝트 팀빌딩'],
+        accentColor: 'var(--color-career-end)',
+        accentBg: 'rgba(79, 172, 254, 0.1)',
+        accentBorder: 'rgba(79, 172, 254, 0.2)',
+        icon: 'fa-graduation-cap'
+    },
+    {
+        id: 'media-1',
+        category: 'media',
+        title: '지식정보 유튜브 채널 \'커리어로그\' 기획 및 운영',
+        period: '2024.01 - 현재',
+        year: '2024',
+        summary: '취업 꿀팁, 영상 편집 노하우, IT 도구 사용법 등을 친절하게 다루는 1인 미디어 채널을 운영하며 기획부터 촬영, 편집, 분석의 전 과정을 직접 리딩했습니다.',
+        description: '다양한 직무 지식과 실무 스킬을 아카이빙하는 유튜브 채널을 개설하여 1인 크리에이터로서의 역량을 다졌습니다. 시청자 유지를 위한 알고리즘 분석과 SEO 기반의 썸네일/타이틀 최적화를 학습했습니다.',
+        role: '채널 아이덴티티 수립, 영상 시나리오 작성 및 화면 콘셉트 구상, 촬영(카메라/조명/마이크 세팅) 및 자막/모션그래픽/색보정 편집, 유튜브 데이터 스튜디오 대시보드 기반 시청 지속율 분석.',
+        highlights: [
+            '채널 개설 후 1년 만에 순수 구독자 1.5만 명 달성 및 수익 창출 조건 충족',
+            '유튜브 쇼츠 및 롱폼 영상 포함 누적 조회수 120만 회 돌파',
+            '직무 면접 가이드 롱폼 영상의 경우 단일 조회수 35만 회 달성, 알고리즘 유입 분석 적용',
+            'Premiere Pro 및 After Effects 템플릿 패키지를 직접 제작하여 시청자 대상 무료 배포 이벤트 진행 (이메일 구독자 1,200명 유치)'
+        ],
+        techStack: ['유튜브 운영', 'Premiere Pro', 'After Effects', '시나리오 작법', '썸네일 디자인'],
+        accentColor: 'var(--color-media-end)',
+        accentBg: 'rgba(248, 87, 166, 0.1)',
+        accentBorder: 'rgba(248, 87, 166, 0.2)',
+        icon: 'fa-video'
+    },
+    {
+        id: 'media-2',
+        category: 'media',
+        title: '로컬 청년 창업 인터뷰 다큐멘터리 제작 PD',
+        period: '2023.07 - 2023.12',
+        year: '2023',
+        summary: '지역 청년 창업가들의 도전과 성장을 다룬 15분 분량의 휴먼 다큐멘터리를 연출하고 촬영 및 영상 편집 전 과정을 주도했습니다.',
+        description: '지역 문화 재단의 미디어 공모전에 당선되어 제작비를 지원받아 진행된 청년 로컬 크리에이터 아카이빙 다큐멘터리입니다. 창업가 3인의 생생한 인터뷰와 시네마틱한 B-roll 컷을 결합하여 몰입감을 높였습니다.',
+        role: '기획안 및 시나리오 연출, 출연자 섭외 및 인터뷰 스크립트 작성, 메인 카메라 촬영(Sony A7S3) 및 3점 조명 셋업, 사운드 믹싱 및 서정적 색보정(DLog -> REC709).',
+        highlights: [
+            '지역 문화 재단 미디어 지원 부문 최우수작 선정 및 상패 수여',
+            '지역 독립영화관 및 메가박스 특별 세션에서 다큐멘터리 공식 초청 상영',
+            '스토리라인 구성을 통해 단순 인터뷰 방식을 탈피, 감성적이고 몰입감 높은 연출력으로 영상 집중도 점수 향상',
+            '유튜브 등 디지털 플랫폼 릴리즈 후 누적 2만 뷰 기록, 지역 청년 커뮤니티 활성화 기여'
+        ],
+        techStack: ['시네마토그래피', '다큐멘터리 연출', '인터뷰 촬영', '다빈치 리졸브', '색보정'],
+        accentColor: 'var(--color-media-end)',
+        accentBg: 'rgba(248, 87, 166, 0.1)',
+        accentBorder: 'rgba(248, 87, 166, 0.2)',
+        icon: 'fa-video'
+    },
+    {
+        id: 'media-3',
+        category: 'media',
+        title: '모교 공식 홍보 캠페인 영상 제작 프로젝트',
+        period: '2022.09 - 2022.12',
+        year: '2022',
+        summary: '모교 대학 홍보실과 협업하여, 예비 신입생을 위한 트렌디하고 감각적인 대학 소개 영상을 기획 및 연출하였습니다.',
+        description: '기존의 딱딱하고 정형화된 대학 공식 홍보 영상에서 벗어나, 20대 대학생의 활기찬 일상을 브이로그와 시네마틱 스타일을 결합하여 풀어낸 뉴트로 감성 대학 홍보 영상입니다.',
+        role: '아이디어 피칭 및 총 연출, 시나리오 작성 및 스토리보드 스케치, 모션 그래픽 타이틀 제작 및 화면 트랜지션 디자인.',
+        highlights: [
+            '대학 공식 유튜브 채널 메인 영상 업로드 후 조회수 5만 회 이상 기록',
+            '해당 연도 대학 입학 설명회 및 정시 설명회 메인 스크린 공식 오프닝 영상으로 채택',
+            'After Effects 모션 그래픽을 활용하여 대학의 강점(장학제도, 교환학생)을 타이포그래피로 시각화해 정보 전달력 제고',
+            '학내 재학생 모델 5인과의 활발한 소통을 통해 2일이라는 한정된 촬영 타임라인 준수'
+        ],
+        techStack: ['영상 연출', '모션 그래픽', 'Premiere Pro', 'After Effects', '스토리보드'],
+        accentColor: 'var(--color-media-end)',
+        accentBg: 'rgba(248, 87, 166, 0.1)',
+        accentBorder: 'rgba(248, 87, 166, 0.2)',
+        icon: 'fa-video'
+    },
+    {
+        id: 'it-1',
+        category: 'it',
+        title: '사용자 맞춤형 커리어 로드맵 추천 서비스 \'PathFinder\'',
+        period: '2025.09 - 2025.12',
+        year: '2025',
+        summary: '취업 준비생의 역량 진단을 기반으로 개인화된 취업 및 학습 로드맵을 자동으로 그려주는 웹 애플리케이션의 프론트엔드를 개발했습니다.',
+        description: '사용자가 관심 분야 및 현재 자격증, 보유 기술을 선택하면 공공 채용 데이터 API와 워크넷 Open API의 통계를 분석하여 가장 알맞은 가상의 직무 로드맵과 부족한 역량을 Chart.js로 시각화해 제공하는 서비스입니다.',
+        role: '프론트엔드 전체 UI/UX 마크업 및 스타일 가이드 정립, React 기반의 상태 관리와 API 연동, 가인포그래픽 차트 렌더링 최적화, 반응형 모바일 레이아웃 구현.',
+        highlights: [
+            'Chart.js와 TailwindCSS를 사용하여 가독성 높은 맞춤형 분석 보고서 대시보드 구축',
+            'Open API 데이터 통신 지연에 대응한 스켈레톤 UI 컴포넌트와 비동기 로딩 최적화로 초기 렌더링 병목 25% 완화',
+            '다크 모드와 고대비 접근성 모드 지원으로 시각약자 접근 환경 준수',
+            '구글 등 검색 포털 노출 향상을 위한 React Helmet 기반 SEO 마크업 적용'
+        ],
+        techStack: ['React', 'CSS Grid', 'Chart.js', 'Rest API', 'Git'],
+        accentColor: 'var(--color-it-end)',
+        accentBg: 'rgba(225, 0, 255, 0.1)',
+        accentBorder: 'rgba(225, 0, 255, 0.2)',
+        icon: 'fa-code'
+    },
+    {
+        id: 'it-2',
+        category: 'it',
+        title: '포트폴리오 템플릿 아카이빙 플랫폼 \'Folder\'',
+        period: '2024.08 - 2024.11',
+        year: '2024',
+        summary: '복잡한 프레임워크 없이 오직 HTML, Vanilla JS, CSS Grid만을 사용하여 제작한 초경량, 초고속 포트폴리오 아카이빙 정적 웹사이트입니다.',
+        description: '다양한 직무의 우수 포트폴리오 기획안과 템플릿을 공유하는 큐레이션 웹사이트입니다. 프레임워크의 오버헤드를 줄이고, 순수 웹 표준 기술만을 사용하여 웹 최적화 성능의 극대화를 연습했습니다.',
+        role: '바닐라 자바스크립트 기반의 가상 돔 라우팅 및 템플릿 렌더러 설계, 로컬 스토리지를 활용한 좋아요 및 북마크 시스템 개발, CSS Flexbox/Grid를 활용한 완벽한 픽셀 반응형 디자인 설계.',
+        highlights: [
+            'Lighthouse 기준 성능 및 SEO 점수 100점 달성 (초기 FCP 0.3초 이내 도달)',
+            '프레임워크 라이브러리 의존성 0% 달성으로 웹 브라우저 호환성 극대화',
+            'Intersection Observer API를 활용한 무한 스크롤 및 이미지 지연 로딩(Lazy loading) 기능 자체 구현',
+            '순수 CSS만으로 구현한 글래스모피즘 UI 디자인 컴포넌트 라이브러리화'
+        ],
+        techStack: ['HTML5', 'Vanilla Javascript', 'Vanilla CSS', 'Lighthouse Optimization'],
+        accentColor: 'var(--color-it-end)',
+        accentBg: 'rgba(225, 0, 255, 0.1)',
+        accentBorder: 'rgba(225, 0, 255, 0.2)',
+        icon: 'fa-code'
+    },
+    {
+        id: 'it-3',
+        category: 'it',
+        title: '공공데이터 활용 청년 취업정보 지도 웹앱',
+        period: '2023.05 - 2023.09',
+        year: '2023',
+        summary: '사용자의 현재 위치를 기반으로 내 주변에서 열리는 일자리 박람회 및 국비지원 교육기관의 정보를 지도로 보여주는 하이브리드 웹입니다.',
+        description: '청년들이 취업 박람회나 교육 정보를 찾기 어렵다는 문제에서 출발하여, 카카오맵 API와 서울시 공공데이터를 융합하여 쉽고 시각적으로 파악할 수 있도록 제작한 지도 기반 탐색형 웹 서비스입니다.',
+        role: '카카오 지도 API 마커 클러스터링 로직 구현, Geolocation API 연동을 통한 사용자 주변 현 위치 연산 구현, 취업 공고 실시간 검색 필터링 모듈 개발.',
+        highlights: [
+            '시 주관 공공데이터 매시업 해커톤 공모전 참가, 크리에이티브 부문 우수상 수상',
+            '카카오 맵 클러스터러 라이브러리를 활용하여 1,000건 이상의 공공 데이터를 브라우저 부하 없이 매끄럽게 렌더링',
+            '북마크된 행사 일정이 다가오면 브라우저 알림을 보내는 Push Notification API 기능 도입',
+            'Figma를 통한 UI 설계부터 프로토타입 테스팅, 실제 개발까지 애자일 방식으로 4인 협업 진행'
+        ],
+        techStack: ['Javascript', 'Kakao Map API', 'HTML5/CSS3', 'Geolocation API', 'Figma'],
+        accentColor: 'var(--color-it-end)',
+        accentBg: 'rgba(225, 0, 255, 0.1)',
+        accentBorder: 'rgba(225, 0, 255, 0.2)',
+        icon: 'fa-code'
+    }
+];
+
+// ==========================================================================
+// Initialization & DOM Event Binding
+// ==========================================================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    initApp();
+});
+
+function initApp() {
+    renderPortfolioGrid();
+    renderTimeline();
+    setupFilters();
+    setupModal();
+    setupThemeToggle();
+    setupMobileMenu();
+    setupScrollEffects();
+    setupContactForm();
+}
+
+// ==========================================================================
+// Portfolio Grid Rendering
+// ==========================================================================
+
+function renderPortfolioGrid(filter = 'all') {
+    const grid = document.getElementById('portfolio-grid');
+    if (!grid) return;
+    
+    grid.innerHTML = '';
+    
+    const filteredData = filter === 'all' 
+        ? portfolioData 
+        : portfolioData.filter(item => item.category === filter);
+        
+    filteredData.forEach(item => {
+        const card = document.createElement('article');
+        card.className = 'portfolio-card glass-panel reveal-on-scroll active';
+        card.setAttribute('data-id', item.id);
+        card.style.setProperty('--card-accent', item.accentColor);
+        
+        // Define human readable category name
+        let catName = '기타';
+        let catClass = '';
+        if (item.category === 'career') { catName = '취업진로'; catClass = 'text-career'; }
+        else if (item.category === 'media') { catName = '영상콘텐츠'; catClass = 'text-media'; }
+        else if (item.category === 'it') { catName = 'IT'; catClass = 'text-it'; }
+        
+        card.style.setProperty('--card-accent-color', `var(--color-${item.category}-end)`);
+        
+        card.innerHTML = `
+            <div class="portfolio-card-content">
+                <div class="card-top">
+                    <span class="card-category ${catClass}">${catName}</span>
+                    <span class="card-date">${item.period.split(' ')[0]}</span>
+                </div>
+                <h3>${item.title}</h3>
+                <p class="card-desc">${item.summary}</p>
+                <div class="card-bottom">
+                    <div class="card-tags">
+                        ${item.tags ? item.tags.map(tag => `<span class="card-tag">#${tag}</span>`).join('') : item.techStack.slice(0, 2).map(tag => `<span class="card-tag">#${tag}</span>`).join('')}
+                    </div>
+                    <div class="card-arrow" aria-label="상세 보기">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Card click event triggers details modal
+        card.addEventListener('click', () => {
+            openDetailsModal(item.id);
+        });
+        
+        grid.appendChild(card);
+    });
+}
+
+// ==========================================================================
+// Timeline Rendering (Chronological order)
+// ==========================================================================
+
+function renderTimeline() {
+    const container = document.getElementById('timeline-container');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    // Sort timeline items chronologically (descending or ascending)
+    // Here we'll order by period start date, newest first.
+    const sortedData = [...portfolioData].sort((a, b) => {
+        const dateA = a.period.split(' - ')[0].replace('.', '');
+        const dateB = b.period.split(' - ')[0].replace('.', '');
+        return dateB - dateA;
+    });
+    
+    sortedData.forEach((item, index) => {
+        const itemEl = document.createElement('div');
+        // Alternating sides: left or right
+        const side = index % 2 === 0 ? 'left' : 'right';
+        itemEl.className = `timeline-item ${side}`;
+        
+        let catName = '';
+        if (item.category === 'career') catName = '취업진로';
+        else if (item.category === 'media') catName = '영상콘텐츠';
+        else if (item.category === 'it') catName = 'IT';
+        
+        itemEl.style.setProperty('--dot-accent', item.accentColor);
+        itemEl.style.setProperty('--timeline-accent', item.accentColor);
+        
+        itemEl.innerHTML = `
+            <div class="timeline-dot"></div>
+            <div class="timeline-content-wrapper">
+                <div class="timeline-card glass-panel">
+                    <span class="time">${item.period}</span>
+                    <h3>${item.title}</h3>
+                    <span class="subtitle text-${item.category}">${catName} · ${item.techStack.slice(0, 2).join(', ')}</span>
+                    <p>${item.summary}</p>
+                </div>
+            </div>
+        `;
+        
+        // Timeline card also clickable to modal
+        itemEl.querySelector('.timeline-card').addEventListener('click', () => {
+            openDetailsModal(item.id);
+        });
+        
+        container.appendChild(itemEl);
+    });
+}
+
+// ==========================================================================
+// Setup Filter Buttons
+// ==========================================================================
+
+function setupFilters() {
+    const filters = document.querySelectorAll('#portfolio-filters .filter-btn');
+    filters.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            // Remove active class from all
+            filters.forEach(f => f.classList.remove('active'));
+            
+            // Add active to clicked
+            btn.classList.add('active');
+            
+            const filterValue = btn.getAttribute('data-filter');
+            
+            // Re-render grid with transition
+            const grid = document.getElementById('portfolio-grid');
+            grid.style.opacity = '0';
+            grid.style.transform = 'translateY(10px)';
+            
+            setTimeout(() => {
+                renderPortfolioGrid(filterValue);
+                grid.style.opacity = '1';
+                grid.style.transform = 'translateY(0)';
+                // Re-initialize intersection observers for new elements
+                setupScrollEffects();
+            }, 300);
+        });
+    });
+}
+
+// ==========================================================================
+// Details Modal Controllers
+// ==========================================================================
+
+function setupModal() {
+    const modal = document.getElementById('details-modal');
+    if (!modal) return;
+    
+    // Close on overlay click
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+    
+    // Close on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+}
+
+function openDetailsModal(id) {
+    const modal = document.getElementById('details-modal');
+    const container = document.getElementById('modal-content-container');
+    if (!modal || !container) return;
+    
+    const item = portfolioData.find(d => d.id === id);
+    if (!item) return;
+    
+    let catName = '기타';
+    if (item.category === 'career') catName = '취업진로';
+    else if (item.category === 'media') catName = '영상콘텐츠';
+    else if (item.category === 'it') catName = 'IT';
+    
+    // Setup modal specific CSS values dynamically
+    container.style.setProperty('--modal-accent', item.accentColor);
+    container.style.setProperty('--modal-accent-color', `var(--color-${item.category}-end)`);
+    container.style.setProperty('--modal-accent-alpha', item.accentBg);
+    container.style.setProperty('--modal-accent-border', item.accentBorder);
+    
+    container.innerHTML = `
+        <button class="modal-close-btn" id="modal-close-btn" aria-label="닫기">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        
+        <div class="modal-header-hero">
+            <div class="modal-meta">
+                <span class="modal-category">${catName}</span>
+                <span class="modal-date">${item.period}</span>
+            </div>
+            <h2 class="modal-title">${item.title}</h2>
+        </div>
+        
+        <div class="modal-body">
+            <div class="modal-section">
+                <h4 class="modal-section-title">개요</h4>
+                <p class="modal-desc-long">${item.description}</p>
+            </div>
+            
+            <div class="modal-section">
+                <h4 class="modal-section-title">수행 역할</h4>
+                <p class="modal-desc-long">${item.role}</p>
+            </div>
+            
+            <div class="modal-section">
+                <h4 class="modal-section-title">주요 성과 및 하이라이트</h4>
+                <ul class="modal-bullet-list">
+                    ${item.highlights.map(hl => `<li>${hl}</li>`).join('')}
+                </ul>
+            </div>
+            
+            <div class="modal-section">
+                <h4 class="modal-section-title">기술 스택 / 핵심 키워드</h4>
+                <div class="modal-tech-list">
+                    ${item.techStack.map(tech => `<span class="modal-tech-tag">${tech}</span>`).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Bind close button event
+    container.querySelector('#modal-close-btn').addEventListener('click', closeModal);
+    
+    // Open modal
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden'; // Lock background scroll
+}
+
+function closeModal() {
+    const modal = document.getElementById('details-modal');
+    if (!modal) return;
+    
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = ''; // Unlock scroll
+}
+
+// ==========================================================================
+// Theme (Dark/Light) Mode Toggle
+// ==========================================================================
+
+function setupThemeToggle() {
+    const toggleBtn = document.getElementById('theme-toggle');
+    if (!toggleBtn) return;
+    
+    // Check local storage setting or system preferences
+    const savedTheme = localStorage.getItem('theme');
+    const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+    
+    if (savedTheme === 'light' || (!savedTheme && prefersLight)) {
+        enableLightMode();
+    } else {
+        enableDarkMode();
+    }
+    
+    toggleBtn.addEventListener('click', () => {
+        if (document.body.classList.contains('light-mode')) {
+            enableDarkMode();
+        } else {
+            enableLightMode();
+        }
+    });
+    
+    function enableLightMode() {
+        document.body.classList.remove('dark-mode');
+        document.body.classList.add('light-mode');
+        toggleBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+        localStorage.setItem('theme', 'light');
+    }
+    
+    function enableDarkMode() {
+        document.body.classList.remove('light-mode');
+        document.body.classList.add('dark-mode');
+        toggleBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
+        localStorage.setItem('theme', 'dark');
+    }
+}
+
+// ==========================================================================
+// Mobile Menu Controller
+// ==========================================================================
+
+function setupMobileMenu() {
+    const btn = document.getElementById('mobile-menu-btn');
+    const nav = document.getElementById('nav-menu');
+    if (!btn || !nav) return;
+    
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        btn.classList.toggle('active');
+        nav.classList.toggle('active');
+    });
+    
+    // Close menu when link clicked
+    const links = nav.querySelectorAll('.nav-link');
+    links.forEach(link => {
+        link.addEventListener('click', () => {
+            btn.classList.remove('active');
+            nav.classList.remove('active');
+        });
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (nav.classList.contains('active') && !nav.contains(e.target) && e.target !== btn) {
+            btn.classList.remove('active');
+            nav.classList.remove('active');
+        }
+    });
+}
+
+// ==========================================================================
+// Scroll Reveal & Active Navigation Highlights
+// ==========================================================================
+
+function setupScrollEffects() {
+    // Header shadow on scroll
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+    
+    // Intersection Observer for scroll animation reveals
+    const reveals = document.querySelectorAll('.reveal-on-scroll');
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                observer.unobserve(entry.target); // Trigger only once
+            }
+        });
+    }, {
+        threshold: 0.15,
+        rootMargin: '0px 0px -50px 0px'
+    });
+    
+    reveals.forEach(el => revealObserver.observe(el));
+    
+    // Highlight active link on scroll
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    window.addEventListener('scroll', () => {
+        let currentSection = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop - 150; // offset header height
+            if (window.scrollY >= sectionTop) {
+                currentSection = section.getAttribute('id');
+            }
+        });
+        
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${currentSection}`) {
+                link.classList.add('active');
+            }
+        });
+    });
+}
+
+// ==========================================================================
+// Contact Form Submission Mockup
+// ==========================================================================
+
+function setupContactForm() {
+    const form = document.getElementById('contact-form');
+    if (!form) return;
+    
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const name = document.getElementById('form-name').value;
+        const email = document.getElementById('form-email').value;
+        const subject = document.getElementById('form-subject').value;
+        const message = document.getElementById('form-message').value;
+        
+        const submitBtn = document.getElementById('btn-submit');
+        
+        // Visual indicator for sending state
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>메시지 전송 중...</span> <i class="fa-solid fa-spinner fa-spin"></i>';
+        
+        // Mock API Request Delay
+        setTimeout(() => {
+            alert(`감사합니다, ${name}님! 메시지가 성공적으로 전달되었습니다.\n(작성하신 이메일: ${email}로 빠른 시일 내에 연락드리겠습니다.)`);
+            form.reset();
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<span>메시지 전송하기</span> <i class="fa-solid fa-paper-plane"></i>';
+        }, 1500);
+    });
+}
