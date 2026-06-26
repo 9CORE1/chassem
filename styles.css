@@ -2037,4 +2037,58 @@ body.light-mode .modal-content {
     }
 }
 
+/* KakaoTalk Image Icon Styles in Social Links */
+.social-links a img.kakao-icon {
+    width: 1.2rem;
+    height: 1.2rem;
+    object-fit: contain;
+    transition: var(--transition-smooth);
+    filter: invert(0.7) brightness(1.2);
+}
+
+body.light-mode .social-links a img.kakao-icon {
+    filter: invert(0.3) brightness(0.8);
+}
+
+.social-links a:hover img.kakao-icon {
+    filter: brightness(0) invert(1);
+}
+
+/* Contact Details SNS Individual Icons Styling */
+.contact-sns-link {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+    transition: var(--transition-smooth);
+}
+
+.contact-sns-link:last-child {
+    margin-bottom: 0;
+}
+
+.contact-sns-link i {
+    font-size: 1rem;
+    width: 1.1rem;
+    text-align: center;
+    transition: var(--transition-smooth);
+}
+
+.contact-sns-link img.kakao-icon {
+    width: 1.05rem;
+    height: 1.05rem;
+    object-fit: contain;
+    transition: var(--transition-smooth);
+    filter: invert(0.7) brightness(1.2);
+}
+
+body.light-mode .contact-sns-link img.kakao-icon {
+    filter: invert(0.3) brightness(0.8);
+}
+
+/* Hover effect on Kakao icon matching font-hover color */
+.contact-sns-link:hover img.kakao-icon {
+    filter: invert(61%) sepia(74%) saturate(2250%) hue-rotate(182deg) brightness(102%) contrast(99%);
+}
+
 
