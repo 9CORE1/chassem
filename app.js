@@ -238,7 +238,7 @@ function renderPortfolioGrid(filter = 'all') {
         let catClass = '';
         if (item.category === 'career') { catName = '취업진로'; catClass = 'text-career'; }
         else if (item.category === 'media') { catName = '영상콘텐츠'; catClass = 'text-media'; }
-        else if (item.category === 'it') { catName = 'IT'; catClass = 'text-it'; }
+        else if (item.category === 'it') { catName = 'IT 미래기술'; catClass = 'text-it'; }
         
         card.style.setProperty('--card-accent-color', `var(--color-${item.category}-end)`);
         
@@ -297,7 +297,7 @@ function renderTimeline() {
         let catName = '';
         if (item.category === 'career') catName = '취업진로';
         else if (item.category === 'media') catName = '영상콘텐츠';
-        else if (item.category === 'it') catName = 'IT';
+        else if (item.category === 'it') catName = 'IT 미래기술';
         
         itemEl.style.setProperty('--dot-accent', item.accentColor);
         itemEl.style.setProperty('--timeline-accent', item.accentColor);
@@ -389,7 +389,7 @@ function openDetailsModal(id) {
     let catName = '기타';
     if (item.category === 'career') catName = '취업진로';
     else if (item.category === 'media') catName = '영상콘텐츠';
-    else if (item.category === 'it') catName = 'IT';
+    else if (item.category === 'it') catName = 'IT 미래기술';
     
     // Setup modal specific CSS values dynamically
     container.style.setProperty('--modal-accent', item.accentColor);

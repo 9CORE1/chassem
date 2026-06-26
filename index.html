@@ -24,6 +24,9 @@
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Favicon -->
+    <link rel="icon" href="images/favicon.png" type="image/png">
+    
     <!-- Stylesheet -->
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -70,14 +73,14 @@
         <section id="hero" class="hero-section">
             <div class="container hero-container">
                 <div class="hero-content">
-                    <div class="badge fade-in">Creative Multi-Creator</div>
+                    <div class="badge fade-in">Hands-on Solution Builder</div>
                     <h1 class="hero-title fade-in">
                         안녕하세요, <br>
                         <span class="text-gradient">차은정</span>입니다.
                     </h1>
                     <p class="hero-subtitle fade-in">
                         취업진로 컨설팅의 전문성, 영상콘텐츠의 창의성, 그리고 IT 기술의 논리력을 융합하여 
-                        사람과 기술을 잇는 가치 있는 솔루션을 만듭니다.
+                        사람과 기술을 잇는 가치있는 솔루션을 제안합니다.
                     </p>
                     <div class="hero-cta fade-in">
                         <a href="#portfolio" class="btn btn-primary">포트폴리오 보기</a>
@@ -98,7 +101,7 @@
                     </div>
                     <div class="floating-card card-it">
                         <i class="fa-solid fa-code"></i>
-                        <span>IT 엔지니어</span>
+                        <span>IT 미래기술</span>
                     </div>
                 </div>
             </div>
@@ -128,7 +131,19 @@
                             <div class="profile-info-list">
                                 <div class="info-item">
                                     <span class="info-label">Email</span>
-                                    <span class="info-val">eunjung.cha@example.com</span>
+                                    <div class="info-val-group">
+                                        <span class="info-val">teacha99@gmail.com</span>
+                                        <span class="info-val-separator">/</span>
+                                        <span class="info-val">jjung9935@naver.com</span>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">SNS / Channel</span>
+                                    <div class="social-links" style="margin-top: 0.25rem;">
+                                        <a href="https://instagram.com/chaeunjung9" target="_blank" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                                        <a href="https://facebook.com/hrdmaker" target="_blank" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+                                        <a href="https://www.youtube.com/hrdmaker" target="_blank" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                                    </div>
                                 </div>
                                 <div class="info-item">
                                     <span class="info-label">Location</span>
@@ -179,7 +194,7 @@
                                 <div class="skill-category-card">
                                     <div class="skill-cat-header text-it">
                                         <i class="fa-solid fa-code"></i>
-                                        <h5>IT</h5>
+                                        <h5>IT 미래기술</h5>
                                     </div>
                                     <ul class="skill-list">
                                         <li>프론트엔드 개발 (HTML/CSS/JS/React)</li>
@@ -209,7 +224,7 @@
                         <li><button class="filter-btn active" data-filter="all" id="btn-filter-all">전체보기</button></li>
                         <li><button class="filter-btn" data-filter="career" id="btn-filter-career"><i class="fa-solid fa-graduation-cap icon-left"></i>취업진로</button></li>
                         <li><button class="filter-btn" data-filter="media" id="btn-filter-media"><i class="fa-solid fa-video icon-left"></i>영상콘텐츠</button></li>
-                        <li><button class="filter-btn" data-filter="it" id="btn-filter-it"><i class="fa-solid fa-code icon-left"></i>IT</button></li>
+                        <li><button class="filter-btn" data-filter="it" id="btn-filter-it"><i class="fa-solid fa-code icon-left"></i>IT 미래기술</button></li>
                     </ul>
                 </div>
 
@@ -246,11 +261,6 @@
                 
                 <div class="contact-grid reveal-on-scroll">
                     <div class="contact-info">
-                        <h3 class="contact-info-title">언제든 편하게 연락해 주세요.</h3>
-                        <p class="contact-info-text">
-                            제시된 카테고리 융합 프로젝트나 개별 분야의 협업이 필요하시다면 아래 연락처 혹은 문의 폼을 통해 메시지를 남겨주세요. 빠른 시일 내에 답변해 드리겠습니다.
-                        </p>
-                        
                         <div class="contact-details">
                             <div class="contact-card">
                                 <div class="contact-icon bg-career">
@@ -258,7 +268,27 @@
                                 </div>
                                 <div class="contact-text">
                                     <span class="label">Email</span>
-                                    <a href="mailto:eunjung.cha@example.com" class="val">eunjung.cha@example.com</a>
+                                    <a href="mailto:teacha99@gmail.com" class="val">teacha99@gmail.com</a>
+                                    <a href="mailto:jjung9935@naver.com" class="val">jjung9935@naver.com</a>
+                                </div>
+                            </div>
+                            <div class="contact-card">
+                                <div class="contact-icon bg-it">
+                                    <i class="fa-solid fa-share-nodes"></i>
+                                </div>
+                                <div class="contact-text">
+                                    <span class="label">SNS</span>
+                                    <a href="https://instagram.com/chaeunjung9" target="_blank" class="val">Instagram: @chaeunjung9</a>
+                                    <a href="https://facebook.com/hrdmaker" target="_blank" class="val">Facebook: hrdmaker</a>
+                                </div>
+                            </div>
+                            <div class="contact-card">
+                                <div class="contact-icon bg-media">
+                                    <i class="fa-brands fa-youtube"></i>
+                                </div>
+                                <div class="contact-text">
+                                    <span class="label">YouTube</span>
+                                    <a href="https://www.youtube.com/hrdmaker" target="_blank" class="val">youtube.com/hrdmaker</a>
                                 </div>
                             </div>
                             <div class="contact-card">
@@ -283,6 +313,11 @@
                     </div>
                     
                     <div class="contact-form-wrapper">
+                        <h3 class="contact-info-title">언제든 편하게 연락해 주세요.</h3>
+                        <p class="contact-info-text">
+                            제시된 카테고리 융합 프로젝트나 개별 분야의 협업이 필요하시다면 아래 연락처 혹은 문의 폼을 통해 메시지를 남겨주세요. 빠른 시일 내에 답변해 드리겠습니다.
+                        </p>
+                        
                         <form id="contact-form" class="contact-form">
                             <div class="form-group-row">
                                 <div class="form-group">
@@ -331,9 +366,9 @@
             <div class="footer-right">
                 <div class="social-links">
                     <a href="https://github.com" target="_blank" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
-                    <a href="https://youtube.com" target="_blank" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
-                    <a href="https://instagram.com" target="_blank" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+                    <a href="https://www.youtube.com/hrdmaker" target="_blank" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="https://instagram.com/chaeunjung9" target="_blank" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://facebook.com/hrdmaker" target="_blank" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
                 </div>
                 <p class="copyright">&copy; 2026 Cha Eun-jeong. All rights reserved.</p>
             </div>
