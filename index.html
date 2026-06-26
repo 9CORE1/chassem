@@ -31,6 +31,12 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="dark-mode">
+    <!-- Admin Mode Banner -->
+    <div id="admin-banner" style="display: none; position: fixed; top: 0; left: 0; width: 100%; background: linear-gradient(90deg, var(--color-career-start), var(--color-career-end)); color: white; text-align: center; padding: 0.5rem 1rem; font-size: 0.9rem; font-weight: 600; z-index: 9999; box-shadow: 0 4px 10px rgba(0,0,0,0.25); align-items: center; justify-content: center; gap: 1rem;">
+        <span>🛠️ 관리자 편집 모드가 활성화되어 있습니다.</span>
+        <button onclick="resetAllToDefault()" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.2s;">초기값으로 재설정</button>
+    </div>
+
     <!-- background decorative elements -->
     <div class="bg-blur-orbs">
         <div class="orb orb-1"></div>
@@ -56,7 +62,10 @@
             </nav>
             
             <div class="header-actions">
-                <button id="theme-toggle" class="theme-toggle-btn" aria-label="화면 테마 변경">
+                <button id="admin-toggle" class="admin-toggle-btn" aria-label="관리자 모드 전환" title="관리자 모드" style="margin-right: 0.5rem;">
+                    <i class="fa-solid fa-lock"></i>
+                </button>
+                <button id="theme-toggle" class="theme-toggle-btn" aria-label="화면 테마 변경" title="화면 테마">
                     <i class="fa-solid fa-moon"></i>
                 </button>
                 <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="메뉴 열기">
@@ -168,40 +177,8 @@
                         <!-- Core Competencies -->
                         <div class="skills-container">
                             <h4 class="skills-title">Core Competencies</h4>
-                            <div class="skills-grid">
-                                <div class="skill-category-card">
-                                    <div class="skill-cat-header text-career">
-                                        <i class="fa-solid fa-graduation-cap"></i>
-                                        <h5>취업진로</h5>
-                                    </div>
-                                    <ul class="skill-list">
-                                        <li>진로 상담 & 커리어 컨설팅</li>
-                                        <li>자기소개서 첨삭 & 면접 코칭</li>
-                                        <li>취업 역량 강화 프로그램 기획</li>
-                                    </ul>
-                                </div>
-                                <div class="skill-category-card">
-                                    <div class="skill-cat-header text-media">
-                                        <i class="fa-solid fa-video"></i>
-                                        <h5>영상콘텐츠</h5>
-                                    </div>
-                                    <ul class="skill-list">
-                                        <li>영상 편집 (Premiere, After Effects)</li>
-                                        <li>유튜브 채널 운영 & 분석</li>
-                                        <li>시나리오 작성 & 스토리보드 기획</li>
-                                    </ul>
-                                </div>
-                                <div class="skill-category-card">
-                                    <div class="skill-cat-header text-it">
-                                        <i class="fa-solid fa-code"></i>
-                                        <h5>IT 미래기술</h5>
-                                    </div>
-                                    <ul class="skill-list">
-                                        <li>프론트엔드 개발 (HTML/CSS/JS/React)</li>
-                                        <li>UI/UX 반응형 웹 디자인</li>
-                                        <li>공공데이터 활용 및 API 연동</li>
-                                    </ul>
-                                </div>
+                            <div class="skills-grid" id="competencies-grid">
+                                <!-- Dynamic rendering by app.js -->
                             </div>
                         </div>
                     </div>
@@ -219,13 +196,16 @@
                 </div>
 
                 <!-- Category Filters -->
-                <div class="filter-wrapper reveal-on-scroll">
-                    <ul class="portfolio-filters" id="portfolio-filters">
+                <div class="filter-wrapper reveal-on-scroll" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+                    <ul class="portfolio-filters" id="portfolio-filters" style="margin-bottom: 0;">
                         <li><button class="filter-btn active" data-filter="all" id="btn-filter-all">전체보기</button></li>
                         <li><button class="filter-btn" data-filter="career" id="btn-filter-career"><i class="fa-solid fa-graduation-cap icon-left"></i>취업진로</button></li>
                         <li><button class="filter-btn" data-filter="media" id="btn-filter-media"><i class="fa-solid fa-video icon-left"></i>영상콘텐츠</button></li>
                         <li><button class="filter-btn" data-filter="it" id="btn-filter-it"><i class="fa-solid fa-code icon-left"></i>IT 미래기술</button></li>
                     </ul>
+                    <div id="admin-portfolio-actions" style="display: none;">
+                        <button class="btn btn-primary" onclick="openAddProjectModal()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;"><i class="fa-solid fa-plus icon-left"></i>프로젝트 추가</button>
+                    </div>
                 </div>
 
                 <!-- Portfolio Grid -->
@@ -382,7 +362,64 @@
         </div>
     </div>
 
+    <!-- Admin Edit Modal -->
+    <div id="admin-modal" class="modal-overlay" aria-hidden="true" role="dialog">
+        <div class="modal-content" style="padding: 2.5rem; max-width: 650px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+                <h3 id="admin-modal-title" style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary);">관리자 편집</h3>
+                <button id="btn-close-admin-modal" style="font-size: 2rem; cursor: pointer; color: var(--text-muted); background: none; border: none;">&times;</button>
+            </div>
+            <div id="admin-modal-body">
+                <!-- Dynamic form rendering -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Auth Modal -->
+    <div id="admin-auth-modal" class="modal-overlay" aria-hidden="true" role="dialog">
+        <div class="modal-content" style="padding: 2.5rem; max-width: 400px; text-align: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+                <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">관리자 인증</h3>
+                <button id="btn-close-auth-modal" style="font-size: 1.75rem; cursor: pointer; color: var(--text-muted); background: none; border: none; line-height: 1;">&times;</button>
+            </div>
+            <div id="auth-modal-body">
+                <!-- Step 1: Send Code -->
+                <div id="auth-step-send" style="display: block;">
+                    <i class="fa-solid fa-shield-halved" style="font-size: 3rem; color: var(--accent-primary-start); margin-bottom: 1rem;"></i>
+                    <p style="font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 1.25rem; line-height: 1.6;">
+                        관리자 모드로 전환하려면 이메일 인증이 필요합니다.<br>
+                        등록된 관리자 이메일 주소를 입력해 주세요.
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem;">
+                        <input type="email" id="auth-email-input" placeholder="관리자 이메일 주소 입력" style="width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); text-align: center; font-size: 0.95rem;" required>
+                        <span id="auth-email-error-msg" style="color: #f43f5e; font-size: 0.85rem; display: none;">등록된 관리자 이메일 주소가 아닙니다.</span>
+                    </div>
+                    <button id="btn-send-code" class="btn btn-primary btn-block">인증번호 발송</button>
+                </div>
+                <!-- Step 2: Verify Code -->
+                <div id="auth-step-verify" style="display: none;">
+                    <i class="fa-solid fa-key" style="font-size: 3rem; color: var(--color-career-end); margin-bottom: 1rem;"></i>
+                    <p style="font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.6;">
+                        이메일로 발송된 6자리 인증번호를 입력하세요.
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem;">
+                        <div style="position: relative;">
+                            <input type="text" id="auth-code-input" maxlength="6" placeholder="인증번호 6자리" style="width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); text-align: center; font-size: 1.25rem; font-weight: 700; letter-spacing: 0.25em;" required>
+                            <span id="auth-timer" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); font-size: 0.85rem; color: #f43f5e; font-weight: 600;">03:00</span>
+                        </div>
+                        <span id="auth-error-msg" style="color: #f43f5e; font-size: 0.85rem; display: none;">잘못된 인증번호입니다. 다시 확인해 주세요.</span>
+                    </div>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <button id="btn-resend-code" class="btn btn-outline" style="flex: 1; padding: 0.6rem; font-size: 0.9rem;">재발송</button>
+                        <button id="btn-verify-code" class="btn btn-primary" style="flex: 1.5; padding: 0.6rem; font-size: 0.9rem;">인증 확인</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

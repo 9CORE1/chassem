@@ -1,8 +1,19 @@
 // ==========================================================================
+// EmailJS Configuration for Admin Verification
+// ==========================================================================
+const EMAILJS_CONFIG = {
+    publicKey: 'aXXhO0m1M7H5nSE-P',         // EmailJS Public Key (e.g. 'your_public_key')
+    serviceId: 'service_d002zti',         // EmailJS Service ID (e.g. 'service_xxxxxxx')
+    templateId: 'template_r1e9i3d',        // EmailJS Template ID (e.g. 'template_xxxxxxx')
+    allowedEmails: ['teacha99@gmail.com', 'jjung9935@naver.com'] // Authorized admin emails
+};
+
+// ==========================================================================
 // Portfolio & Experience Data Definition
 // ==========================================================================
 
-const portfolioData = [
+
+const defaultPortfolioData = [
     {
         id: 'career-1',
         category: 'career',
@@ -194,6 +205,52 @@ const portfolioData = [
     }
 ];
 
+let portfolioData = JSON.parse(localStorage.getItem('portfolioData'));
+if (!portfolioData) {
+    portfolioData = defaultPortfolioData;
+    localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
+}
+
+let competenciesData = JSON.parse(localStorage.getItem('competenciesData'));
+if (!competenciesData) {
+    competenciesData = [
+        {
+            id: 'comp-career',
+            category: 'career',
+            title: '취업진로',
+            icon: 'fa-graduation-cap',
+            skills: [
+                '진로 상담 & 커리어 컨설팅',
+                '자기소개서 첨삭 & 면접 코칭',
+                '취업 역량 강화 프로그램 기획'
+            ]
+        },
+        {
+            id: 'comp-media',
+            category: 'media',
+            title: '영상콘텐츠',
+            icon: 'fa-video',
+            skills: [
+                '영상 편집 (Premiere, After Effects)',
+                '유튜브 채널 운영 & 분석',
+                '시나리오 작성 & 스토리보드 기획'
+            ]
+        },
+        {
+            id: 'comp-it',
+            category: 'it',
+            title: 'IT 미래기술',
+            icon: 'fa-code',
+            skills: [
+                '프론트엔드 개발 (HTML/CSS/JS/React)',
+                'UI/UX 반응형 웹 디자인',
+                '공공데이터 활용 및 API 연동'
+            ]
+        }
+    ];
+    localStorage.setItem('competenciesData', JSON.stringify(competenciesData));
+}
+
 // ==========================================================================
 // Initialization & DOM Event Binding
 // ==========================================================================
@@ -203,6 +260,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initApp() {
+    initEmailJS();
+    renderCompetencies();
     renderPortfolioGrid();
     renderTimeline();
     setupFilters();
@@ -211,6 +270,7 @@ function initApp() {
     setupMobileMenu();
     setupScrollEffects();
     setupContactForm();
+    setupAdminMode();
 }
 
 // ==========================================================================
@@ -230,10 +290,10 @@ function renderPortfolioGrid(filter = 'all') {
     filteredData.forEach(item => {
         const card = document.createElement('article');
         card.className = 'portfolio-card glass-panel reveal-on-scroll active';
+        card.style.position = 'relative';
         card.setAttribute('data-id', item.id);
         card.style.setProperty('--card-accent', item.accentColor);
         
-        // Define human readable category name
         let catName = '기타';
         let catClass = '';
         if (item.category === 'career') { catName = '취업진로'; catClass = 'text-career'; }
@@ -242,7 +302,18 @@ function renderPortfolioGrid(filter = 'all') {
         
         card.style.setProperty('--card-accent-color', `var(--color-${item.category}-end)`);
         
+        let adminBtns = '';
+        if (isAdminMode) {
+            adminBtns = `
+                <div class="admin-card-actions" style="position: absolute; top: 1rem; right: 1rem; display: flex; gap: 0.5rem; z-index: 10;">
+                    <button class="admin-edit-btn" onclick="event.stopPropagation(); openEditProjectModal('${item.id}')" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--accent-primary-start); width: 32px; height: 32px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="편집"><i class="fa-solid fa-pen"></i></button>
+                    <button class="admin-delete-btn" onclick="event.stopPropagation(); deleteProject('${item.id}')" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); color: #f43f5e; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="삭제"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `;
+        }
+        
         card.innerHTML = `
+            ${adminBtns}
             <div class="portfolio-card-content">
                 <div class="card-top">
                     <span class="card-category ${catClass}">${catName}</span>
@@ -261,7 +332,6 @@ function renderPortfolioGrid(filter = 'all') {
             </div>
         `;
         
-        // Card click event triggers details modal
         card.addEventListener('click', () => {
             openDetailsModal(item.id);
         });
@@ -613,3 +683,645 @@ function setupContactForm() {
         }, 1500);
     });
 }
+
+// ==========================================================================
+// Admin Mode Management & CMS Actions
+// ==========================================================================
+
+let isAdminMode = false;
+let generatedAuthCode = '';
+let authCodeExpiry = 0;
+let authTimerInterval = null;
+
+function initEmailJS() {
+    if (EMAILJS_CONFIG.publicKey) {
+        emailjs.init(EMAILJS_CONFIG.publicKey);
+    }
+}
+
+function setupAdminMode() {
+    const adminToggle = document.getElementById('admin-toggle');
+    const adminBanner = document.getElementById('admin-banner');
+    const adminPortfolioActions = document.getElementById('admin-portfolio-actions');
+    
+    const savedAdmin = sessionStorage.getItem('isAdminMode') === 'true';
+    if (savedAdmin) {
+        isAdminMode = true;
+        if (adminToggle) {
+            adminToggle.classList.add('active');
+            adminToggle.innerHTML = '<i class="fa-solid fa-lock-open"></i>';
+        }
+        if (adminBanner) adminBanner.style.display = 'flex';
+        if (adminPortfolioActions) adminPortfolioActions.style.display = 'block';
+        document.body.classList.add('admin-active');
+    }
+    
+    if (adminToggle) {
+        adminToggle.addEventListener('click', () => {
+            if (isAdminMode) {
+                // Log out directly
+                isAdminMode = false;
+                sessionStorage.removeItem('isAdminMode');
+                
+                adminToggle.classList.remove('active');
+                adminToggle.innerHTML = '<i class="fa-solid fa-lock"></i>';
+                if (adminBanner) adminBanner.style.display = 'none';
+                if (adminPortfolioActions) adminPortfolioActions.style.display = 'none';
+                document.body.classList.remove('admin-active');
+                
+                renderCompetencies();
+                renderPortfolioGrid();
+                alert('관리자 모드가 해제되었습니다.');
+            } else {
+                openAuthModal();
+            }
+        });
+    }
+    
+    const closeAdminBtn = document.getElementById('btn-close-admin-modal');
+    if (closeAdminBtn) {
+        closeAdminBtn.addEventListener('click', closeAdminModal);
+    }
+
+    // Bind Auth Modal elements
+    const closeAuthBtn = document.getElementById('btn-close-auth-modal');
+    if (closeAuthBtn) {
+        closeAuthBtn.addEventListener('click', closeAuthModal);
+    }
+    
+    const sendCodeBtn = document.getElementById('btn-send-code');
+    if (sendCodeBtn) {
+        sendCodeBtn.addEventListener('click', sendVerificationCode);
+    }
+    
+    const resendCodeBtn = document.getElementById('btn-resend-code');
+    if (resendCodeBtn) {
+        resendCodeBtn.addEventListener('click', sendVerificationCode);
+    }
+    
+    const verifyCodeBtn = document.getElementById('btn-verify-code');
+    if (verifyCodeBtn) {
+        verifyCodeBtn.addEventListener('click', verifyAuthCode);
+    }
+    
+    const emailInput = document.getElementById('auth-email-input');
+    if (emailInput) {
+        emailInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                sendVerificationCode();
+            }
+        });
+    }
+    
+    const codeInput = document.getElementById('auth-code-input');
+    if (codeInput) {
+        codeInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                verifyAuthCode();
+            }
+        });
+    }
+    
+    const authOverlay = document.getElementById('admin-auth-modal');
+    if (authOverlay) {
+        authOverlay.addEventListener('click', (e) => {
+            if (e.target === authOverlay) {
+                closeAuthModal();
+            }
+        });
+    }
+}
+
+function openAuthModal() {
+    const modal = document.getElementById('admin-auth-modal');
+    const stepSend = document.getElementById('auth-step-send');
+    const stepVerify = document.getElementById('auth-step-verify');
+    const errorMsg = document.getElementById('auth-error-msg');
+    const emailErrorMsg = document.getElementById('auth-email-error-msg');
+    const emailInput = document.getElementById('auth-email-input');
+    const input = document.getElementById('auth-code-input');
+    
+    if (!modal) return;
+    
+    stepSend.style.display = 'block';
+    stepVerify.style.display = 'none';
+    if (errorMsg) errorMsg.style.display = 'none';
+    if (emailErrorMsg) emailErrorMsg.style.display = 'none';
+    if (emailInput) {
+        emailInput.value = '';
+        emailInput.disabled = false;
+    }
+    if (input) input.value = '';
+    
+    if (authTimerInterval) {
+        clearInterval(authTimerInterval);
+        authTimerInterval = null;
+    }
+    
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    
+    if (emailInput) {
+        setTimeout(() => emailInput.focus(), 100);
+    }
+}
+
+function closeAuthModal() {
+    const modal = document.getElementById('admin-auth-modal');
+    if (!modal) return;
+    
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    
+    if (authTimerInterval) {
+        clearInterval(authTimerInterval);
+        authTimerInterval = null;
+    }
+}
+
+function sendVerificationCode() {
+    const emailInput = document.getElementById('auth-email-input');
+    const emailErrorMsg = document.getElementById('auth-email-error-msg');
+    if (!emailInput) return;
+    
+    const enteredEmail = emailInput.value.trim().toLowerCase();
+    
+    // Check if email is in allowed list
+    const isAllowed = EMAILJS_CONFIG.allowedEmails.some(email => email.trim().toLowerCase() === enteredEmail);
+    
+    if (!isAllowed) {
+        if (emailErrorMsg) {
+            emailErrorMsg.style.display = 'block';
+        }
+        emailInput.focus();
+        emailInput.select();
+        return;
+    } else {
+        if (emailErrorMsg) {
+            emailErrorMsg.style.display = 'none';
+        }
+    }
+    
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    generatedAuthCode = code;
+    authCodeExpiry = Date.now() + 3 * 60 * 1000; // 3 minutes expiration
+    
+    const sendBtn = document.getElementById('btn-send-code');
+    const resendBtn = document.getElementById('btn-resend-code');
+    
+    if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.innerHTML = '발송 중... <i class="fa-solid fa-spinner fa-spin"></i>';
+    }
+    if (resendBtn) {
+        resendBtn.disabled = true;
+    }
+    
+    emailInput.disabled = true; // Lock the email input during verification
+    
+    const templateParams = {
+        to_email: enteredEmail,
+        to_name: '관리자',
+        code: code
+    };
+    
+    const isConfigured = EMAILJS_CONFIG.publicKey && EMAILJS_CONFIG.serviceId && EMAILJS_CONFIG.templateId;
+    
+    if (isConfigured) {
+        emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateId, templateParams)
+            .then(() => {
+                showVerificationStep();
+            })
+            .catch((error) => {
+                console.error('EmailJS 발송 실패:', error);
+                alert('인증번호 이메일 발송에 실패했습니다. 서비스 설정이나 키값을 확인하세요. (디버그 콘솔창에서 인증번호 확인 가능)');
+                console.log(`[디버그] 생성된 인증번호: ${code}`);
+                showVerificationStep();
+            });
+    } else {
+        setTimeout(() => {
+            console.log(`%c[EmailJS 시뮬레이션] 인증 이메일 발송 완료!`, 'color: #0284c7; font-weight: bold;');
+            console.log(`%c수신자: ${enteredEmail}`, 'color: #0284c7;');
+            console.log(`%c인증번호: ${code}`, 'color: #ea580c; font-size: 1.2rem; font-weight: bold;');
+            alert(`인증번호가 발송되었습니다 (시뮬레이션 모드).\n입력하신 메일 [ ${enteredEmail} ] 은 관리자 메일이 맞으므로, F12를 눌러 콘솔창(Console)에서 인증번호 [ ${code} ] 를 확인해 주세요!`);
+            showVerificationStep();
+        }, 800);
+    }
+}
+
+function showVerificationStep() {
+    const stepSend = document.getElementById('auth-step-send');
+    const stepVerify = document.getElementById('auth-step-verify');
+    const sendBtn = document.getElementById('btn-send-code');
+    const resendBtn = document.getElementById('btn-resend-code');
+    const input = document.getElementById('auth-code-input');
+    
+    if (sendBtn) {
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '인증번호 발송';
+    }
+    if (resendBtn) {
+        resendBtn.disabled = false;
+    }
+    
+    if (stepSend && stepVerify) {
+        stepSend.style.display = 'none';
+        stepVerify.style.display = 'block';
+    }
+    
+    if (input) {
+        input.value = '';
+        input.focus();
+    }
+    
+    startAuthTimer();
+}
+
+function startAuthTimer() {
+    const timerSpan = document.getElementById('auth-timer');
+    if (authTimerInterval) {
+        clearInterval(authTimerInterval);
+    }
+    
+    function updateTimer() {
+        const remaining = Math.max(0, authCodeExpiry - Date.now());
+        const seconds = Math.floor(remaining / 1000);
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        
+        if (timerSpan) {
+            timerSpan.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        if (remaining <= 0) {
+            clearInterval(authTimerInterval);
+            authTimerInterval = null;
+            alert('인증번호 유효시간이 만료되었습니다. 다시 요청해 주세요.');
+            generatedAuthCode = '';
+            
+            const stepSend = document.getElementById('auth-step-send');
+            const stepVerify = document.getElementById('auth-step-verify');
+            if (stepSend && stepVerify) {
+                stepSend.style.display = 'block';
+                stepVerify.style.display = 'none';
+                
+                const emailInput = document.getElementById('auth-email-input');
+                if (emailInput) {
+                    emailInput.disabled = false;
+                    emailInput.focus();
+                }
+            }
+        }
+    }
+    
+    updateTimer();
+    authTimerInterval = setInterval(updateTimer, 1000);
+}
+
+function verifyAuthCode() {
+    const input = document.getElementById('auth-code-input');
+    const errorMsg = document.getElementById('auth-error-msg');
+    if (!input) return;
+    
+    const enteredCode = input.value.trim();
+    
+    if (!generatedAuthCode || Date.now() > authCodeExpiry) {
+        alert('인증 코드가 만료되었거나 생성되지 않았습니다. 인증번호를 다시 발송해 주세요.');
+        return;
+    }
+    
+    if (enteredCode === generatedAuthCode) {
+        isAdminMode = true;
+        sessionStorage.setItem('isAdminMode', 'true');
+        
+        const adminToggle = document.getElementById('admin-toggle');
+        const adminBanner = document.getElementById('admin-banner');
+        const adminPortfolioActions = document.getElementById('admin-portfolio-actions');
+        
+        if (adminToggle) {
+            adminToggle.classList.add('active');
+            adminToggle.innerHTML = '<i class="fa-solid fa-lock-open"></i>';
+        }
+        if (adminBanner) adminBanner.style.display = 'flex';
+        if (adminPortfolioActions) adminPortfolioActions.style.display = 'block';
+        document.body.classList.add('admin-active');
+        
+        renderCompetencies();
+        renderPortfolioGrid();
+        
+        closeAuthModal();
+        alert('관리자 인증이 성공했습니다. 관리자 편집 모드가 활성화됩니다.');
+    } else {
+        if (errorMsg) {
+            errorMsg.style.display = 'block';
+        }
+        input.focus();
+        input.select();
+    }
+}
+
+function renderCompetencies() {
+    const grid = document.getElementById('competencies-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    
+    competenciesData.forEach(comp => {
+        const card = document.createElement('div');
+        card.className = 'skill-category-card';
+        card.style.position = 'relative';
+        
+        let skillItems = comp.skills.map(skill => `<li>${skill}</li>`).join('');
+        
+        let adminBtns = '';
+        if (isAdminMode) {
+            adminBtns = `
+                <div class="admin-card-actions" style="position: absolute; top: 1rem; right: 1rem; display: flex; gap: 0.5rem; z-index: 10;">
+                    <button class="admin-edit-btn" onclick="openEditCompModal('${comp.id}')" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--accent-primary-start); width: 32px; height: 32px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="편집"><i class="fa-solid fa-pen"></i></button>
+                </div>
+            `;
+        }
+        
+        card.innerHTML = `
+            ${adminBtns}
+            <div class="skill-cat-header text-${comp.category}">
+                <i class="fa-solid ${comp.icon}"></i>
+                <h5>${comp.title}</h5>
+            </div>
+            <ul class="skill-list">
+                ${skillItems}
+            </ul>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function openAdminModal(title, contentHtml) {
+    const modal = document.getElementById('admin-modal');
+    const modalTitle = document.getElementById('admin-modal-title');
+    const modalBody = document.getElementById('admin-modal-body');
+    
+    if (modal && modalTitle && modalBody) {
+        modalTitle.textContent = title;
+        modalBody.innerHTML = contentHtml;
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+    }
+}
+
+window.closeAdminModal = function() {
+    const modal = document.getElementById('admin-modal');
+    if (modal) {
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+    }
+};
+
+window.openEditCompModal = function(compId) {
+    const comp = competenciesData.find(c => c.id === compId);
+    if (!comp) return;
+    
+    let skillsListHtml = comp.skills.map((skill, index) => `
+        <div class="form-group" style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem; align-items: center;" id="skill-row-${index}">
+            <input type="text" class="form-control skill-input" value="${skill}" style="flex: 1; padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+            <button type="button" onclick="document.getElementById('skill-row-${index}').remove()" style="background: none; border: none; color: #f43f5e; font-size: 1.2rem; cursor: pointer;" title="삭제"><i class="fa-solid fa-trash-can"></i></button>
+        </div>
+    `).join('');
+    
+    const formHtml = `
+        <form id="edit-comp-form" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div class="form-group">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: var(--text-secondary);">카테고리 제목</label>
+                <input type="text" id="comp-title" value="${comp.title}" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+            </div>
+            <div class="form-group">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: var(--text-secondary);">아이콘 클래스 (FontAwesome)</label>
+                <input type="text" id="comp-icon" value="${comp.icon}" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+            </div>
+            <div class="form-group">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; color: var(--text-secondary);">
+                    <span>핵심 역량 리스트</span>
+                    <button type="button" onclick="addSkillRow()" class="btn btn-outline" style="padding: 0.25rem 0.75rem; font-size: 0.8rem; border-radius: 6px;"><i class="fa-solid fa-plus icon-left"></i>역량 추가</button>
+                </label>
+                <div id="skills-list-container">
+                    ${skillsListHtml}
+                </div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                <button type="button" onclick="closeAdminModal()" class="btn btn-outline" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">취소</button>
+                <button type="submit" class="btn btn-primary" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">저장</button>
+            </div>
+        </form>
+    `;
+    
+    let skillIndex = comp.skills.length;
+    window.addSkillRow = function() {
+        const container = document.getElementById('skills-list-container');
+        if (!container) return;
+        
+        const row = document.createElement('div');
+        row.id = `skill-row-${skillIndex}`;
+        row.style = "display: flex; gap: 0.5rem; margin-bottom: 0.75rem; align-items: center;";
+        row.innerHTML = `
+            <input type="text" class="form-control skill-input" value="" placeholder="역량을 입력하세요" style="flex: 1; padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+            <button type="button" onclick="document.getElementById('skill-row-${skillIndex}').remove()" style="background: none; border: none; color: #f43f5e; font-size: 1.2rem; cursor: pointer;" title="삭제"><i class="fa-solid fa-trash-can"></i></button>
+        `;
+        container.appendChild(row);
+        skillIndex++;
+    };
+    
+    openAdminModal(`핵심 역량 편집 - ${comp.title}`, formHtml);
+    
+    const form = document.getElementById('edit-comp-form');
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const newTitle = document.getElementById('comp-title').value.trim();
+        const newIcon = document.getElementById('comp-icon').value.trim();
+        
+        const skillInputs = document.querySelectorAll('.skill-input');
+        const newSkills = Array.from(skillInputs).map(input => input.value.trim()).filter(val => val !== '');
+        
+        comp.title = newTitle;
+        comp.icon = newIcon;
+        comp.skills = newSkills;
+        
+        localStorage.setItem('competenciesData', JSON.stringify(competenciesData));
+        renderCompetencies();
+        closeAdminModal();
+    });
+};
+
+window.openEditProjectModal = function(projectId) {
+    const project = portfolioData.find(p => p.id === projectId);
+    if (!project) return;
+    
+    renderProjectForm(project, `프로젝트 편집 - ${project.title}`);
+};
+
+window.openAddProjectModal = function() {
+    renderProjectForm(null, '새 프로젝트 추가');
+};
+
+function renderProjectForm(project = null, modalTitleStr) {
+    const isEdit = !!project;
+    
+    const formHtml = `
+        <form id="project-form" style="display: flex; flex-direction: column; gap: 1.2rem; max-height: 65vh; overflow-y: auto; padding-right: 0.5rem; scrollbar-width: thin;">
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                <div class="form-group">
+                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">카테고리</label>
+                    <select id="proj-category" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+                        <option value="career" ${isEdit && project.category === 'career' ? 'selected' : ''}>취업진로</option>
+                        <option value="media" ${isEdit && project.category === 'media' ? 'selected' : ''}>영상콘텐츠</option>
+                        <option value="it" ${isEdit && project.category === 'it' ? 'selected' : ''}>IT 미래기술</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">프로젝트 기간</label>
+                    <input type="text" id="proj-period" value="${isEdit ? project.period : ''}" placeholder="예: 2026.01 - 2026.06" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">프로젝트 제목</label>
+                <input type="text" id="proj-title" value="${isEdit ? project.title : ''}" placeholder="프로젝트 제목을 입력하세요" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+            </div>
+            
+            <div class="form-group">
+                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">요약 설명 (카드 노출)</label>
+                <textarea id="proj-summary" rows="2" placeholder="간단한 요약 한 문장을 적어주세요." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); resize: vertical;" required>${isEdit ? project.summary : ''}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">상세 설명 (모달 팝업 노출)</label>
+                <textarea id="proj-description" rows="3" placeholder="프로젝트에 대한 세부 내용을 입력하세요." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); resize: vertical;" required>${isEdit ? project.description : ''}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">담당 역할 및 활동</label>
+                <textarea id="proj-role" rows="2" placeholder="수행한 본인의 구체적인 역할 및 활동 내용" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); resize: vertical;" required>${isEdit ? project.role : ''}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">주요 성과 및 하이라이트 (줄바꿈으로 구분)</label>
+                <textarea id="proj-highlights" rows="4" placeholder="엔터(줄바꿈)로 구분하여 여러 성과를 작성하세요.&#10;예:&#10;1:1 코칭 학생 합격률 85% 달성&#10;우수 서포터즈 장관상 수상" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); resize: vertical;" required>${isEdit ? project.highlights.join('\n') : ''}</textarea>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                <div class="form-group">
+                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">기술 스택 / 핵심 키워드 (쉼표로 구분)</label>
+                    <input type="text" id="proj-techstack" value="${isEdit ? project.techStack.join(', ') : ''}" placeholder="예: React, CSS Grid, Rest API" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+                </div>
+                <div class="form-group">
+                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">아이콘 클래스 (FontAwesome)</label>
+                    <input type="text" id="proj-icon" value="${isEdit ? project.icon : 'fa-code'}" placeholder="예: fa-code, fa-video, fa-graduation-cap" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+                </div>
+            </div>
+            
+            <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                <button type="button" onclick="closeAdminModal()" class="btn btn-outline" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">취소</button>
+                <button type="submit" class="btn btn-primary" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">저장</button>
+            </div>
+        </form>
+    `;
+    
+    openAdminModal(modalTitleStr, formHtml);
+    
+    const form = document.getElementById('project-form');
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const categoryVal = document.getElementById('proj-category').value;
+        const titleVal = document.getElementById('proj-title').value.trim();
+        const periodVal = document.getElementById('proj-period').value.trim();
+        const summaryVal = document.getElementById('proj-summary').value.trim();
+        const descriptionVal = document.getElementById('proj-description').value.trim();
+        const roleVal = document.getElementById('proj-role').value.trim();
+        
+        const highlightsVal = document.getElementById('proj-highlights').value.split('\n')
+            .map(line => line.trim())
+            .filter(line => line !== '');
+            
+        const techStackVal = document.getElementById('proj-techstack').value.split(',')
+            .map(item => item.trim())
+            .filter(item => item !== '');
+            
+        const iconVal = document.getElementById('proj-icon').value.trim();
+        
+        const yearMatch = periodVal.match(/\d{4}/);
+        const yearVal = yearMatch ? yearMatch[0] : new Date().getFullYear().toString();
+        
+        let colorVal = 'var(--color-it-end)';
+        let bgVal = 'rgba(225, 0, 255, 0.1)';
+        let borderVal = 'rgba(225, 0, 255, 0.2)';
+        
+        if (categoryVal === 'career') {
+            colorVal = 'var(--color-career-end)';
+            bgVal = 'rgba(79, 172, 254, 0.1)';
+            borderVal = 'rgba(79, 172, 254, 0.2)';
+        } else if (categoryVal === 'media') {
+            colorVal = 'var(--color-media-end)';
+            bgVal = 'rgba(248, 87, 166, 0.1)';
+            borderVal = 'rgba(248, 87, 166, 0.2)';
+        }
+        
+        if (isEdit) {
+            project.category = categoryVal;
+            project.title = titleVal;
+            project.period = periodVal;
+            project.year = yearVal;
+            project.summary = summaryVal;
+            project.description = descriptionVal;
+            project.role = roleVal;
+            project.highlights = highlightsVal;
+            project.techStack = techStackVal;
+            project.icon = iconVal;
+            project.accentColor = colorVal;
+            project.accentBg = bgVal;
+            project.accentBorder = borderVal;
+        } else {
+            const newProj = {
+                id: `${categoryVal}-${Date.now()}`,
+                category: categoryVal,
+                title: titleVal,
+                period: periodVal,
+                year: yearVal,
+                summary: summaryVal,
+                description: descriptionVal,
+                role: roleVal,
+                highlights: highlightsVal,
+                techStack: techStackVal,
+                accentColor: colorVal,
+                accentBg: bgVal,
+                accentBorder: borderVal,
+                icon: iconVal
+            };
+            portfolioData.push(newProj);
+        }
+        
+        localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
+        
+        renderPortfolioGrid();
+        renderTimeline();
+        closeAdminModal();
+    });
+}
+
+window.deleteProject = function(projectId) {
+    if (confirm('이 프로젝트를 삭제하시겠습니까? (삭제 시 성장 스토리 타임라인에서도 함께 삭제됩니다.)')) {
+        portfolioData = portfolioData.filter(p => p.id !== projectId);
+        localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
+        renderPortfolioGrid();
+        renderTimeline();
+    }
+};
+
+window.resetAllToDefault = function() {
+    if (confirm('모든 데이터를 원래 템플릿의 초기값으로 초기화하시겠습니까? 작성하거나 수정한 데이터는 모두 소실됩니다.')) {
+        localStorage.removeItem('competenciesData');
+        localStorage.removeItem('portfolioData');
+        window.location.reload();
+    }
+};
