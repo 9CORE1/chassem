@@ -249,6 +249,25 @@
       "accentBorder": "rgba(225, 0, 255, 0.2)",
       "icon": "fa-code",
       "youtubeUrl": ""
+    },
+    {
+      "id": "it-1782718545995",
+      "category": "it",
+      "title": "글로벌 AI 최고위 과정",
+      "period": "2026.04.14~현재",
+      "year": "2026",
+      "summary": "글로벌 AI 최고위 과정-실습",
+      "description": "",
+      "role": "실습 전담 강의",
+      "highlights": [],
+      "techStack": [],
+      "accentColor": "var(--color-it-end)",
+      "accentBg": "rgba(225, 0, 255, 0.1)",
+      "accentBorder": "rgba(225, 0, 255, 0.2)",
+      "icon": "fa-code",
+      "youtubeUrl": "https://youtu.be/UkawNL1Z0Cc?si=lfNDwUK_WIfZZlBX",
+      "youtubeStart": "85",
+      "youtubeEnd": "100"
     }
   ],
   "journeyData": [
