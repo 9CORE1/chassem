@@ -253,22 +253,6 @@
   ],
   "journeyData": [
     {
-      "id": "journey-4",
-      "category": "cert",
-      "title": "직업상담사 2급 자격증 취득",
-      "institution": "한국산업인력공단",
-      "period": "2025.08",
-      "description": "직업상담학, 직업심리학, 직업정보론, 노동시장론 및 노동관계법규 검증 완료."
-    },
-    {
-      "id": "journey-5",
-      "category": "cert",
-      "title": "웹디자인기능사 자격증 취득",
-      "institution": "한국산업인력공단",
-      "period": "2024.11",
-      "description": "HTML5, CSS3 웹 표준 퍼블리싱 및 UI/UX 레이아웃 구현 능력 검증."
-    },
-    {
       "id": "journey-1782710928446",
       "category": "education",
       "period": "1999.03 ~ 2002.08",
@@ -307,6 +291,38 @@
       "title": "효성정보직업전문학교 전임강사",
       "institution": "총괄관리",
       "description": "효성정보직업전문학교 전임강사"
+    },
+    {
+      "id": "journey-1782711668884",
+      "category": "cert",
+      "period": "2002.08.23",
+      "title": "중등학교2급정교사(전자계산)",
+      "institution": "교육인적자원부",
+      "description": "중등학교2급정교사(전자계산)"
+    },
+    {
+      "id": "journey-1782711858020",
+      "category": "cert",
+      "period": "2026.03.03",
+      "title": "직업능력개발훈련교사 인공지능3급",
+      "institution": "고용노동부",
+      "description": "정보기술개발3급 2019.04.08(최초발급:2006.07.27)\n영상제작3급 2019.04.08(최초발급:2009.02.05)\n총무일반사무3급 2019.04.08(최초발급:2004.11.23)"
+    },
+    {
+      "id": "journey-1782711923308",
+      "category": "cert",
+      "period": "2002.08.19",
+      "title": "정보처리기사",
+      "institution": "한국산업인력공단",
+      "description": "정보처리기사"
+    },
+    {
+      "id": "journey-1782711965382",
+      "category": "cert",
+      "period": "2025.09.05",
+      "title": "데이터분석준전문가(ADSP)",
+      "institution": "한국데이터산업진흥원",
+      "description": "데이터분석준전문가(ADSP)"
     }
   ],
   "competenciesData": [
