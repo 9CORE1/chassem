@@ -804,35 +804,10 @@ function openDetailsModal(id) {
             </div>
             ` : ''}
             
-            ${item.description ? `
-            <div class="modal-section">
-                <h4 class="modal-section-title">개요</h4>
-                <p class="modal-desc-long">${item.description}</p>
-            </div>
-            ` : ''}
-            
             ${item.role ? `
             <div class="modal-section">
                 <h4 class="modal-section-title">기관명</h4>
                 <p class="modal-desc-long">${item.role}</p>
-            </div>
-            ` : ''}
-            
-            ${item.highlights && item.highlights.length > 0 ? `
-            <div class="modal-section">
-                <h4 class="modal-section-title">주요 성과 및 하이라이트</h4>
-                <ul class="modal-bullet-list">
-                    ${item.highlights.map(hl => `<li>${hl}</li>`).join('')}
-                </ul>
-            </div>
-            ` : ''}
-            
-            ${item.techStack && item.techStack.length > 0 ? `
-            <div class="modal-section">
-                <h4 class="modal-section-title">기술 스택 / 핵심 키워드</h4>
-                <div class="modal-tech-list">
-                    ${item.techStack.map(tech => `<span class="modal-tech-tag">${tech}</span>`).join('')}
-                </div>
             </div>
             ` : ''}
         </div>
