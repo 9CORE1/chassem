@@ -13,14 +13,50 @@ app.use(express.static(__dirname));
 
 // API to save updated data back to data.json
 app.post('/api/save', (req, res) => {
-    const { portfolioData, journeyData, competenciesData } = req.body;
+    let { portfolioData, journeyData, competenciesData } = req.body;
     
     if (!portfolioData || !journeyData || !competenciesData) {
         return res.status(400).json({ error: '필수 데이터 항목이 누락되었습니다.' });
     }
     
+    // Base64 형태의 이미지 데이터를 추출하여 images 폴더에 JPEG 파일로 저장 후 상대경로로 치환
+    let updatedPortfolioData = portfolioData.map(item => {
+        if (item.imageUrl && item.imageUrl.startsWith('data:image/')) {
+            try {
+                // 포맷 매칭: data:image/[타입];base64,[데이터]
+                const matches = item.imageUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+                if (matches && matches.length === 3) {
+                    const base64Data = matches[2];
+                    const buffer = Buffer.from(base64Data, 'base64');
+                    
+                    const filename = `project-${item.id}.jpg`;
+                    const dirPath = path.join(__dirname, 'images');
+                    
+                    // images 디렉토리가 없으면 생성
+                    if (!fs.existsSync(dirPath)) {
+                        fs.mkdirSync(dirPath, { recursive: true });
+                    }
+                    
+                    const filePath = path.join(dirPath, filename);
+                    fs.writeFileSync(filePath, buffer);
+                    
+                    console.log(`[${new Date().toLocaleTimeString()}] 이미지 저장 완료: ${filePath}`);
+                    
+                    // 상대 경로로 데이터 치환
+                    return {
+                        ...item,
+                        imageUrl: `images/${filename}`
+                    };
+                }
+            } catch (err) {
+                console.error('이미지 파일 저장 오류:', err);
+            }
+        }
+        return item;
+    });
+    
     const filePath = path.join(__dirname, 'data.json');
-    const fileContent = JSON.stringify({ portfolioData, journeyData, competenciesData }, null, 2);
+    const fileContent = JSON.stringify({ portfolioData: updatedPortfolioData, journeyData, competenciesData }, null, 2);
     
     fs.writeFile(filePath, fileContent, 'utf8', (err) => {
         if (err) {
@@ -28,7 +64,11 @@ app.post('/api/save', (req, res) => {
             return res.status(500).json({ error: '서버 파일 쓰기 중 오류가 발생했습니다.' });
         }
         console.log(`[${new Date().toLocaleTimeString()}] 데이터가 성공적으로 data.json 파일에 저장되었습니다.`);
-        res.json({ success: true, message: '서버 데이터 저장 완료' });
+        res.json({ 
+            success: true, 
+            message: '서버 데이터 및 이미지 파일 저장 완료',
+            portfolioData: updatedPortfolioData
+        });
     });
 });
 

@@ -399,6 +399,11 @@ function saveAllData() {
     })
     .then(result => {
         console.log('데이터가 서버에 동기화되어 저장되었습니다:', result.message);
+        if (result.portfolioData) {
+            portfolioData = result.portfolioData;
+            localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
+            renderPortfolioGrid(); // 새로운 이미지 상대경로를 카드에 즉시 반영
+        }
     })
     .catch(err => {
         console.warn('서버 저장 실패 (오프라인 혹은 정적 호스팅 환경일 수 있습니다):', err);
@@ -1651,10 +1656,28 @@ function renderProjectForm(project = null, modalTitleStr) {
                     filenameSpan.textContent = file.name;
                     const reader = new FileReader();
                     reader.onload = (event) => {
-                        selectedImageBase64 = event.target.result;
-                        previewImg.src = selectedImageBase64;
-                        previewWrapper.style.display = 'block';
-                        if (deleteBtn) deleteBtn.style.display = 'inline-flex';
+                        const img = new Image();
+                        img.onload = () => {
+                            // canvas를 사용해 업로드한 이미지 포맷을 jpeg로 강제 변환 및 압축 진행
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                            
+                            // 투명 배경이 있는 이미지(PNG 등)의 경우 검은색 배경 방지를 위해 흰색 배경으로 채우기
+                            ctx.fillStyle = '#ffffff';
+                            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                            
+                            ctx.drawImage(img, 0, 0);
+                            
+                            // JPEG 포맷으로 변환 (품질 0.9 설정)
+                            selectedImageBase64 = canvas.toDataURL('image/jpeg', 0.9);
+                            previewImg.src = selectedImageBase64;
+                            previewWrapper.style.display = 'block';
+                            if (deleteBtn) deleteBtn.style.display = 'inline-flex';
+                        };
+                        img.src = event.target.result;
                     };
                     reader.readAsDataURL(file);
                 }
