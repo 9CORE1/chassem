@@ -521,6 +521,10 @@ function renderTimeline(filter = 'career') {
             catName = '자격 및 수료사항';
             categoryClass = 'media';
             accentColor = 'var(--color-media-end)';
+        } else if (item.category === 'writing') {
+            catName = '저작활동';
+            categoryClass = 'writing';
+            accentColor = 'var(--color-writing-end)';
         }
         
         itemEl.style.setProperty('--dot-accent', accentColor);
@@ -1699,6 +1703,7 @@ function renderJourneyForm(journeyItem = null, modalTitleStr) {
                         <option value="education" ${isEdit && journeyItem.category === 'education' ? 'selected' : ''}>학력사항</option>
                         <option value="career" ${isEdit && journeyItem.category === 'career' ? 'selected' : ''}>경력사항</option>
                         <option value="cert" ${isEdit && journeyItem.category === 'cert' ? 'selected' : ''}>자격 및 수료사항</option>
+                        <option value="writing" ${isEdit && journeyItem.category === 'writing' ? 'selected' : ''}>저작활동</option>
                     </select>
                 </div>
                 <div class="form-group">

@@ -19,6 +19,8 @@
     --color-media-end: #ea580c;     /* Copper (Prestige & Creativity) */
     --color-it-start: #4f46e5;      /* Indigo (Logic & Technology) */
     --color-it-end: #0284c7;        /* Cobalt (Precision Engineering) */
+    --color-writing-start: #7c3aed;  /* Violet (Publications & Writing) */
+    --color-writing-end: #c084fc;    /* Lavender (Creative Expression) */
     
     /* Neutral Accents */
     --accent-primary-start: #2563eb; /* Trust Indigo Blue */
@@ -293,6 +295,12 @@ body.light-mode .orb {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+.text-writing {
+    color: var(--color-writing-end);
+    background: linear-gradient(135deg, var(--color-writing-start), var(--color-writing-end));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 
 .bg-career {
     background: linear-gradient(135deg, var(--color-career-start), var(--color-career-end));
@@ -302,6 +310,9 @@ body.light-mode .orb {
 }
 .bg-it {
     background: linear-gradient(135deg, var(--color-it-start), var(--color-it-end));
+}
+.bg-writing {
+    background: linear-gradient(135deg, var(--color-writing-start), var(--color-writing-end));
 }
 
 /* ==========================================================================
