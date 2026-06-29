@@ -712,8 +712,7 @@ function getYouTubeEmbedUrl(url, start = null, end = null) {
         'controls=1',         // 재생 컨트롤러 활성화 (기기 호환성 및 모바일 지원)
         'rel=0',              // 관련 영상 추천 중단
         'modestbranding=1',   // 유튜브 로고 표시 최소화
-        'iv_load_policy=3',   // 동영상 어노테이션(주석) 숨김
-        `origin=${encodeURIComponent(window.location.origin)}` // 리퍼러 origin 명시로 권한 확인 우회
+        'iv_load_policy=3'    // 동영상 어노테이션(주석) 숨김
     ];
     const parsedStart = convertTimeToSeconds(start);
     const parsedEnd = convertTimeToSeconds(end);
@@ -756,6 +755,12 @@ function openDetailsModal(id) {
                     <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 8px; margin-top: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
                         <!-- 화면 확대 없이 100% 정상 비율 유지 -->
                         <iframe src="${embedUrl}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div style="margin-top: 0.8rem; text-align: right;">
+                        <a href="${item.youtubeUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; font-size: 0.85rem; border-radius: 6px; border: 1px solid var(--border-color); color: var(--text-secondary); background: var(--bg-tertiary); cursor: pointer; text-decoration: none; transition: all 0.2s;">
+                            <i class="fa-brands fa-youtube" style="color: #ff0000; font-size: 1rem;"></i>
+                            <span>유튜브에서 직접 보기</span>
+                        </a>
                     </div>
                 </div>
             `;
