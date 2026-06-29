@@ -261,14 +261,6 @@
       "description": "대학 청년들을 대상으로 맞춤형 커리어 로드맵을 설계하고, 자기소개서 첨삭 및 면접 코칭 전담."
     },
     {
-      "id": "journey-2",
-      "category": "education",
-      "title": "미디어커뮤니케이션학과 학사 졸업",
-      "institution": "부산대학교",
-      "period": "2018.03 - 2022.02",
-      "description": "언론 정보, 미디어 스토리텔링 및 영상콘텐츠 기획/제작 심화 학습."
-    },
-    {
       "id": "journey-3",
       "category": "career",
       "title": "진로 설계 강사 및 코치",
