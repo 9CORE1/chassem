@@ -253,22 +253,6 @@
   ],
   "journeyData": [
     {
-      "id": "journey-1",
-      "category": "career",
-      "title": "청년인재 커리어 빌드업 프로그램 컨설턴트",
-      "institution": "대학일자리플러스센터",
-      "period": "2025.03 - 2026.02",
-      "description": "대학 청년들을 대상으로 맞춤형 커리어 로드맵을 설계하고, 자기소개서 첨삭 및 면접 코칭 전담."
-    },
-    {
-      "id": "journey-3",
-      "category": "career",
-      "title": "진로 설계 강사 및 코치",
-      "institution": "청소년진로지원센터",
-      "period": "2024.05 - 현재",
-      "description": "고등학교 및 대학교 대상 직업 트렌드 소개, 적성 분석 및 자기주도적 진로 탐색 강연 진행."
-    },
-    {
       "id": "journey-4",
       "category": "cert",
       "title": "직업상담사 2급 자격증 취득",
@@ -299,6 +283,30 @@
       "title": "인공지능(공학석사)",
       "institution": "동의대학교",
       "description": "동의대학교 인공지능학과 석사 졸업"
+    },
+    {
+      "id": "journey-1782711396006",
+      "category": "career",
+      "period": "2015.11 ~ 2026.03",
+      "title": "(주)나인코어 대표이사",
+      "institution": "콘텐츠기획제작",
+      "description": "(주)나인코어 대표이사"
+    },
+    {
+      "id": "journey-1782711513293",
+      "category": "career",
+      "period": "2009.06 ~ 2015.10",
+      "title": "(주)워크잡 팀장",
+      "institution": "HRD총괄",
+      "description": "(주)워크잡 팀장"
+    },
+    {
+      "id": "journey-1782711577312",
+      "category": "career",
+      "period": "2004.09 ~ 2009.06",
+      "title": "효성정보직업전문학교 전임강사",
+      "institution": "총괄관리",
+      "description": "효성정보직업전문학교 전임강사"
     }
   ],
   "competenciesData": [
