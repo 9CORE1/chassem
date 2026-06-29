@@ -291,6 +291,22 @@
       "institution": "한국산업인력공단",
       "period": "2024.11",
       "description": "HTML5, CSS3 웹 표준 퍼블리싱 및 UI/UX 레이아웃 구현 능력 검증."
+    },
+    {
+      "id": "journey-1782710928446",
+      "category": "education",
+      "period": "1999.03 ~ 2002.08",
+      "title": "전산통계학(이학사)",
+      "institution": "동의대학교",
+      "description": "동의대학교 전산통계학과 졸업"
+    },
+    {
+      "id": "journey-1782710976509",
+      "category": "education",
+      "period": "2024.03 ~ 2026.02",
+      "title": "인공지능(공학석사)",
+      "institution": "동의대학교",
+      "description": "동의대학교 인공지능학과 석사 졸업"
     }
   ],
   "competenciesData": [
