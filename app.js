@@ -643,6 +643,30 @@ function setupModal() {
     });
 }
 
+function convertTimeToSeconds(timeStr) {
+    if (timeStr === null || timeStr === undefined) return '';
+    const str = String(timeStr).trim();
+    if (!str) return '';
+    
+    if (/^\d+$/.test(str)) {
+        return parseInt(str, 10);
+    }
+    
+    if (str.includes(':')) {
+        const parts = str.split(':').map(Number);
+        if (parts.some(isNaN)) return '';
+        
+        if (parts.length === 2) {
+            return parts[0] * 60 + parts[1];
+        } else if (parts.length === 3) {
+            return parts[0] * 3600 + parts[1] * 60 + parts[2];
+        }
+    }
+    
+    const num = parseInt(str, 10);
+    return isNaN(num) ? '' : num;
+}
+
 function getYouTubeEmbedUrl(url, start = null, end = null) {
     if (!url) return null;
     let videoId = '';
@@ -662,20 +686,24 @@ function getYouTubeEmbedUrl(url, start = null, end = null) {
     }
     if (!videoId) return null;
     
-    let embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
+    // 일부 공개(unlisted) 영상 임베딩 재생 호환성 향상을 위해 일반 youtube.com 도메인 사용
+    let embedUrl = `https://www.youtube.com/embed/${videoId}`;
     const params = [
         'controls=0',         // 재생 컨트롤러 숨김 (탐색/조작 금지)
         'disablekb=1',        // 키보드 단축키 비활성화
         'fs=0',               // 전체화면 버튼 숨김
         'rel=0',              // 관련 영상 추천 중단
         'modestbranding=1',   // 유튜브 로고 표시 최소화
-        'iv_load_policy=3'    // 동영상 어노테이션(주석) 숨김
+        'iv_load_policy=3',   // 동영상 어노테이션(주석) 숨김
+        `origin=${encodeURIComponent(window.location.origin)}` // 리퍼러 origin 명시로 권한 확인 우회
     ];
-    if (start) {
-        params.push(`start=${start}`);
+    const parsedStart = convertTimeToSeconds(start);
+    const parsedEnd = convertTimeToSeconds(end);
+    if (parsedStart) {
+        params.push(`start=${parsedStart}`);
     }
-    if (end) {
-        params.push(`end=${end}`);
+    if (parsedEnd) {
+        params.push(`end=${parsedEnd}`);
     }
     embedUrl += `?${params.join('&')}`;
     return embedUrl;
@@ -709,7 +737,7 @@ function openDetailsModal(id) {
                     <h4 class="modal-section-title">관련 영상</h4>
                     <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 8px; margin-top: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
                         <!-- 1.2배 확대 및 상하좌우 여백 크롭을 통해 유튜브 제목과 공유(링크 복사) 아이콘을 보이지 않게 처리 -->
-                        <iframe src="${embedUrl}" style="position: absolute; top: -10%; left: -10%; width: 120%; height: 120%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                        <iframe src="${embedUrl}" style="position: absolute; top: -10%; left: -10%; width: 120%; height: 120%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         <!-- 상단 및 하단 조작방지 투명 레이어막 -->
                         <div style="position: absolute; top: 0; left: 0; width: 100%; height: 60px; z-index: 10; background: transparent;" onclick="event.stopPropagation();" oncontextmenu="event.preventDefault(); event.stopPropagation();"></div>
                         <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 50px; z-index: 10; background: transparent;" onclick="event.stopPropagation();" oncontextmenu="event.preventDefault(); event.stopPropagation();"></div>
@@ -1538,12 +1566,12 @@ function renderProjectForm(project = null, modalTitleStr) {
             
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
                 <div class="form-group">
-                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">영상 재생 시작 시간 (초 단위, 선택사항)</label>
-                    <input type="number" id="proj-youtube-start" value="${isEdit && project.youtubeStart ? project.youtubeStart : ''}" placeholder="예: 10 (비워두면 처음부터)" min="0" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">영상 재생 시작 시간 (분:초 또는 초 단위, 선택사항)</label>
+                    <input type="text" id="proj-youtube-start" value="${isEdit && project.youtubeStart ? project.youtubeStart : ''}" placeholder="예: 1:25 또는 85" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
                 </div>
                 <div class="form-group">
-                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">영상 재생 종료 시간 (초 단위, 선택사항)</label>
-                    <input type="number" id="proj-youtube-end" value="${isEdit && project.youtubeEnd ? project.youtubeEnd : ''}" placeholder="예: 60 (비워두면 끝까지)" min="0" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">영상 재생 종료 시간 (분:초 또는 초 단위, 선택사항)</label>
+                    <input type="text" id="proj-youtube-end" value="${isEdit && project.youtubeEnd ? project.youtubeEnd : ''}" placeholder="예: 2:30 또는 150" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
                 </div>
             </div>
             
@@ -1566,8 +1594,8 @@ function renderProjectForm(project = null, modalTitleStr) {
         const summaryVal = document.getElementById('proj-summary').value.trim();
         const roleVal = document.getElementById('proj-role').value.trim();
         const youtubeUrlVal = document.getElementById('proj-youtube').value.trim();
-        const youtubeStartVal = document.getElementById('proj-youtube-start').value.trim();
-        const youtubeEndVal = document.getElementById('proj-youtube-end').value.trim();
+        const youtubeStartVal = convertTimeToSeconds(document.getElementById('proj-youtube-start').value.trim());
+        const youtubeEndVal = convertTimeToSeconds(document.getElementById('proj-youtube-end').value.trim());
         
         const descriptionVal = isEdit ? project.description : '';
         const highlightsVal = isEdit ? project.highlights : [];
