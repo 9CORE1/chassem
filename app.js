@@ -469,8 +469,9 @@ function renderPortfolioGrid(filter = 'all') {
                 <h3>${item.title}</h3>
                 <p class="card-desc">${item.summary}</p>
                 <div class="card-bottom">
-                    <div class="card-tags">
-                        ${item.tags ? item.tags.map(tag => `<span class="card-tag">#${tag}</span>`).join('') : item.techStack.slice(0, 2).map(tag => `<span class="card-tag">#${tag}</span>`).join('')}
+                    <div class="card-institution" style="font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 0.4rem; font-weight: 500;">
+                        <i class="fa-solid fa-building" style="font-size: 0.8rem; color: var(--card-accent-color); margin-bottom: 0;"></i>
+                        <span>${item.role || '소속 기관 없음'}</span>
                     </div>
                     <div class="card-arrow" aria-label="상세 보기">
                         <i class="fa-solid fa-arrow-right"></i>
