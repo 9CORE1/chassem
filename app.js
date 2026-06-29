@@ -665,13 +665,29 @@ function setupModal() {
 
 function convertTimeToSeconds(timeStr) {
     if (timeStr === null || timeStr === undefined) return '';
-    const str = String(timeStr).trim();
+    let str = String(timeStr).trim().toLowerCase();
     if (!str) return '';
     
+    // 1. YouTube의 t=1h2m3s 또는 t=85s 또는 t=1m 형식 파싱 지원
+    if (/[hms]/.test(str)) {
+        let totalSeconds = 0;
+        const hoursMatch = str.match(/(\d+)h/);
+        const minutesMatch = str.match(/(\d+)m/);
+        const secondsMatch = str.match(/(\d+)s/);
+        
+        if (hoursMatch) totalSeconds += parseInt(hoursMatch[1], 10) * 3600;
+        if (minutesMatch) totalSeconds += parseInt(minutesMatch[1], 10) * 60;
+        if (secondsMatch) totalSeconds += parseInt(secondsMatch[1], 10);
+        
+        if (totalSeconds > 0) return totalSeconds;
+    }
+    
+    // 2. 숫자로만 구성된 경우 (초 단위)
     if (/^\d+$/.test(str)) {
         return parseInt(str, 10);
     }
     
+    // 3. 분:초 (1:25) 또는 시:분:초 (1:05:30) 형식
     if (str.includes(':')) {
         const parts = str.split(':').map(Number);
         if (parts.some(isNaN)) return '';
@@ -700,7 +716,21 @@ function getYouTubeEmbedUrl(url, start = null, end = null) {
         }
     }
     
-    // 2. 만약 입력값이 11자리 비디오 ID 자체인 경우 직접 할당
+    // 2. 파라미터로 제공된 start/end가 없고 URL 자체에 시간 파라미터(t= 또는 start= 또는 end=)가 포함되어 있는 경우 추출
+    if (start === null || start === undefined || start === '') {
+        const startMatch = url.match(/[\?&](?:start|t)=([^&#]+)/);
+        if (startMatch && startMatch[1]) {
+            start = startMatch[1];
+        }
+    }
+    if (end === null || end === undefined || end === '') {
+        const endMatch = url.match(/[\?&]end=([^&#]+)/);
+        if (endMatch && endMatch[1]) {
+            end = endMatch[1];
+        }
+    }
+    
+    // 3. 만약 입력값이 11자리 비디오 ID 자체인 경우 직접 할당
     if (url.length === 11 && !url.includes('/') && !url.includes('.')) {
         videoId = url;
     } else {
