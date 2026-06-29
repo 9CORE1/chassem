@@ -761,8 +761,8 @@ function getYouTubeEmbedUrl(url, start = null, end = null) {
     
     if (!videoId) return null;
     
-    // 모바일 브라우저(iOS Safari 등)의 서드파티 쿠키 차단 정책을 우회하기 위해 youtube-nocookie.com 도메인 사용
-    let embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
+    // 일부 공개(unlisted) 영상 및 연령 제한/저작권 주장 클레임 영상의 임베드 재생 호환성 향상을 위해 일반 youtube.com 도메인 사용
+    let embedUrl = `https://www.youtube.com/embed/${videoId}`;
     const params = [
         'controls=1',         // 재생 컨트롤러 활성화 (기기 호환성 및 모바일 지원)
         'rel=0',              // 관련 영상 추천 중단
