@@ -168,89 +168,6 @@
       "youtubeEnd": "5"
     },
     {
-      "id": "it-1",
-      "category": "it",
-      "title": "사용자 맞춤형 커리어 로드맵 추천 서비스 'PathFinder'",
-      "period": "2025.09 - 2025.12",
-      "year": "2025",
-      "summary": "취업 준비생의 역량 진단을 기반으로 개인화된 취업 및 학습 로드맵을 자동으로 그려주는 웹 애플리케이션의 프론트엔드를 개발했습니다.",
-      "description": "사용자가 관심 분야 및 현재 자격증, 보유 기술을 선택하면 공공 채용 데이터 API와 워크넷 Open API의 통계를 분석하여 가장 알맞은 가상의 직무 로드맵과 부족한 역량을 Chart.js로 시각화해 제공하는 서비스입니다.",
-      "role": "프론트엔드 전체 UI/UX 마크업 및 스타일 가이드 정립, React 기반의 상태 관리와 API 연동, 가인포그래픽 차트 렌더링 최적화, 반응형 모바일 레이아웃 구현.",
-      "highlights": [
-        "Chart.js와 TailwindCSS를 사용하여 가독성 높은 맞춤형 분석 보고서 대시보드 구축",
-        "Open API 데이터 통신 지연에 대응한 스켈레톤 UI 컴포넌트와 비동기 로딩 최적화로 초기 렌더링 병목 25% 완화",
-        "다크 모드와 고대비 접근성 모드 지원으로 시각약자 접근 환경 준수",
-        "구글 등 검색 포털 노출 향상을 위한 React Helmet 기반 SEO 마크업 적용"
-      ],
-      "techStack": [
-        "React",
-        "CSS Grid",
-        "Chart.js",
-        "Rest API",
-        "Git"
-      ],
-      "accentColor": "var(--color-it-end)",
-      "accentBg": "rgba(225, 0, 255, 0.1)",
-      "accentBorder": "rgba(225, 0, 255, 0.2)",
-      "icon": "fa-code",
-      "youtubeUrl": ""
-    },
-    {
-      "id": "it-2",
-      "category": "it",
-      "title": "포트폴리오 템플릿 아카이빙 플랫폼 'Folder'",
-      "period": "2024.08 - 2024.11",
-      "year": "2024",
-      "summary": "복잡한 프레임워크 없이 오직 HTML, Vanilla JS, CSS Grid만을 사용하여 제작한 초경량, 초고속 포트폴리오 아카이빙 정적 웹사이트입니다.",
-      "description": "다양한 직무의 우수 포트폴리오 기획안과 템플릿을 공유하는 큐레이션 웹사이트입니다. 프레임워크의 오버헤드를 줄이고, 순수 웹 표준 기술만을 사용하여 웹 최적화 성능의 극대화를 연습했습니다.",
-      "role": "바닐라 자바스크립트 기반의 가상 돔 라우팅 및 템플릿 렌더러 설계, 로컬 스토리지를 활용한 좋아요 및 북마크 시스템 개발, CSS Flexbox/Grid를 활용한 완벽한 픽셀 반응형 디자인 설계.",
-      "highlights": [
-        "Lighthouse 기준 성능 및 SEO 점수 100점 달성 (초기 FCP 0.3초 이내 도달)",
-        "프레임워크 라이브러리 의존성 0% 달성으로 웹 브라우저 호환성 극대화",
-        "Intersection Observer API를 활용한 무한 스크롤 및 이미지 지연 로딩(Lazy loading) 기능 자체 구현",
-        "순수 CSS만으로 구현한 글래스모피즘 UI 디자인 컴포넌트 라이브러리화"
-      ],
-      "techStack": [
-        "HTML5",
-        "Vanilla Javascript",
-        "Vanilla CSS",
-        "Lighthouse Optimization"
-      ],
-      "accentColor": "var(--color-it-end)",
-      "accentBg": "rgba(225, 0, 255, 0.1)",
-      "accentBorder": "rgba(225, 0, 255, 0.2)",
-      "icon": "fa-code",
-      "youtubeUrl": ""
-    },
-    {
-      "id": "it-3",
-      "category": "it",
-      "title": "공공데이터 활용 청년 취업정보 지도 웹앱",
-      "period": "2023.05 - 2023.09",
-      "year": "2023",
-      "summary": "사용자의 현재 위치를 기반으로 내 주변에서 열리는 일자리 박람회 및 국비지원 교육기관의 정보를 지도로 보여주는 하이브리드 웹입니다.",
-      "description": "청년들이 취업 박람회나 교육 정보를 찾기 어렵다는 문제에서 출발하여, 카카오맵 API와 서울시 공공데이터를 융합하여 쉽고 시각적으로 파악할 수 있도록 제작한 지도 기반 탐색형 웹 서비스입니다.",
-      "role": "카카오 지도 API 마커 클러스터링 로직 구현, Geolocation API 연동을 통한 사용자 주변 현 위치 연산 구현, 취업 공고 실시간 검색 필터링 모듈 개발.",
-      "highlights": [
-        "시 주관 공공데이터 매시업 해커톤 공모전 참가, 크리에이티브 부문 우수상 수상",
-        "카카오 맵 클러스터러 라이브러리를 활용하여 1,000건 이상의 공공 데이터를 브라우저 부하 없이 매끄럽게 렌더링",
-        "북마크된 행사 일정이 다가오면 브라우저 알림을 보내는 Push Notification API 기능 도입",
-        "Figma를 통한 UI 설계부터 프로토타입 테스팅, 실제 개발까지 애자일 방식으로 4인 협업 진행"
-      ],
-      "techStack": [
-        "Javascript",
-        "Kakao Map API",
-        "HTML5/CSS3",
-        "Geolocation API",
-        "Figma"
-      ],
-      "accentColor": "var(--color-it-end)",
-      "accentBg": "rgba(225, 0, 255, 0.1)",
-      "accentBorder": "rgba(225, 0, 255, 0.2)",
-      "icon": "fa-code",
-      "youtubeUrl": ""
-    },
-    {
       "id": "it-1782718545995",
       "category": "it",
       "title": "글로벌 AI 최고위 과정",
@@ -266,8 +183,8 @@
       "accentBorder": "rgba(225, 0, 255, 0.2)",
       "icon": "fa-code",
       "youtubeUrl": "https://youtu.be/UkawNL1Z0Cc?si=lfNDwUK_WIfZZlBX",
-      "youtubeStart": "85",
-      "youtubeEnd": "100"
+      "youtubeStart": 85,
+      "youtubeEnd": 180
     }
   ],
   "journeyData": [
