@@ -205,107 +205,143 @@ const defaultPortfolioData = [
     }
 ];
 
-let portfolioData = JSON.parse(localStorage.getItem('portfolioData'));
-if (!portfolioData) {
-    portfolioData = defaultPortfolioData;
-    localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
-}
+const defaultJourneyData = [
+    {
+        id: 'journey-1',
+        category: 'career',
+        title: '청년인재 커리어 빌드업 프로그램 컨설턴트',
+        institution: '대학일자리플러스센터',
+        period: '2025.03 - 2026.02',
+        description: '대학 청년들을 대상으로 맞춤형 커리어 로드맵을 설계하고, 자기소개서 첨삭 및 면접 코칭 전담.'
+    },
+    {
+        id: 'journey-2',
+        category: 'education',
+        title: '미디어커뮤니케이션학과 학사 졸업',
+        institution: '부산대학교',
+        period: '2018.03 - 2022.02',
+        description: '언론 정보, 미디어 스토리텔링 및 영상콘텐츠 기획/제작 심화 학습.'
+    },
+    {
+        id: 'journey-3',
+        category: 'career',
+        title: '진로 설계 강사 및 코치',
+        institution: '청소년진로지원센터',
+        period: '2024.05 - 현재',
+        description: '고등학교 및 대학교 대상 직업 트렌드 소개, 적성 분석 및 자기주도적 진로 탐색 강연 진행.'
+    },
+    {
+        id: 'journey-4',
+        category: 'cert',
+        title: '직업상담사 2급 자격증 취득',
+        institution: '한국산업인력공단',
+        period: '2025.08',
+        description: '직업상담학, 직업심리학, 직업정보론, 노동시장론 및 노동관계법규 검증 완료.'
+    },
+    {
+        id: 'journey-5',
+        category: 'cert',
+        title: '웹디자인기능사 자격증 취득',
+        institution: '한국산업인력공단',
+        period: '2024.11',
+        description: 'HTML5, CSS3 웹 표준 퍼블리싱 및 UI/UX 레이아웃 구현 능력 검증.'
+    }
+];
 
-let journeyData = JSON.parse(localStorage.getItem('journeyData'));
-if (!journeyData) {
-    journeyData = [
-        {
-            id: 'journey-1',
-            category: 'career',
-            title: '청년인재 커리어 빌드업 프로그램 컨설턴트',
-            institution: '대학일자리플러스센터',
-            period: '2025.03 - 2026.02',
-            description: '대학 청년들을 대상으로 맞춤형 커리어 로드맵을 설계하고, 자기소개서 첨삭 및 면접 코칭 전담.'
-        },
-        {
-            id: 'journey-2',
-            category: 'education',
-            title: '미디어커뮤니케이션학과 학사 졸업',
-            institution: '부산대학교',
-            period: '2018.03 - 2022.02',
-            description: '언론 정보, 미디어 스토리텔링 및 영상콘텐츠 기획/제작 심화 학습.'
-        },
-        {
-            id: 'journey-3',
-            category: 'career',
-            title: '진로 설계 강사 및 코치',
-            institution: '청소년진로지원센터',
-            period: '2024.05 - 현재',
-            description: '고등학교 및 대학교 대상 직업 트렌드 소개, 적성 분석 및 자기주도적 진로 탐색 강연 진행.'
-        },
-        {
-            id: 'journey-4',
-            category: 'cert',
-            title: '직업상담사 2급 자격증 취득',
-            institution: '한국산업인력공단',
-            period: '2025.08',
-            description: '직업상담학, 직업심리학, 직업정보론, 노동시장론 및 노동관계법규 검증 완료.'
-        },
-        {
-            id: 'journey-5',
-            category: 'cert',
-            title: '웹디자인기능사 자격증 취득',
-            institution: '한국산업인력공단',
-            period: '2024.11',
-            description: 'HTML5, CSS3 웹 표준 퍼블리싱 및 UI/UX 레이아웃 구현 능력 검증.'
-        }
-    ];
-    localStorage.setItem('journeyData', JSON.stringify(journeyData));
-}
+const defaultCompetenciesData = [
+    {
+        id: 'comp-career',
+        category: 'career',
+        title: '취업진로',
+        icon: 'fa-graduation-cap',
+        skills: [
+            '진로 상담 & 커리어 컨설팅',
+            '자기소개서 첨삭 & 면접 코칭',
+            '취업 역량 강화 프로그램 기획'
+        ]
+    },
+    {
+        id: 'comp-media',
+        category: 'media',
+        title: '영상콘텐츠',
+        icon: 'fa-video',
+        skills: [
+            '영상 편집 (Premiere, After Effects)',
+            '유튜브 채널 운영 & 분석',
+            '시나리오 작성 & 스토리보드 기획'
+        ]
+    },
+    {
+        id: 'comp-it',
+        category: 'it',
+        title: 'IT 미래기술',
+        icon: 'fa-code',
+        skills: [
+            '프론트엔드 개발 (HTML/CSS/JS/React)',
+            'UI/UX 반응형 웹 디자인',
+            '공공데이터 활용 및 API 연동'
+        ]
+    }
+];
 
-
-let competenciesData = JSON.parse(localStorage.getItem('competenciesData'));
-if (!competenciesData) {
-    competenciesData = [
-        {
-            id: 'comp-career',
-            category: 'career',
-            title: '취업진로',
-            icon: 'fa-graduation-cap',
-            skills: [
-                '진로 상담 & 커리어 컨설팅',
-                '자기소개서 첨삭 & 면접 코칭',
-                '취업 역량 강화 프로그램 기획'
-            ]
-        },
-        {
-            id: 'comp-media',
-            category: 'media',
-            title: '영상콘텐츠',
-            icon: 'fa-video',
-            skills: [
-                '영상 편집 (Premiere, After Effects)',
-                '유튜브 채널 운영 & 분석',
-                '시나리오 작성 & 스토리보드 기획'
-            ]
-        },
-        {
-            id: 'comp-it',
-            category: 'it',
-            title: 'IT 미래기술',
-            icon: 'fa-code',
-            skills: [
-                '프론트엔드 개발 (HTML/CSS/JS/React)',
-                'UI/UX 반응형 웹 디자인',
-                '공공데이터 활용 및 API 연동'
-            ]
-        }
-    ];
-    localStorage.setItem('competenciesData', JSON.stringify(competenciesData));
-}
+let portfolioData = [];
+let journeyData = [];
+let competenciesData = [];
 
 // ==========================================================================
 // Initialization & DOM Event Binding
 // ==========================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    initApp();
+    loadDataAndInit();
 });
+
+function loadDataAndInit() {
+    fetch('data.json')
+        .then(res => {
+            if (!res.ok) throw new Error('서버 데이터 로드 실패');
+            return res.json();
+        })
+        .then(data => {
+            console.log('서버로부터 최신 데이터를 로드했습니다.');
+            portfolioData = data.portfolioData;
+            journeyData = data.journeyData;
+            competenciesData = data.competenciesData;
+            
+            // 로컬 스토리지 데이터 동기화
+            localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
+            localStorage.setItem('journeyData', JSON.stringify(journeyData));
+            localStorage.setItem('competenciesData', JSON.stringify(competenciesData));
+            
+            initApp();
+        })
+        .catch(err => {
+            console.warn('서버 데이터 로드 실패, 로컬 스토리지 데이터를 로드합니다:', err);
+            
+            // 로컬 스토리지 사용 시도
+            try {
+                portfolioData = JSON.parse(localStorage.getItem('portfolioData'));
+                journeyData = JSON.parse(localStorage.getItem('journeyData'));
+                competenciesData = JSON.parse(localStorage.getItem('competenciesData'));
+            } catch (e) {
+                console.error('로컬 스토리지 데이터 파싱 오류:', e);
+            }
+            
+            // 로컬 스토리지 데이터도 누락되어 있으면 기본 템플릿 데이터 사용
+            if (!portfolioData || !journeyData || !competenciesData) {
+                console.log('기본 템플릿 데이터셋으로 초기화합니다.');
+                portfolioData = portfolioData || defaultPortfolioData;
+                journeyData = journeyData || defaultJourneyData;
+                competenciesData = competenciesData || defaultCompetenciesData;
+                
+                localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
+                localStorage.setItem('journeyData', JSON.stringify(journeyData));
+                localStorage.setItem('competenciesData', JSON.stringify(competenciesData));
+            }
+            
+            initApp();
+        });
+}
 
 function initApp() {
     initEmailJS();
@@ -321,6 +357,54 @@ function initApp() {
     setupContactForm();
     setupAdminMode();
 }
+
+// 헬퍼 함수: 로컬 저장 및 서버 동기화
+function saveAllData() {
+    // 1. 로컬 저장
+    localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
+    localStorage.setItem('journeyData', JSON.stringify(journeyData));
+    localStorage.setItem('competenciesData', JSON.stringify(competenciesData));
+    
+    // 2. 서버로 저장 요청 (Express 실행 환경일 때)
+    const payload = {
+        portfolioData,
+        journeyData,
+        competenciesData
+    };
+    
+    fetch('/api/save', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(res => {
+        if (!res.ok) throw new Error('서버 저장 실패');
+        return res.json();
+    })
+    .then(result => {
+        console.log('데이터가 서버에 동기화되어 저장되었습니다:', result.message);
+    })
+    .catch(err => {
+        console.warn('서버 저장 실패 (오프라인 혹은 정적 호스팅 환경일 수 있습니다):', err);
+    });
+}
+
+// 헬퍼 함수: 정적 배포를 위한 데이터 백업 다운로드
+window.downloadDataJson = function() {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({
+        portfolioData,
+        journeyData,
+        competenciesData
+    }, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", "data.json");
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+};
 
 // ==========================================================================
 // Portfolio Grid Rendering
@@ -1388,7 +1472,7 @@ window.openEditCompModal = function(compId) {
         comp.icon = newIcon;
         comp.skills = newSkills;
         
-        localStorage.setItem('competenciesData', JSON.stringify(competenciesData));
+        saveAllData();
         renderCompetencies();
         closeAdminModal();
     });
@@ -1549,7 +1633,7 @@ function renderProjectForm(project = null, modalTitleStr) {
             portfolioData.push(newProj);
         }
         
-        localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
+        saveAllData();
         
         renderPortfolioGrid();
         closeAdminModal();
@@ -1559,7 +1643,7 @@ function renderProjectForm(project = null, modalTitleStr) {
 window.deleteProject = function(projectId) {
     if (confirm('이 프로젝트를 삭제하시겠습니까?')) {
         portfolioData = portfolioData.filter(p => p.id !== projectId);
-        localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
+        saveAllData();
         renderPortfolioGrid();
     }
 };
@@ -1569,7 +1653,23 @@ window.resetAllToDefault = function() {
         localStorage.removeItem('competenciesData');
         localStorage.removeItem('portfolioData');
         localStorage.removeItem('journeyData');
-        window.location.reload();
+        
+        const payload = {
+            portfolioData: defaultPortfolioData,
+            journeyData: defaultJourneyData,
+            competenciesData: defaultCompetenciesData
+        };
+        
+        fetch('/api/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .finally(() => {
+            window.location.reload();
+        });
     }
 };
 
@@ -1657,7 +1757,7 @@ function renderJourneyForm(journeyItem = null, modalTitleStr) {
             journeyData.push(newItem);
         }
         
-        localStorage.setItem('journeyData', JSON.stringify(journeyData));
+        saveAllData();
         renderTimeline(getActiveJourneyFilter());
         closeAdminModal();
     });
@@ -1666,7 +1766,182 @@ function renderJourneyForm(journeyItem = null, modalTitleStr) {
 window.deleteJourneyItem = function(journeyId) {
     if (confirm('이 타임라인 항목을 삭제하시겠습니까?')) {
         journeyData = journeyData.filter(j => j.id !== journeyId);
-        localStorage.setItem('journeyData', JSON.stringify(journeyData));
+        saveAllData();
         renderTimeline(getActiveJourneyFilter());
     }
+};
+
+// ==========================================================================
+// GitHub Integration and Server Update Persistence (via PAT)
+// ==========================================================================
+
+window.openGithubConfigModal = function() {
+    let config = JSON.parse(localStorage.getItem('githubConfig')) || {
+        pat: '',
+        owner: '',
+        repo: '',
+        branch: 'main',
+        path: 'data.json'
+    };
+    
+    const formHtml = `
+        <form id="github-config-form" style="display: flex; flex-direction: column; gap: 1.2rem;">
+            <div class="form-group">
+                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">GitHub Personal Access Token (PAT)</label>
+                <input type="password" id="gh-pat" value="${config.pat || ''}" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+                <small style="color: var(--text-muted); font-size: 0.8rem; display: block; margin-top: 0.25rem;">* 토큰은 브라우저 로컬 스토리지에만 보관되며 외부에 노출되지 않습니다.</small>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                <div class="form-group">
+                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">저장소 소유자 (Owner)</label>
+                    <input type="text" id="gh-owner" value="${config.owner || ''}" placeholder="예: user-id" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+                </div>
+                <div class="form-group">
+                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">저장소 이름 (Repo)</label>
+                    <input type="text" id="gh-repo" value="${config.repo || ''}" placeholder="예: profile" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                <div class="form-group">
+                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">브랜치 (Branch)</label>
+                    <input type="text" id="gh-branch" value="${config.branch || 'main'}" placeholder="예: main" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+                </div>
+                <div class="form-group">
+                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">파일 경로 (Path)</label>
+                    <input type="text" id="gh-path" value="${config.path || 'data.json'}" placeholder="예: data.json" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                <button type="button" onclick="closeAdminModal()" class="btn btn-outline" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">취소</button>
+                <button type="submit" class="btn btn-primary" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">설정 저장</button>
+            </div>
+        </form>
+    `;
+    
+    openAdminModal('GitHub 연동 설정', formHtml);
+    
+    const form = document.getElementById('github-config-form');
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const newConfig = {
+            pat: document.getElementById('gh-pat').value.trim(),
+            owner: document.getElementById('gh-owner').value.trim(),
+            repo: document.getElementById('gh-repo').value.trim(),
+            branch: document.getElementById('gh-branch').value.trim(),
+            path: document.getElementById('gh-path').value.trim()
+        };
+        localStorage.setItem('githubConfig', JSON.stringify(newConfig));
+        alert('GitHub 연동 설정이 로컬 브라우저에 임시 저장되었습니다.');
+        closeAdminModal();
+    });
+};
+
+window.updateServerGithub = function() {
+    const config = JSON.parse(localStorage.getItem('githubConfig'));
+    if (!config || !config.pat || !config.owner || !config.repo) {
+        alert('먼저 "GitHub 연동 설정"을 완료해 주세요.');
+        openGithubConfigModal();
+        return;
+    }
+    
+    const syncBtn = document.getElementById('btn-github-sync');
+    const originalText = syncBtn.innerHTML;
+    syncBtn.disabled = true;
+    syncBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right: 0.25rem;"></i>서버 업데이트 중...';
+    
+    const url = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.path}?ref=${config.branch}`;
+    const headers = {
+        'Authorization': `token ${config.pat}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+    };
+    
+    // Step 1: Get the current SHA of the file (required for updating)
+    fetch(url, { headers })
+        .then(res => {
+            if (res.status === 404) {
+                // File doesn't exist yet, we can create it without sha
+                return { sha: null };
+            }
+            if (!res.ok) {
+                throw new Error(`저장소 메타데이터 조회 실패 (코드: ${res.status})`);
+            }
+            return res.json();
+        })
+        .then(fileMeta => {
+            const sha = fileMeta.sha;
+            
+            // Step 2: Prepare payload
+            const dataPayload = {
+                portfolioData,
+                journeyData,
+                competenciesData
+            };
+            const jsonStr = JSON.stringify(dataPayload, null, 2);
+            // Safe UTF-8 Base64 encoding
+            const base64Content = btoa(unescape(encodeURIComponent(jsonStr)));
+            
+            const commitPayload = {
+                message: `chore: update portfolio data.json via admin interface [${new Date().toLocaleDateString()}]`,
+                content: base64Content,
+                branch: config.branch
+            };
+            if (sha) {
+                commitPayload.sha = sha;
+            }
+            
+            // Step 3: Put/Commit content
+            return fetch(`https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.path}`, {
+                method: 'PUT',
+                headers,
+                body: JSON.stringify(commitPayload)
+            });
+        })
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`커밋 실패 (코드: ${res.status})`);
+            }
+            return res.json();
+        })
+        .then(commitResult => {
+            alert('성공적으로 GitHub 저장소에 데이터를 업데이트했습니다!\nGitHub Pages가 빌드된 후(보통 1~2분 소요) 다른 기기에서도 업데이트가 실시간 반영됩니다.');
+        })
+        .catch(err => {
+            console.error(err);
+            alert(`서버 업데이트 중 오류 발생: ${err.message}\n토큰 권한(repo 스코프 필수)이나 레포지토리 정보가 올바른지 확인하세요.`);
+        })
+        .finally(() => {
+            syncBtn.disabled = false;
+            syncBtn.innerHTML = originalText;
+        });
+};
+
+window.downloadUploadedDataJson = function() {
+    const config = JSON.parse(localStorage.getItem('githubConfig'));
+    let downloadUrl = 'data.json'; // Default: local static url
+    
+    if (config && config.owner && config.repo && config.branch && config.path) {
+        downloadUrl = `https://raw.githubusercontent.com/${config.owner}/${config.repo}/${config.branch}/${config.path}?t=${Date.now()}`;
+    }
+    
+    console.log('다운로드할 데이터 파일 경로:', downloadUrl);
+    
+    fetch(downloadUrl)
+        .then(res => {
+            if (!res.ok) throw new Error(`데이터 파일 다운로드 실패 (상태 코드: ${res.status})`);
+            return res.json();
+        })
+        .then(data => {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", config && config.path ? config.path.split('/').pop() : "data.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        })
+        .catch(err => {
+            console.error(err);
+            alert(`서버에 업로드된 Json파일 로드 실패: ${err.message}\n(설정하신 GitHub 정보가 정확하거나 파일이 업로드되어 있는지 확인해 주세요.)`);
+        });
 };
