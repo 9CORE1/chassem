@@ -1999,7 +1999,7 @@ window.clearGithubConfig = function() {
 
 window.updateServerGithub = function() {
     const config = JSON.parse(localStorage.getItem('githubConfig'));
-    if (!config || !config.pat || !config.owner || !config.repo) {
+    if (!config || !config.pat || !config.owner || !config.repo || !config.branch || !config.path) {
         alert('먼저 "GitHub 연동 설정"을 완료해 주세요.');
         openGithubConfigModal();
         return;
@@ -2010,18 +2010,122 @@ window.updateServerGithub = function() {
     syncBtn.disabled = true;
     syncBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right: 0.25rem;"></i>서버 업데이트 중...';
     
-    const url = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.path}?ref=${config.branch}`;
     const headers = {
         'Authorization': `token ${config.pat}`,
         'Accept': 'application/vnd.github.v3+json',
         'Content-Type': 'application/json'
     };
     
-    // Step 1: Get the current SHA of the file (required for updating)
-    fetch(url, { headers })
+    // Step 1: GitHub 저장소의 images 폴더로 업로드할 이미지들을 확인하고 처리하는 헬퍼 함수
+    const syncImagesToGithub = () => {
+        const pathParts = config.path.split('/');
+        pathParts.pop(); // Remove data.json filename
+        const parentPath = pathParts.length > 0 ? pathParts.join('/') + '/' : '';
+        
+        const syncPromises = portfolioData.map(item => {
+            if (!item.imageUrl) return Promise.resolve();
+            
+            // 이미지 데이터가 Base64 형태인 경우
+            if (item.imageUrl.startsWith('data:image/')) {
+                const matches = item.imageUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+                if (!matches || matches.length !== 3) return Promise.resolve();
+                
+                const base64Data = matches[2];
+                const githubImagePath = `${parentPath}images/project-${item.id}.jpg`;
+                const imageApiUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${githubImagePath}`;
+                
+                // 해당 파일이 저장소에 이미 존재하는지 SHA 확인
+                return fetch(`${imageApiUrl}?ref=${config.branch}`, { headers })
+                    .then(res => {
+                        if (res.status === 404) return { sha: null };
+                        if (!res.ok) throw new Error(`이미지 파일 SHA 조회 실패 (코드: ${res.status})`);
+                        return res.json();
+                    })
+                    .then(fileMeta => {
+                        const sha = fileMeta.sha;
+                        const commitPayload = {
+                            message: `upload project image: project-${item.id}.jpg`,
+                            content: base64Data,
+                            branch: config.branch
+                        };
+                        if (sha) commitPayload.sha = sha;
+                        
+                        return fetch(imageApiUrl, {
+                            method: 'PUT',
+                            headers,
+                            body: JSON.stringify(commitPayload)
+                        });
+                    })
+                    .then(res => {
+                        if (!res.ok) throw new Error(`GitHub 이미지 업로드 실패 (코드: ${res.status})`);
+                        // 성공적으로 업로드 완료 후 이미지 경로를 상대 경로로 치환
+                        item.imageUrl = `images/project-${item.id}.jpg`;
+                    });
+            }
+            // 이미지 데이터가 로컬 서버의 상대 경로이고, 깃허브에 존재하지 않을 수 있는 경우
+            else if (item.imageUrl.startsWith('images/')) {
+                const githubImagePath = `${parentPath}${item.imageUrl}`;
+                const imageApiUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${githubImagePath}`;
+                
+                // GitHub 저장소에 이미 이미지가 존재하는지 확인
+                return fetch(`${imageApiUrl}?ref=${config.branch}`, { headers })
+                    .then(res => {
+                        if (res.status === 404) {
+                            // 깃허브에 파일이 없을 경우 로컬 서버에서 이미지를 다운받아 깃허브로 업로드
+                            return fetch(item.imageUrl)
+                                .then(localRes => {
+                                    if (!localRes.ok) throw new Error(`로컬 서버에서 이미지 가져오기 실패: ${item.imageUrl}`);
+                                    return localRes.blob();
+                                })
+                                .then(blob => {
+                                    return new Promise((resolve, reject) => {
+                                        const reader = new FileReader();
+                                        reader.onloadend = () => {
+                                            const base64Data = reader.result.split(',')[1];
+                                            resolve(base64Data);
+                                        };
+                                        reader.onerror = reject;
+                                        reader.readAsDataURL(blob);
+                                    });
+                                })
+                                .then(base64Data => {
+                                    const commitPayload = {
+                                        message: `sync missing project image: ${item.imageUrl.split('/').pop()}`,
+                                        content: base64Data,
+                                        branch: config.branch
+                                    };
+                                    return fetch(imageApiUrl, {
+                                        method: 'PUT',
+                                        headers,
+                                        body: JSON.stringify(commitPayload)
+                                    });
+                                })
+                                .then(uploadRes => {
+                                    if (!uploadRes.ok) throw new Error(`로컬 이미지 GitHub 동기화 실패 (코드: ${uploadRes.status})`);
+                                });
+                        }
+                        return Promise.resolve();
+                    });
+            }
+            
+            return Promise.resolve();
+        });
+        
+        return Promise.all(syncPromises).then(() => {
+            // 변경된 상대경로들을 로컬 스토리지에 최종 반영하고 목록 다시 렌더링
+            localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
+            renderPortfolioGrid();
+        });
+    };
+    
+    // Step 2: 이미지 업로드 완료 후, 최종 정제된 data.json 업로드 실행
+    syncImagesToGithub()
+        .then(() => {
+            const url = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.path}?ref=${config.branch}`;
+            return fetch(url, { headers });
+        })
         .then(res => {
             if (res.status === 404) {
-                // File doesn't exist yet, we can create it without sha
                 return { sha: null };
             }
             if (!res.ok) {
@@ -2032,7 +2136,6 @@ window.updateServerGithub = function() {
         .then(fileMeta => {
             const sha = fileMeta.sha;
             
-            // Step 2: Prepare payload
             const dataPayload = {
                 portfolioData,
                 journeyData,
@@ -2051,7 +2154,6 @@ window.updateServerGithub = function() {
                 commitPayload.sha = sha;
             }
             
-            // Step 3: Put/Commit content
             return fetch(`https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.path}`, {
                 method: 'PUT',
                 headers,
@@ -2065,7 +2167,7 @@ window.updateServerGithub = function() {
             return res.json();
         })
         .then(commitResult => {
-            alert('성공적으로 GitHub 저장소에 데이터를 업데이트했습니다!\nGitHub Pages가 빌드된 후(보통 1~2분 소요) 다른 기기에서도 업데이트가 실시간 반영됩니다.');
+            alert('성공적으로 GitHub 저장소에 데이터와 신규 이미지를 업로드했습니다!\nGitHub Pages가 빌드된 후(보통 1~2분 소요) 다른 기기에서도 업데이트가 실시간 반영됩니다.');
         })
         .catch(err => {
             console.error(err);
