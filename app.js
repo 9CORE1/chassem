@@ -263,7 +263,7 @@ const defaultCompetenciesData = [
     {
         id: 'comp-career',
         category: 'career',
-        title: '비즈니스 사무자동화',
+        title: '사무자동화',
         icon: 'fa-laptop-file',
         skills: [
             'Excel & Google Sheets 데이터 분석',
