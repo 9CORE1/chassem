@@ -558,6 +558,26 @@ function setupModal() {
     });
 }
 
+function getYouTubeEmbedUrl(url) {
+    if (!url) return null;
+    let videoId = '';
+    try {
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = url.match(regExp);
+        if (match && match[2].length === 11) {
+            videoId = match[2];
+        } else if (url.includes('shorts/')) {
+            const parts = url.split('shorts/');
+            if (parts.length > 1) {
+                videoId = parts[1].split(/[?#]/)[0];
+            }
+        }
+    } catch (e) {
+        console.error('유튜브 URL 파싱 오류:', e);
+    }
+    return videoId ? `https://www.youtube-nocookie.com/embed/${videoId}` : null;
+}
+
 function openDetailsModal(id) {
     const modal = document.getElementById('details-modal');
     const container = document.getElementById('modal-content-container');
@@ -577,6 +597,21 @@ function openDetailsModal(id) {
     container.style.setProperty('--modal-accent-alpha', item.accentBg);
     container.style.setProperty('--modal-accent-border', item.accentBorder);
     
+    let youtubeSection = '';
+    if (item.youtubeUrl) {
+        const embedUrl = getYouTubeEmbedUrl(item.youtubeUrl);
+        if (embedUrl) {
+            youtubeSection = `
+                <div class="modal-section">
+                    <h4 class="modal-section-title">관련 영상</h4>
+                    <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 8px; margin-top: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                        <iframe src="${embedUrl}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
     container.innerHTML = `
         <button class="modal-close-btn" id="modal-close-btn" aria-label="닫기">
             <i class="fa-solid fa-xmark"></i>
@@ -591,29 +626,39 @@ function openDetailsModal(id) {
         </div>
         
         <div class="modal-body">
+            ${youtubeSection}
+            
+            ${item.description ? `
             <div class="modal-section">
                 <h4 class="modal-section-title">개요</h4>
                 <p class="modal-desc-long">${item.description}</p>
             </div>
+            ` : ''}
             
+            ${item.role ? `
             <div class="modal-section">
                 <h4 class="modal-section-title">수행 역할</h4>
                 <p class="modal-desc-long">${item.role}</p>
             </div>
+            ` : ''}
             
+            ${item.highlights && item.highlights.length > 0 ? `
             <div class="modal-section">
                 <h4 class="modal-section-title">주요 성과 및 하이라이트</h4>
                 <ul class="modal-bullet-list">
                     ${item.highlights.map(hl => `<li>${hl}</li>`).join('')}
                 </ul>
             </div>
+            ` : ''}
             
+            ${item.techStack && item.techStack.length > 0 ? `
             <div class="modal-section">
                 <h4 class="modal-section-title">기술 스택 / 핵심 키워드</h4>
                 <div class="modal-tech-list">
                     ${item.techStack.map(tech => `<span class="modal-tech-tag">${tech}</span>`).join('')}
                 </div>
             </div>
+            ` : ''}
         </div>
     `;
     
@@ -1346,7 +1391,7 @@ function renderProjectForm(project = null, modalTitleStr) {
     const isEdit = !!project;
     
     const formHtml = `
-        <form id="project-form" style="display: flex; flex-direction: column; gap: 1.2rem; max-height: 65vh; overflow-y: auto; padding-right: 0.5rem; scrollbar-width: thin;">
+        <form id="project-form" style="display: flex; flex-direction: column; gap: 1.2rem;">
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
                 <div class="form-group">
                     <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">카테고리</label>
@@ -1373,29 +1418,13 @@ function renderProjectForm(project = null, modalTitleStr) {
             </div>
             
             <div class="form-group">
-                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">상세 설명 (모달 팝업 노출)</label>
-                <textarea id="proj-description" rows="3" placeholder="프로젝트에 대한 세부 내용을 입력하세요." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); resize: vertical;" required>${isEdit ? project.description : ''}</textarea>
-            </div>
-            
-            <div class="form-group">
                 <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">담당 역할 및 활동</label>
                 <textarea id="proj-role" rows="2" placeholder="수행한 본인의 구체적인 역할 및 활동 내용" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); resize: vertical;" required>${isEdit ? project.role : ''}</textarea>
             </div>
             
             <div class="form-group">
-                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">주요 성과 및 하이라이트 (줄바꿈으로 구분)</label>
-                <textarea id="proj-highlights" rows="4" placeholder="엔터(줄바꿈)로 구분하여 여러 성과를 작성하세요.&#10;예:&#10;1:1 코칭 학생 합격률 85% 달성&#10;우수 서포터즈 장관상 수상" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); resize: vertical;" required>${isEdit ? project.highlights.join('\n') : ''}</textarea>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
-                <div class="form-group">
-                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">기술 스택 / 핵심 키워드 (쉼표로 구분)</label>
-                    <input type="text" id="proj-techstack" value="${isEdit ? project.techStack.join(', ') : ''}" placeholder="예: React, CSS Grid, Rest API" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
-                </div>
-                <div class="form-group">
-                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">아이콘 클래스 (FontAwesome)</label>
-                    <input type="text" id="proj-icon" value="${isEdit ? project.icon : 'fa-code'}" placeholder="예: fa-code, fa-video, fa-graduation-cap" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
-                </div>
+                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">유튜브 링크 (선택사항)</label>
+                <input type="url" id="proj-youtube" value="${isEdit && project.youtubeUrl ? project.youtubeUrl : ''}" placeholder="예: https://www.youtube.com/watch?v=xxxxxx" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
             </div>
             
             <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
@@ -1415,18 +1444,22 @@ function renderProjectForm(project = null, modalTitleStr) {
         const titleVal = document.getElementById('proj-title').value.trim();
         const periodVal = document.getElementById('proj-period').value.trim();
         const summaryVal = document.getElementById('proj-summary').value.trim();
-        const descriptionVal = document.getElementById('proj-description').value.trim();
         const roleVal = document.getElementById('proj-role').value.trim();
+        const youtubeUrlVal = document.getElementById('proj-youtube').value.trim();
         
-        const highlightsVal = document.getElementById('proj-highlights').value.split('\n')
-            .map(line => line.trim())
-            .filter(line => line !== '');
-            
-        const techStackVal = document.getElementById('proj-techstack').value.split(',')
-            .map(item => item.trim())
-            .filter(item => item !== '');
-            
-        const iconVal = document.getElementById('proj-icon').value.trim();
+        const descriptionVal = isEdit ? project.description : '';
+        const highlightsVal = isEdit ? project.highlights : [];
+        const techStackVal = isEdit ? project.techStack : [];
+        
+        let iconVal = 'fa-code';
+        if (categoryVal === 'career') {
+            iconVal = 'fa-graduation-cap';
+        } else if (categoryVal === 'media') {
+            iconVal = 'fa-video';
+        }
+        if (isEdit && project.icon) {
+            iconVal = project.icon;
+        }
         
         const yearMatch = periodVal.match(/\d{4}/);
         const yearVal = yearMatch ? yearMatch[0] : new Date().getFullYear().toString();
@@ -1459,6 +1492,7 @@ function renderProjectForm(project = null, modalTitleStr) {
             project.accentColor = colorVal;
             project.accentBg = bgVal;
             project.accentBorder = borderVal;
+            project.youtubeUrl = youtubeUrlVal;
         } else {
             const newProj = {
                 id: `${categoryVal}-${Date.now()}`,
@@ -1474,7 +1508,8 @@ function renderProjectForm(project = null, modalTitleStr) {
                 accentColor: colorVal,
                 accentBg: bgVal,
                 accentBorder: borderVal,
-                icon: iconVal
+                icon: iconVal,
+                youtubeUrl: youtubeUrlVal
             };
             portfolioData.push(newProj);
         }
