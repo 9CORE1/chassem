@@ -558,7 +558,7 @@ function setupModal() {
     });
 }
 
-function getYouTubeEmbedUrl(url) {
+function getYouTubeEmbedUrl(url, start = null, end = null) {
     if (!url) return null;
     let videoId = '';
     try {
@@ -575,7 +575,20 @@ function getYouTubeEmbedUrl(url) {
     } catch (e) {
         console.error('유튜브 URL 파싱 오류:', e);
     }
-    return videoId ? `https://www.youtube-nocookie.com/embed/${videoId}` : null;
+    if (!videoId) return null;
+    
+    let embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
+    const params = [];
+    if (start) {
+        params.push(`start=${start}`);
+    }
+    if (end) {
+        params.push(`end=${end}`);
+    }
+    if (params.length > 0) {
+        embedUrl += `?${params.join('&')}`;
+    }
+    return embedUrl;
 }
 
 function openDetailsModal(id) {
@@ -599,7 +612,7 @@ function openDetailsModal(id) {
     
     let youtubeSection = '';
     if (item.youtubeUrl) {
-        const embedUrl = getYouTubeEmbedUrl(item.youtubeUrl);
+        const embedUrl = getYouTubeEmbedUrl(item.youtubeUrl, item.youtubeStart, item.youtubeEnd);
         if (embedUrl) {
             youtubeSection = `
                 <div class="modal-section">
@@ -1427,6 +1440,17 @@ function renderProjectForm(project = null, modalTitleStr) {
                 <input type="url" id="proj-youtube" value="${isEdit && project.youtubeUrl ? project.youtubeUrl : ''}" placeholder="예: https://www.youtube.com/watch?v=xxxxxx" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
             </div>
             
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                <div class="form-group">
+                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">영상 재생 시작 시간 (초 단위, 선택사항)</label>
+                    <input type="number" id="proj-youtube-start" value="${isEdit && project.youtubeStart ? project.youtubeStart : ''}" placeholder="예: 10 (비워두면 처음부터)" min="0" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+                </div>
+                <div class="form-group">
+                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">영상 재생 종료 시간 (초 단위, 선택사항)</label>
+                    <input type="number" id="proj-youtube-end" value="${isEdit && project.youtubeEnd ? project.youtubeEnd : ''}" placeholder="예: 60 (비워두면 끝까지)" min="0" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+                </div>
+            </div>
+            
             <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
                 <button type="button" onclick="closeAdminModal()" class="btn btn-outline" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">취소</button>
                 <button type="submit" class="btn btn-primary" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">저장</button>
@@ -1446,6 +1470,8 @@ function renderProjectForm(project = null, modalTitleStr) {
         const summaryVal = document.getElementById('proj-summary').value.trim();
         const roleVal = document.getElementById('proj-role').value.trim();
         const youtubeUrlVal = document.getElementById('proj-youtube').value.trim();
+        const youtubeStartVal = document.getElementById('proj-youtube-start').value.trim();
+        const youtubeEndVal = document.getElementById('proj-youtube-end').value.trim();
         
         const descriptionVal = isEdit ? project.description : '';
         const highlightsVal = isEdit ? project.highlights : [];
@@ -1493,6 +1519,8 @@ function renderProjectForm(project = null, modalTitleStr) {
             project.accentBg = bgVal;
             project.accentBorder = borderVal;
             project.youtubeUrl = youtubeUrlVal;
+            project.youtubeStart = youtubeStartVal;
+            project.youtubeEnd = youtubeEndVal;
         } else {
             const newProj = {
                 id: `${categoryVal}-${Date.now()}`,
@@ -1509,7 +1537,9 @@ function renderProjectForm(project = null, modalTitleStr) {
                 accentBg: bgVal,
                 accentBorder: borderVal,
                 icon: iconVal,
-                youtubeUrl: youtubeUrlVal
+                youtubeUrl: youtubeUrlVal,
+                youtubeStart: youtubeStartVal,
+                youtubeEnd: youtubeEndVal
             };
             portfolioData.push(newProj);
         }
