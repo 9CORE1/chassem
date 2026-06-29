@@ -339,6 +339,30 @@
       "title": "컴퓨터그래픽스운용기능사",
       "institution": "한국산업인력공단",
       "description": "컴퓨터그래픽스운용기능사"
+    },
+    {
+      "id": "journey-1782712771692",
+      "category": "writing",
+      "period": "2026.02",
+      "title": "공학석사학위논문",
+      "institution": "동의대학교",
+      "description": "대학생의 인공지능(AI) 리터러시 측정 도구 개발에 관한 연구\nhttps://orcid.org/0009-0003-2706-7926"
+    },
+    {
+      "id": "journey-1782712825447",
+      "category": "writing",
+      "period": "2023.06",
+      "title": "chatGPT로만 자기소개서 쓰기",
+      "institution": "eBook",
+      "description": "[eBook] chatGPT로만 자기소개서 쓰기"
+    },
+    {
+      "id": "journey-1782712867092",
+      "category": "writing",
+      "period": "2023.06",
+      "title": "면접 트레이닝 with chatGPT",
+      "institution": "eBook",
+      "description": "[eBook] 면접 트레이닝 with chatGPT"
     }
   ],
   "competenciesData": [
