@@ -1786,7 +1786,8 @@ body.admin-active header {
 }
 
 .portfolio-card:hover .admin-card-actions,
-.skill-category-card:hover .admin-card-actions {
+.skill-category-card:hover .admin-card-actions,
+.timeline-card:hover .admin-card-actions {
     opacity: 1;
     transform: translateY(0);
 }

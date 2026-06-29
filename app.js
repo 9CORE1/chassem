@@ -526,15 +526,12 @@ function renderTimeline(filter = 'career') {
         itemEl.style.setProperty('--dot-accent', accentColor);
         itemEl.style.setProperty('--timeline-accent', accentColor);
         
-        let adminBtns = '';
-        if (isAdminMode) {
-            adminBtns = `
-                <div class="admin-card-actions" style="position: absolute; top: 1rem; right: 1rem; display: flex; gap: 0.5rem; z-index: 10;">
-                    <button class="admin-edit-btn" onclick="event.stopPropagation(); openEditJourneyModal('${item.id}')" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--accent-primary-start); width: 32px; height: 32px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="편집"><i class="fa-solid fa-pen"></i></button>
-                    <button class="admin-delete-btn" onclick="event.stopPropagation(); deleteJourneyItem('${item.id}')" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); color: #f43f5e; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="삭제"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            `;
-        }
+        let adminBtns = `
+            <div class="admin-card-actions" style="position: absolute; top: 1rem; right: 1rem; display: flex; gap: 0.5rem; z-index: 10;">
+                <button class="admin-edit-btn" onclick="event.stopPropagation(); openEditJourneyModal('${item.id}')" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--accent-primary-start); width: 32px; height: 32px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="편집"><i class="fa-solid fa-pen"></i></button>
+                <button class="admin-delete-btn" onclick="event.stopPropagation(); deleteJourneyItem('${item.id}')" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); color: #f43f5e; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="삭제"><i class="fa-solid fa-trash"></i></button>
+            </div>
+        `;
         
         itemEl.innerHTML = `
             <div class="timeline-dot"></div>
@@ -1022,6 +1019,9 @@ function setupAdminMode() {
     const adminPortfolioActions = document.getElementById('admin-portfolio-actions');
     const adminJourneyActions = document.getElementById('admin-journey-actions');
     
+    // Always show timeline actions (Add button)
+    if (adminJourneyActions) adminJourneyActions.style.display = 'block';
+    
     const savedAdmin = sessionStorage.getItem('isAdminMode') === 'true';
     if (savedAdmin) {
         isAdminMode = true;
@@ -1031,7 +1031,6 @@ function setupAdminMode() {
         }
         if (adminBanner) adminBanner.style.display = 'flex';
         if (adminPortfolioActions) adminPortfolioActions.style.display = 'block';
-        if (adminJourneyActions) adminJourneyActions.style.display = 'block';
         document.body.classList.add('admin-active');
         
         // Re-render to show admin actions on page load
@@ -1051,7 +1050,7 @@ function setupAdminMode() {
                 adminToggle.innerHTML = '<i class="fa-solid fa-lock"></i>';
                 if (adminBanner) adminBanner.style.display = 'none';
                 if (adminPortfolioActions) adminPortfolioActions.style.display = 'none';
-                if (adminJourneyActions) adminJourneyActions.style.display = 'none';
+                // adminJourneyActions is kept visible (do not set to 'none')
                 document.body.classList.remove('admin-active');
                 
                 renderCompetencies();
