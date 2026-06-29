@@ -690,20 +690,37 @@ function convertTimeToSeconds(timeStr) {
 function getYouTubeEmbedUrl(url, start = null, end = null) {
     if (!url) return null;
     let videoId = '';
-    try {
-        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-        const match = url.match(regExp);
-        if (match && match[2].length === 11) {
-            videoId = match[2];
-        } else if (url.includes('shorts/')) {
-            const parts = url.split('shorts/');
-            if (parts.length > 1) {
-                videoId = parts[1].split(/[?#]/)[0];
+    url = url.trim();
+    
+    // 1. 만약 입력값이 11자리 비디오 ID 자체인 경우 직접 할당
+    if (url.length === 11 && !url.includes('/') && !url.includes('.')) {
+        videoId = url;
+    } else {
+        try {
+            // 2. Shorts 및 Live 스트림 URL 처리
+            if (url.includes('shorts/')) {
+                const parts = url.split('shorts/');
+                if (parts.length > 1) {
+                    videoId = parts[1].split(/[?#]/)[0];
+                }
+            } else if (url.includes('live/')) {
+                const parts = url.split('live/');
+                if (parts.length > 1) {
+                    videoId = parts[1].split(/[?#]/)[0];
+                }
+            } else {
+                // 3. 일반적인 유튜브 URL 파싱
+                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                const match = url.match(regExp);
+                if (match && match[2].length === 11) {
+                    videoId = match[2];
+                }
             }
+        } catch (e) {
+            console.error('유튜브 URL 파싱 오류:', e);
         }
-    } catch (e) {
-        console.error('유튜브 URL 파싱 오류:', e);
     }
+    
     if (!videoId) return null;
     
     // 모바일 브라우저(iOS Safari 등)의 서드파티 쿠키 차단 정책을 우회하기 위해 youtube-nocookie.com 도메인 사용
@@ -748,6 +765,7 @@ function openDetailsModal(id) {
     let youtubeSection = '';
     if (item.youtubeUrl) {
         const embedUrl = getYouTubeEmbedUrl(item.youtubeUrl, item.youtubeStart, item.youtubeEnd);
+        console.log(`[YouTube embed debugging] Original URL: ${item.youtubeUrl} -> Generated Embed URL: ${embedUrl}`);
         if (embedUrl) {
             youtubeSection = `
                 <div class="modal-section">
