@@ -792,6 +792,13 @@ function openDetailsModal(id) {
             ${youtubeSection}
             ${imageSection}
             
+            ${item.summary ? `
+            <div class="modal-section">
+                <h4 class="modal-section-title">요약 설명</h4>
+                <p class="modal-desc-long">${item.summary}</p>
+            </div>
+            ` : ''}
+            
             ${item.description ? `
             <div class="modal-section">
                 <h4 class="modal-section-title">개요</h4>
@@ -1579,7 +1586,7 @@ function renderProjectForm(project = null, modalTitleStr) {
             </div>
             
             <div class="form-group">
-                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">요약 설명 (카드 노출)</label>
+                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">요약 설명</label>
                 <textarea id="proj-summary" rows="2" placeholder="간단한 요약 한 문장을 적어주세요." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); resize: vertical;" required>${isEdit ? project.summary : ''}</textarea>
             </div>
             
