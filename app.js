@@ -578,16 +578,21 @@ function getYouTubeEmbedUrl(url, start = null, end = null) {
     if (!videoId) return null;
     
     let embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
-    const params = [];
+    const params = [
+        'controls=0',         // 재생 컨트롤러 숨김 (탐색/조작 금지)
+        'disablekb=1',        // 키보드 단축키 비활성화
+        'fs=0',               // 전체화면 버튼 숨김
+        'rel=0',              // 관련 영상 추천 중단
+        'modestbranding=1',   // 유튜브 로고 표시 최소화
+        'iv_load_policy=3'    // 동영상 어노테이션(주석) 숨김
+    ];
     if (start) {
         params.push(`start=${start}`);
     }
     if (end) {
         params.push(`end=${end}`);
     }
-    if (params.length > 0) {
-        embedUrl += `?${params.join('&')}`;
-    }
+    embedUrl += `?${params.join('&')}`;
     return embedUrl;
 }
 
