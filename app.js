@@ -1815,9 +1815,12 @@ window.openGithubConfigModal = function() {
                     <input type="text" id="gh-path" value="${config.path || 'data.json'}" placeholder="예: data.json" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
                 </div>
             </div>
-            <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
-                <button type="button" onclick="closeAdminModal()" class="btn btn-outline" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">취소</button>
-                <button type="submit" class="btn btn-primary" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">설정 저장</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                <button type="button" onclick="clearGithubConfig()" class="btn btn-outline" style="padding: 0.6rem 1.2rem; font-size: 0.9rem; color: #f43f5e; border-color: rgba(244, 63, 94, 0.3); background: rgba(244, 63, 94, 0.05);">설정 삭제</button>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="button" onclick="closeAdminModal()" class="btn btn-outline" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">취소</button>
+                    <button type="submit" class="btn btn-primary" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">설정 저장</button>
+                </div>
             </div>
         </form>
     `;
@@ -1838,6 +1841,14 @@ window.openGithubConfigModal = function() {
         alert('GitHub 연동 설정이 로컬 브라우저에 임시 저장되었습니다.');
         closeAdminModal();
     });
+};
+
+window.clearGithubConfig = function() {
+    if (confirm('저장된 모든 GitHub 연동 설정을 삭제하시겠습니까? (로컬 브라우저에 저장 중인 토큰과 저장소 정보가 완전히 제거됩니다.)')) {
+        localStorage.removeItem('githubConfig');
+        alert('GitHub 연동 설정이 성공적으로 삭제되었습니다.');
+        closeAdminModal();
+    }
 };
 
 window.updateServerGithub = function() {
