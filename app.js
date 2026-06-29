@@ -762,6 +762,18 @@ function openDetailsModal(id) {
         }
     }
     
+    let imageSection = '';
+    if (item.imageUrl) {
+        imageSection = `
+            <div class="modal-section">
+                <h4 class="modal-section-title">대표 이미지</h4>
+                <div class="image-container" style="width: 100%; border-radius: 8px; overflow: hidden; margin-top: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid var(--border-color);">
+                    <img src="${item.imageUrl}" style="width: 100%; height: auto; display: block; max-height: 450px; object-fit: contain; background: rgba(0,0,0,0.2);">
+                </div>
+            </div>
+        `;
+    }
+    
     container.innerHTML = `
         <button class="modal-close-btn" id="modal-close-btn" aria-label="닫기">
             <i class="fa-solid fa-xmark"></i>
@@ -777,6 +789,7 @@ function openDetailsModal(id) {
         
         <div class="modal-body">
             ${youtubeSection}
+            ${imageSection}
             
             ${item.description ? `
             <div class="modal-section">
@@ -1575,6 +1588,21 @@ function renderProjectForm(project = null, modalTitleStr) {
             </div>
             
             <div class="form-group">
+                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">대표 이미지 업로드 (선택사항)</label>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <input type="file" id="proj-image" accept="image/*" style="display: none;">
+                    <button type="button" onclick="document.getElementById('proj-image').click()" class="btn btn-outline" style="padding: 0.6rem 1.2rem; font-size: 0.85rem;"><i class="fa-solid fa-image icon-left"></i>이미지 선택</button>
+                    <span id="proj-image-filename" style="font-size: 0.85rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 250px;">
+                        ${isEdit && project.imageUrl ? '등록된 이미지가 있습니다.' : '선택된 파일 없음'}
+                    </span>
+                    <button type="button" id="btn-delete-proj-image" class="btn btn-outline" style="padding: 0.6rem 1rem; font-size: 0.85rem; color: #f43f5e; border-color: rgba(244,63,94,0.2); display: ${isEdit && project.imageUrl ? 'inline-flex' : 'none'};"><i class="fa-solid fa-trash"></i></button>
+                </div>
+                <div id="proj-image-preview-wrapper" style="margin-top: 0.8rem; display: ${isEdit && project.imageUrl ? 'block' : 'none'};">
+                    <img id="proj-image-preview" src="${isEdit && project.imageUrl ? project.imageUrl : ''}" style="max-height: 120px; border-radius: 6px; border: 1px solid var(--border-color); object-fit: cover;">
+                </div>
+            </div>
+            
+            <div class="form-group">
                 <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">유튜브 링크 (선택사항)</label>
                 <input type="url" id="proj-youtube" value="${isEdit && project.youtubeUrl ? project.youtubeUrl : ''}" placeholder="예: https://www.youtube.com/watch?v=xxxxxx" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
             </div>
@@ -1598,6 +1626,44 @@ function renderProjectForm(project = null, modalTitleStr) {
     `;
     
     openAdminModal(modalTitleStr, formHtml);
+    
+    // 이미지 파일 비동기 변환 바인딩
+    let selectedImageBase64 = isEdit && project.imageUrl ? project.imageUrl : '';
+    setTimeout(() => {
+        const fileInput = document.getElementById('proj-image');
+        const filenameSpan = document.getElementById('proj-image-filename');
+        const previewWrapper = document.getElementById('proj-image-preview-wrapper');
+        const previewImg = document.getElementById('proj-image-preview');
+        const deleteBtn = document.getElementById('btn-delete-proj-image');
+        
+        if (fileInput) {
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    filenameSpan.textContent = file.name;
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        selectedImageBase64 = event.target.result;
+                        previewImg.src = selectedImageBase64;
+                        previewWrapper.style.display = 'block';
+                        if (deleteBtn) deleteBtn.style.display = 'inline-flex';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+        
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', () => {
+                selectedImageBase64 = '';
+                if (fileInput) fileInput.value = '';
+                filenameSpan.textContent = '선택된 파일 없음';
+                previewWrapper.style.display = 'none';
+                previewImg.src = '';
+                deleteBtn.style.display = 'none';
+            });
+        }
+    }, 100);
     
     const form = document.getElementById('project-form');
     form.addEventListener('submit', (e) => {
@@ -1660,6 +1726,7 @@ function renderProjectForm(project = null, modalTitleStr) {
             project.youtubeUrl = youtubeUrlVal;
             project.youtubeStart = youtubeStartVal;
             project.youtubeEnd = youtubeEndVal;
+            project.imageUrl = selectedImageBase64;
         } else {
             const newProj = {
                 id: `${categoryVal}-${Date.now()}`,
@@ -1678,7 +1745,8 @@ function renderProjectForm(project = null, modalTitleStr) {
                 icon: iconVal,
                 youtubeUrl: youtubeUrlVal,
                 youtubeStart: youtubeStartVal,
-                youtubeEnd: youtubeEndVal
+                youtubeEnd: youtubeEndVal,
+                imageUrl: selectedImageBase64
             };
             portfolioData.push(newProj);
         }
