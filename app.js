@@ -709,9 +709,7 @@ function getYouTubeEmbedUrl(url, start = null, end = null) {
     // 일부 공개(unlisted) 영상 임베딩 재생 호환성 향상을 위해 일반 youtube.com 도메인 사용
     let embedUrl = `https://www.youtube.com/embed/${videoId}`;
     const params = [
-        'controls=0',         // 재생 컨트롤러 숨김 (탐색/조작 금지)
-        'disablekb=1',        // 키보드 단축키 비활성화
-        'fs=0',               // 전체화면 버튼 숨김
+        'controls=1',         // 재생 컨트롤러 활성화 (기기 호환성 및 모바일 지원)
         'rel=0',              // 관련 영상 추천 중단
         'modestbranding=1',   // 유튜브 로고 표시 최소화
         'iv_load_policy=3',   // 동영상 어노테이션(주석) 숨김
@@ -758,10 +756,6 @@ function openDetailsModal(id) {
                     <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 8px; margin-top: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
                         <!-- 화면 확대 없이 100% 정상 비율 유지 -->
                         <iframe src="${embedUrl}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        <!-- 상단 제목 및 공유 버튼 클릭 차단용 투명 마스크 -->
-                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 65px; z-index: 10; background: transparent; cursor: default;" onclick="event.stopPropagation();" oncontextmenu="event.preventDefault(); event.stopPropagation();"></div>
-                        <!-- 하단 재생 컨트롤러 클릭 차단용 투명 마스크 -->
-                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 50px; z-index: 10; background: transparent; cursor: default;" onclick="event.stopPropagation();" oncontextmenu="event.preventDefault(); event.stopPropagation();"></div>
                     </div>
                 </div>
             `;
