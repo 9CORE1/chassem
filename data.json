@@ -323,6 +323,22 @@
       "title": "데이터분석준전문가(ADSP)",
       "institution": "한국데이터산업진흥원",
       "description": "데이터분석준전문가(ADSP)"
+    },
+    {
+      "id": "journey-1782712085366",
+      "category": "cert",
+      "period": "2004.08.10",
+      "title": "컴퓨터활용능력1급",
+      "institution": "대한상공회의소",
+      "description": "컴퓨터활용능력1급"
+    },
+    {
+      "id": "journey-1782712137934",
+      "category": "cert",
+      "period": "2003.06.23",
+      "title": "컴퓨터그래픽스운용기능사",
+      "institution": "한국산업인력공단",
+      "description": "컴퓨터그래픽스운용기능사"
     }
   ],
   "competenciesData": [
