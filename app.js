@@ -250,36 +250,36 @@ const defaultJourneyData = [
 
 const defaultCompetenciesData = [
     {
+        id: 'comp-it',
+        category: 'it',
+        title: '인공지능 활용',
+        icon: 'fa-robot',
+        skills: [
+            'Generative AI 프롬프트 엔지니어링',
+            'AI 기반 텍스트/이미지/비디오 생성',
+            'AI 도구를 활용한 업무 효율화'
+        ]
+    },
+    {
         id: 'comp-career',
         category: 'career',
-        title: '취업진로',
-        icon: 'fa-graduation-cap',
+        title: '비즈니스 사무자동화',
+        icon: 'fa-laptop-file',
         skills: [
-            '진로 상담 & 커리어 컨설팅',
-            '자기소개서 첨삭 & 면접 코칭',
-            '취업 역량 강화 프로그램 기획'
+            'Excel & Google Sheets 데이터 분석',
+            'Notion 기반 워크스페이스 구축',
+            '비즈니스 문서 및 PPT 시각화'
         ]
     },
     {
         id: 'comp-media',
         category: 'media',
-        title: '영상콘텐츠',
+        title: '콘텐츠 제작',
         icon: 'fa-video',
         skills: [
-            '영상 편집 (Premiere, After Effects)',
-            '유튜브 채널 운영 & 분석',
-            '시나리오 작성 & 스토리보드 기획'
-        ]
-    },
-    {
-        id: 'comp-it',
-        category: 'it',
-        title: 'IT 미래기술',
-        icon: 'fa-code',
-        skills: [
-            '프론트엔드 개발 (HTML/CSS/JS/React)',
-            'UI/UX 반응형 웹 디자인',
-            '공공데이터 활용 및 API 연동'
+            'Premiere & After Effects 영상 편집',
+            '유튜브/SNS 채널 기획 및 분석',
+            '디지털 콘텐츠 기획 및 브랜딩'
         ]
     }
 ];
