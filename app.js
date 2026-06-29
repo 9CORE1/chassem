@@ -787,7 +787,7 @@ function openDetailsModal(id) {
             
             ${item.role ? `
             <div class="modal-section">
-                <h4 class="modal-section-title">수행 역할</h4>
+                <h4 class="modal-section-title">기관명</h4>
                 <p class="modal-desc-long">${item.role}</p>
             </div>
             ` : ''}
@@ -1570,8 +1570,8 @@ function renderProjectForm(project = null, modalTitleStr) {
             </div>
             
             <div class="form-group">
-                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">담당 역할 및 활동</label>
-                <textarea id="proj-role" rows="2" placeholder="수행한 본인의 구체적인 역할 및 활동 내용" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); resize: vertical;" required>${isEdit ? project.role : ''}</textarea>
+                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">기관명</label>
+                <input type="text" id="proj-role" value="${isEdit ? project.role : ''}" placeholder="예: 대학일자리플러스센터, (주)나인코어" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
             </div>
             
             <div class="form-group">
