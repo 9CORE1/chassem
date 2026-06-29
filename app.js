@@ -692,12 +692,20 @@ function getYouTubeEmbedUrl(url, start = null, end = null) {
     let videoId = '';
     url = url.trim();
     
-    // 1. 만약 입력값이 11자리 비디오 ID 자체인 경우 직접 할당
+    // 1. 만약 전체 <iframe ...> HTML 코드를 통째로 붙여넣은 경우 src 속성값만 자동 추출
+    if (url.startsWith('<iframe') && url.includes('src=')) {
+        const srcMatch = url.match(/src=["']([^"']+)["']/);
+        if (srcMatch && srcMatch[1]) {
+            url = srcMatch[1];
+        }
+    }
+    
+    // 2. 만약 입력값이 11자리 비디오 ID 자체인 경우 직접 할당
     if (url.length === 11 && !url.includes('/') && !url.includes('.')) {
         videoId = url;
     } else {
         try {
-            // 2. Shorts 및 Live 스트림 URL 처리
+            // 3. Shorts 및 Live 스트림 URL 처리
             if (url.includes('shorts/')) {
                 const parts = url.split('shorts/');
                 if (parts.length > 1) {
@@ -771,8 +779,16 @@ function openDetailsModal(id) {
                 <div class="modal-section">
                     <h4 class="modal-section-title">관련 영상</h4>
                     <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 8px; margin-top: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                        <!-- 화면 확대 없이 100% 정상 비율 유지 -->
-                        <iframe src="${embedUrl}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                        <!-- 유튜브 공식 퍼가기(iframe) 사양 준수 -->
+                        <iframe 
+                            src="${embedUrl}" 
+                            title="YouTube video player" 
+                            frameborder="0" 
+                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                            referrerpolicy="strict-origin-when-cross-origin" 
+                            allowfullscreen>
+                        </iframe>
                     </div>
                 </div>
             `;
