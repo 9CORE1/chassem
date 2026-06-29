@@ -1023,8 +1023,8 @@ body.light-mode .card-tag {
 }
 
 .timeline-item {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     width: 100%;
     margin-bottom: 4rem;
     position: relative;
@@ -1051,15 +1051,19 @@ body.light-mode .card-tag {
 .timeline-content-wrapper {
     width: fit-content;
     min-width: 320px;
-    max-width: 46%;
+    max-width: 90%;
 }
 
 .timeline-item.left .timeline-content-wrapper {
-    text-align: right;
+    grid-column: 1;
+    justify-self: end;
+    margin-right: 30px;
 }
 
-.timeline-item.right {
-    flex-direction: row-reverse;
+.timeline-item.right .timeline-content-wrapper {
+    grid-column: 2;
+    justify-self: start;
+    margin-left: 30px;
 }
 
 .timeline-card {
@@ -1657,6 +1661,7 @@ body.light-mode footer {
     }
     
     .timeline-item {
+        display: block;
         margin-bottom: 3rem;
     }
     
@@ -1665,16 +1670,18 @@ body.light-mode footer {
     }
     
     .timeline-content-wrapper {
-        width: calc(100% - 4rem);
-        margin-left: auto;
+        width: calc(100% - 4rem) !important;
+        max-width: 100% !important;
+        margin-left: auto !important;
+        margin-right: 0 !important;
     }
     
     .timeline-item.left .timeline-content-wrapper {
-        text-align: left;
+        margin-right: 0;
     }
     
-    .timeline-item.right {
-        flex-direction: row;
+    .timeline-item.right .timeline-content-wrapper {
+        margin-left: auto;
     }
     
     .timeline-item.left .timeline-card::before {
