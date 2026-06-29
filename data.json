@@ -185,6 +185,25 @@
       "youtubeUrl": "https://youtu.be/UkawNL1Z0Cc?si=lfNDwUK_WIfZZlBX",
       "youtubeStart": 85,
       "youtubeEnd": 180
+    },
+    {
+      "id": "career-1782720001520",
+      "category": "career",
+      "title": "AI역량면접의 모든것(AI 취업솔루션 활용 방안)",
+      "period": "2026.05",
+      "year": "2026",
+      "summary": "부산여자대학교 AI역량면접의 모든 것",
+      "description": "",
+      "role": "AI 취업솔루션 활용 방안",
+      "highlights": [],
+      "techStack": [],
+      "accentColor": "var(--color-career-end)",
+      "accentBg": "rgba(79, 172, 254, 0.1)",
+      "accentBorder": "rgba(79, 172, 254, 0.2)",
+      "icon": "fa-graduation-cap",
+      "youtubeUrl": "",
+      "youtubeStart": "",
+      "youtubeEnd": ""
     }
   ],
   "journeyData": [
