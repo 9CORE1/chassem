@@ -372,20 +372,20 @@
       "title": "인공지능 활용",
       "icon": "fa-robot",
       "skills": [
-        "Generative AI 프롬프트 엔지니어링",
-        "AI 기반 텍스트/이미지/비디오 생성",
-        "AI 도구를 활용한 업무 효율화"
+        "생성형 AI 실무 활용 및 교육 역량",
+        "AI 교육과정·자격과정 설계 역량",
+        "디지털 전환(DX) 및 업무 생산성 혁신 역량"
       ]
     },
     {
       "id": "comp-career",
       "category": "career",
-      "title": "사무자동화",
+      "title": "취업진로",
       "icon": "fa-laptop-file",
       "skills": [
-        "Excel & Google Sheets 데이터 분석",
-        "Notion 기반 워크스페이스 구축",
-        "비즈니스 문서 및 PPT 시각화"
+        "AI 활용 취업 및 진로 컨설팅 역량",
+        "진로설계 및 커리어코칭 역량",
+        "취업·진로 교육 프로그램 기획 역량"
       ]
     },
     {
@@ -394,9 +394,9 @@
       "title": "콘텐츠 제작",
       "icon": "fa-video",
       "skills": [
-        "Premiere & After Effects 영상 편집",
-        "유튜브/SNS 채널 기획 및 분석",
-        "디지털 콘텐츠 기획 및 브랜딩"
+        "AI 기반 디지털 콘텐츠 제작 역량",
+        "AI 기반 취업 콘텐츠 개발 역량",
+        "교육 콘텐츠 및 학습경험 설계 역량"
       ]
     }
   ]
