@@ -707,10 +707,10 @@ function openDetailsModal(id) {
                 <div class="modal-section">
                     <h4 class="modal-section-title">관련 영상</h4>
                     <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 8px; margin-top: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                        <iframe src="${embedUrl}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
-                        <!-- 상단 타이틀 및 공유(링크 복사) 버튼 영역 클릭 차단막 -->
+                        <!-- 1.2배 확대 및 상하좌우 여백 크롭을 통해 유튜브 제목과 공유(링크 복사) 아이콘을 보이지 않게 처리 -->
+                        <iframe src="${embedUrl}" style="position: absolute; top: -10%; left: -10%; width: 120%; height: 120%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                        <!-- 상단 및 하단 조작방지 투명 레이어막 -->
                         <div style="position: absolute; top: 0; left: 0; width: 100%; height: 60px; z-index: 10; background: transparent;" onclick="event.stopPropagation();" oncontextmenu="event.preventDefault(); event.stopPropagation();"></div>
-                        <!-- 하단 유튜브 로고 및 링크 영역 클릭 차단막 -->
                         <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 50px; z-index: 10; background: transparent;" onclick="event.stopPropagation();" oncontextmenu="event.preventDefault(); event.stopPropagation();"></div>
                     </div>
                 </div>
