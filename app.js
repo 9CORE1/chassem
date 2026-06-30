@@ -760,7 +760,7 @@ function convertTimeToSeconds(timeStr) {
     return isNaN(num) ? '' : num;
 }
 
-function getGoogleDriveEmbedUrl(url) {
+function getGoogleDriveEmbedUrl(url, start = null) {
     if (!url) return null;
     url = url.trim();
     let fileId = '';
@@ -784,7 +784,14 @@ function getGoogleDriveEmbedUrl(url) {
     }
     
     if (!fileId) return null;
-    return `https://drive.google.com/file/d/${fileId}/preview`;
+    
+    let embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+    const parsedStart = convertTimeToSeconds(start);
+    if (parsedStart) {
+        embedUrl += `?t=${parsedStart}`;
+    }
+    
+    return embedUrl;
 }
 
 function getYouTubeEmbedUrl(url, start = null, end = null) {
@@ -890,14 +897,14 @@ function openDetailsModal(id) {
     }
     
     if (item.googleDriveUrl) {
-        const embedUrl = getGoogleDriveEmbedUrl(item.googleDriveUrl);
+        const embedUrl = getGoogleDriveEmbedUrl(item.googleDriveUrl, item.youtubeStart);
         console.log(`[Google Drive embed debugging] Original URL: ${item.googleDriveUrl} -> Generated Embed URL: ${embedUrl}`);
         if (embedUrl) {
             const marginStyle = videoPlayersHtml ? 'margin-top: 1.5rem;' : 'margin-top: 1rem;';
             videoPlayersHtml += `
-                <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 8px; ${marginStyle} box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                    <!-- 화면 제어/공유 방지를 위해 allowfullscreen 제거하고 allow="autoplay" 설정 -->
-                    <iframe src="${embedUrl}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="autoplay" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                <div class="video-container" oncontextmenu="return false;" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 8px; ${marginStyle} box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                    <!-- 화면 제어/공유 방지를 위해 allowfullscreen 제거, allow="autoplay" 설정 및 sandbox 설정으로 새창 팝업 차단 -->
+                    <iframe src="${embedUrl}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="autoplay" sandbox="allow-scripts allow-same-origin allow-presentation" referrerpolicy="strict-origin-when-cross-origin"></iframe>
                     <!-- 우상단 팝아웃(새창열기)을 통한 다운로드 및 공유 방지용 반응형 투명 오버레이 (상단 약 20%) -->
                     <div style="position: absolute; top: 0; left: 0; width: 100%; height: 20%; z-index: 5; background: transparent;"></div>
                 </div>
