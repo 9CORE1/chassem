@@ -316,6 +316,28 @@
       "googleDriveUrl": "https://drive.google.com/file/d/1N-qV2jsXpAlqVHOuKAp2irMX6FGOhDfR/view?usp=sharing",
       "imageUrl": "",
       "imageUrl2": ""
+    },
+    {
+      "id": "media-1782806441822",
+      "category": "media",
+      "title": "프레젠테이션 스킬업",
+      "period": "2020.11",
+      "year": "2020",
+      "summary": "프레젠테이션 스킬업(영상 강의)",
+      "description": "",
+      "role": "부산가톨릭대학교",
+      "highlights": [],
+      "techStack": [],
+      "accentColor": "var(--color-media-end)",
+      "accentBg": "rgba(248, 87, 166, 0.1)",
+      "accentBorder": "rgba(248, 87, 166, 0.2)",
+      "icon": "fa-video",
+      "youtubeUrl": "",
+      "youtubeStart": "",
+      "youtubeEnd": "",
+      "googleDriveUrl": "",
+      "imageUrl": "",
+      "imageUrl2": ""
     }
   ],
   "journeyData": [
