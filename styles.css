@@ -1420,8 +1420,14 @@ body.light-mode footer {
 
 .footer-desc {
     color: var(--text-secondary);
-    max-width: 480px;
     font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+@media (max-width: 576px) {
+    .footer-desc {
+        white-space: normal;
+    }
 }
 
 .footer-right {
