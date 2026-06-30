@@ -853,8 +853,10 @@ function openDetailsModal(id) {
                     <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 8px; margin-top: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
                         <!-- 화면 제어/공유 방지를 위해 allow 속성 수정 및 allowfullscreen 제거 -->
                         <iframe src="${embedUrl}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"></iframe>
-                        <!-- 상단 타이틀 및 공유/정보 버튼 클릭 차단용 투명 오버레이 -->
-                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 65px; z-index: 5; background: transparent;"></div>
+                        <!-- 상단 타이틀 및 공유/정보 버튼 클릭 차단용 반응형 투명 오버레이 -->
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 18%; z-index: 5; background: transparent;"></div>
+                        <!-- 하단 컨트롤러 및 유튜브 워터마크 클릭 차단용 반응형 투명 오버레이 -->
+                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 15%; z-index: 5; background: transparent;"></div>
                     </div>
                 </div>
             `;
