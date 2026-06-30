@@ -864,23 +864,23 @@ function openDetailsModal(id) {
         if (item.imageUrl) {
             const imgSrc = item.imageUrl.startsWith('data:') ? item.imageUrl : `${item.imageUrl}${cacheBuster}`;
             imagesHtml += `
-                <div class="image-wrapper-detail" style="flex: 1; min-width: 250px; max-width: 100%;">
-                    <img src="${imgSrc}" style="width: 100%; height: auto; display: block; max-height: 400px; object-fit: contain; background: rgba(0,0,0,0.2); border-radius: 6px; border: 1px solid var(--border-color);">
+                <div class="image-wrapper-detail">
+                    <img src="${imgSrc}" alt="${item.title}">
                 </div>
             `;
         }
         if (item.imageUrl2) {
             const imgSrc2 = item.imageUrl2.startsWith('data:') ? item.imageUrl2 : `${item.imageUrl2}${cacheBuster}`;
             imagesHtml += `
-                <div class="image-wrapper-detail" style="flex: 1; min-width: 250px; max-width: 100%;">
-                    <img src="${imgSrc2}" style="width: 100%; height: auto; display: block; max-height: 400px; object-fit: contain; background: rgba(0,0,0,0.2); border-radius: 6px; border: 1px solid var(--border-color);">
+                <div class="image-wrapper-detail">
+                    <img src="${imgSrc2}" alt="${item.title}">
                 </div>
             `;
         }
         imageSection = `
             <div class="modal-section">
                 <h4 class="modal-section-title">대표 이미지</h4>
-                <div class="image-container-grid" style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">
+                <div class="image-container-grid">
                     ${imagesHtml}
                 </div>
             </div>
