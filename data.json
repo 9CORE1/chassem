@@ -471,6 +471,28 @@
       "googleDriveUrl": "",
       "imageUrl": "images/project-it-1782810329054.jpg",
       "imageUrl2": "images/project-it-1782810329054-2.jpg"
+    },
+    {
+      "id": "career-1782810561834",
+      "category": "career",
+      "title": "취업전략 커리어로드맵",
+      "period": "2019.03.28",
+      "year": "2019",
+      "summary": "대학생 진로탐색 및 중소기업탐방 프로그램\n4차 산업혁명 중소기업탐방 프로그램",
+      "description": "",
+      "role": "동의대학교",
+      "highlights": [],
+      "techStack": [],
+      "accentColor": "var(--color-career-end)",
+      "accentBg": "rgba(79, 172, 254, 0.1)",
+      "accentBorder": "rgba(79, 172, 254, 0.2)",
+      "icon": "fa-graduation-cap",
+      "youtubeUrl": "",
+      "youtubeStart": "",
+      "youtubeEnd": "",
+      "googleDriveUrl": "",
+      "imageUrl": "images/project-career-1782810561834.jpg",
+      "imageUrl2": "images/project-career-1782810561834-2.jpg"
     }
   ],
   "journeyData": [
