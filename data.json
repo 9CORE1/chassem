@@ -298,9 +298,9 @@
     {
       "id": "media-1782805516863",
       "category": "media",
-      "title": "사무자동화 영상강의(엑셀 고급, 프레젠테이션)",
-      "period": "2021.02",
-      "year": "2021",
+      "title": "사무자동화 영상강의(엑셀 기본, 엑셀 고급, 프레젠테이션)",
+      "period": "2020 ~ 2022",
+      "year": "2020",
       "summary": "장기현장실습 사무자동화 영상강의\n엑셀 고급, 프레젠테이션",
       "description": "",
       "role": "울산대학교",
@@ -311,9 +311,9 @@
       "accentBorder": "rgba(248, 87, 166, 0.2)",
       "icon": "fa-video",
       "youtubeUrl": "",
-      "youtubeStart": "",
-      "youtubeEnd": "",
-      "googleDriveUrl": "",
+      "youtubeStart": 294,
+      "youtubeEnd": 357,
+      "googleDriveUrl": "https://drive.google.com/file/d/1N-qV2jsXpAlqVHOuKAp2irMX6FGOhDfR/view?usp=sharing",
       "imageUrl": "",
       "imageUrl2": ""
     }
