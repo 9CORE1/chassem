@@ -907,6 +907,8 @@ function openDetailsModal(id) {
                     <iframe src="${embedUrl}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="autoplay" sandbox="allow-scripts allow-same-origin allow-presentation" referrerpolicy="strict-origin-when-cross-origin"></iframe>
                     <!-- 우상단 팝아웃(새창열기)을 통한 다운로드 및 공유 방지용 반응형 투명 오버레이 (상단 약 20%) -->
                     <div style="position: absolute; top: 0; left: 0; width: 100%; height: 20%; z-index: 5; background: transparent;"></div>
+                    <!-- 하단 재생 바 탐색 및 조절 클릭 차단용 반응형 투명 오버레이 (하단 약 15%) -->
+                    <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 15%; z-index: 5; background: transparent;"></div>
                 </div>
             `;
         }
