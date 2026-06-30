@@ -908,7 +908,7 @@ function openDetailsModal(id) {
                     <!-- 우상단 팝아웃(새창열기)을 통한 다운로드 및 공유 방지용 고정 높이 투명 오버레이 (상단 60px) -->
                     <div style="position: absolute; top: 0; left: 0; width: 100%; height: 60px; z-index: 5; background: transparent;"></div>
                     <!-- 하단 재생 바 탐색 및 조절 클릭 차단용 고정 높이 투명 오버레이 (하단 65px) -->
-                    <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 80px; z-index: 5; background: transparent;"></div>
+                    <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 150px; z-index: 5; background: transparent;"></div>
                 </div>
             `;
         }
