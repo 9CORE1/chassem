@@ -81,27 +81,6 @@
       "youtubeEnd": 1897,
       "imageUrl": "",
       "imageUrl2": ""
-    },
-    {
-      "id": "career-1782787901872",
-      "category": "career",
-      "title": "AI활용 취업지도 및 자기소개서 특강",
-      "period": "2025.04",
-      "year": "2025",
-      "summary": "동아대학교 컨설턴트 역량강화사업",
-      "description": "",
-      "role": "동아대학교",
-      "highlights": [],
-      "techStack": [],
-      "accentColor": "var(--color-career-end)",
-      "accentBg": "rgba(79, 172, 254, 0.1)",
-      "accentBorder": "rgba(79, 172, 254, 0.2)",
-      "icon": "fa-graduation-cap",
-      "youtubeUrl": "",
-      "youtubeStart": "",
-      "youtubeEnd": "",
-      "imageUrl": "images/project-career-1782787901872.jpg",
-      "imageUrl2": "images/project-career-1782787901872-2.jpg"
     }
   ],
   "journeyData": [
