@@ -1665,6 +1665,32 @@ function compressAndResizeImage(img, maxWidth = 1024, maxHeight = 1024, quality 
     return canvas.toDataURL('image/jpeg', quality);
 }
 
+// 이미지 비율을 유지하면서 타겟 크기에 맞춰 캔버스 중앙에 배치(Letterbox/Pillarbox)하는 헬퍼 함수
+function resizeAndPadImage(img, targetWidth, targetHeight) {
+    const canvas = document.createElement('canvas');
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
+    const ctx = canvas.getContext('2d');
+    
+    // 흰색 배경으로 채우기 (JPEG 표준 대응 및 여백 처리)
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, targetWidth, targetHeight);
+    
+    // 비율 맞춤용 스케일 팩터 계산 (Contain)
+    const scale = Math.min(targetWidth / img.width, targetHeight / img.height);
+    const scaledWidth = img.width * scale;
+    const scaledHeight = img.height * scale;
+    
+    // 중앙 정렬 오프셋 계산
+    const x = (targetWidth - scaledWidth) / 2;
+    const y = (targetHeight - scaledHeight) / 2;
+    
+    // 이미지 그리기
+    ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+    
+    return canvas.toDataURL('image/jpeg', 0.85); // 퀄리티 0.85로 선명하게 저장
+}
+
 window.openEditProjectModal = function(projectId) {
     const project = portfolioData.find(p => p.id === projectId);
     if (!project) return;
@@ -1769,6 +1795,71 @@ function renderProjectForm(project = null, modalTitleStr) {
     // 이미지 파일 비동기 변환 바인딩
     let selectedImageBase64 = isEdit && project.imageUrl ? project.imageUrl : '';
     let selectedImageBase64_2 = isEdit && project.imageUrl2 ? project.imageUrl2 : '';
+    
+    function alignImageSizes(callback) {
+        if (!selectedImageBase64 || !selectedImageBase64_2) {
+            if (callback) callback();
+            return;
+        }
+        
+        const img1 = new Image();
+        const img2 = new Image();
+        img1.crossOrigin = 'anonymous';
+        img2.crossOrigin = 'anonymous';
+        
+        let loadedCount = 0;
+        let failed = false;
+        
+        const onImgLoad = () => {
+            if (failed) return;
+            loadedCount++;
+            if (loadedCount === 2) {
+                try {
+                    const w1 = img1.width;
+                    const h1 = img1.height;
+                    const w2 = img2.width;
+                    const h2 = img2.height;
+                    
+                    if (w1 === w2 && h1 === h2) {
+                        if (callback) callback();
+                        return;
+                    }
+                    
+                    const targetWidth = Math.max(w1, w2);
+                    const targetHeight = Math.max(h1, h2);
+                    
+                    selectedImageBase64 = resizeAndPadImage(img1, targetWidth, targetHeight);
+                    selectedImageBase64_2 = resizeAndPadImage(img2, targetWidth, targetHeight);
+                    
+                    // Update preview display on form
+                    const previewImg = document.getElementById('proj-image-preview');
+                    const previewImg2 = document.getElementById('proj-image-preview2');
+                    if (previewImg) previewImg.src = selectedImageBase64;
+                    if (previewImg2) previewImg2.src = selectedImageBase64_2;
+                    
+                    console.log(`[Image Alignment] Successfully aligned form images to ${targetWidth}x${targetHeight}`);
+                } catch (err) {
+                    console.error('[Image Alignment] Failed to align image sizes:', err);
+                }
+                if (callback) callback();
+            }
+        };
+        
+        const onImgError = (err) => {
+            console.warn('[Image Alignment] Image load error during size alignment:', err);
+            failed = true;
+            if (callback) callback();
+        };
+        
+        img1.onload = onImgLoad;
+        img2.onload = onImgLoad;
+        img1.onerror = onImgError;
+        img2.onerror = onImgError;
+        
+        img1.src = selectedImageBase64;
+        img2.src = selectedImageBase64_2;
+    }
+    
     setTimeout(() => {
         // 이미지 1 처리
         const fileInput = document.getElementById('proj-image');
@@ -1853,94 +1944,101 @@ function renderProjectForm(project = null, modalTitleStr) {
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         
-        const categoryVal = document.getElementById('proj-category').value;
-        const titleVal = document.getElementById('proj-title').value.trim();
-        const periodVal = document.getElementById('proj-period').value.trim();
-        const summaryVal = document.getElementById('proj-summary').value.trim();
-        const roleVal = document.getElementById('proj-role').value.trim();
-        const youtubeUrlVal = document.getElementById('proj-youtube').value.trim();
-        const youtubeStartVal = convertTimeToSeconds(document.getElementById('proj-youtube-start').value.trim());
-        const youtubeEndVal = convertTimeToSeconds(document.getElementById('proj-youtube-end').value.trim());
-        
-        const descriptionVal = isEdit ? project.description : '';
-        const highlightsVal = isEdit ? project.highlights : [];
-        const techStackVal = isEdit ? project.techStack : [];
-        
-        let iconVal = 'fa-code';
-        if (categoryVal === 'career') {
-            iconVal = 'fa-graduation-cap';
-        } else if (categoryVal === 'media') {
-            iconVal = 'fa-video';
-        }
-        if (isEdit && project.icon) {
-            iconVal = project.icon;
+        const saveBtn = form.querySelector('button[type="submit"]');
+        if (saveBtn) {
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin icon-left"></i>저장 중...';
         }
         
-        const yearMatch = periodVal.match(/\d{4}/);
-        const yearVal = yearMatch ? yearMatch[0] : new Date().getFullYear().toString();
-        
-        let colorVal = 'var(--color-it-end)';
-        let bgVal = 'rgba(225, 0, 255, 0.1)';
-        let borderVal = 'rgba(225, 0, 255, 0.2)';
-        
-        if (categoryVal === 'career') {
-            colorVal = 'var(--color-career-end)';
-            bgVal = 'rgba(79, 172, 254, 0.1)';
-            borderVal = 'rgba(79, 172, 254, 0.2)';
-        } else if (categoryVal === 'media') {
-            colorVal = 'var(--color-media-end)';
-            bgVal = 'rgba(248, 87, 166, 0.1)';
-            borderVal = 'rgba(248, 87, 166, 0.2)';
-        }
-        
-        if (isEdit) {
-            project.category = categoryVal;
-            project.title = titleVal;
-            project.period = periodVal;
-            project.year = yearVal;
-            project.summary = summaryVal;
-            project.description = descriptionVal;
-            project.role = roleVal;
-            project.highlights = highlightsVal;
-            project.techStack = techStackVal;
-            project.icon = iconVal;
-            project.accentColor = colorVal;
-            project.accentBg = bgVal;
-            project.accentBorder = borderVal;
-            project.youtubeUrl = youtubeUrlVal;
-            project.youtubeStart = youtubeStartVal;
-            project.youtubeEnd = youtubeEndVal;
-            project.imageUrl = selectedImageBase64;
-            project.imageUrl2 = selectedImageBase64_2;
-        } else {
-            const newProj = {
-                id: `${categoryVal}-${Date.now()}`,
-                category: categoryVal,
-                title: titleVal,
-                period: periodVal,
-                year: yearVal,
-                summary: summaryVal,
-                description: descriptionVal,
-                role: roleVal,
-                highlights: highlightsVal,
-                techStack: techStackVal,
-                accentColor: colorVal,
-                accentBg: bgVal,
-                accentBorder: borderVal,
-                icon: iconVal,
-                youtubeUrl: youtubeUrlVal,
-                youtubeStart: youtubeStartVal,
-                youtubeEnd: youtubeEndVal,
-                imageUrl: selectedImageBase64,
-                imageUrl2: selectedImageBase64_2
-            };
-            portfolioData.push(newProj);
-        }
-        
-        saveAllData();
-        
-        renderPortfolioGrid();
-        closeAdminModal();
+        alignImageSizes(() => {
+            const categoryVal = document.getElementById('proj-category').value;
+            const titleVal = document.getElementById('proj-title').value.trim();
+            const periodVal = document.getElementById('proj-period').value.trim();
+            const summaryVal = document.getElementById('proj-summary').value.trim();
+            const roleVal = document.getElementById('proj-role').value.trim();
+            const youtubeUrlVal = document.getElementById('proj-youtube').value.trim();
+            const youtubeStartVal = convertTimeToSeconds(document.getElementById('proj-youtube-start').value.trim());
+            const youtubeEndVal = convertTimeToSeconds(document.getElementById('proj-youtube-end').value.trim());
+            
+            const descriptionVal = isEdit ? project.description : '';
+            const highlightsVal = isEdit ? project.highlights : [];
+            const techStackVal = isEdit ? project.techStack : [];
+            
+            let iconVal = 'fa-code';
+            if (categoryVal === 'career') {
+                iconVal = 'fa-graduation-cap';
+            } else if (categoryVal === 'media') {
+                iconVal = 'fa-video';
+            }
+            if (isEdit && project.icon) {
+                iconVal = project.icon;
+            }
+            
+            const yearMatch = periodVal.match(/\d{4}/);
+            const yearVal = yearMatch ? yearMatch[0] : new Date().getFullYear().toString();
+            
+            let colorVal = 'var(--color-it-end)';
+            let bgVal = 'rgba(225, 0, 255, 0.1)';
+            let borderVal = 'rgba(225, 0, 255, 0.2)';
+            
+            if (categoryVal === 'career') {
+                colorVal = 'var(--color-career-end)';
+                bgVal = 'rgba(79, 172, 254, 0.1)';
+                borderVal = 'rgba(79, 172, 254, 0.2)';
+            } else if (categoryVal === 'media') {
+                colorVal = 'var(--color-media-end)';
+                bgVal = 'rgba(248, 87, 166, 0.1)';
+                borderVal = 'rgba(248, 87, 166, 0.2)';
+            }
+            
+            if (isEdit) {
+                project.category = categoryVal;
+                project.title = titleVal;
+                project.period = periodVal;
+                project.year = yearVal;
+                project.summary = summaryVal;
+                project.description = descriptionVal;
+                project.role = roleVal;
+                project.highlights = highlightsVal;
+                project.techStack = techStackVal;
+                project.icon = iconVal;
+                project.accentColor = colorVal;
+                project.accentBg = bgVal;
+                project.accentBorder = borderVal;
+                project.youtubeUrl = youtubeUrlVal;
+                project.youtubeStart = youtubeStartVal;
+                project.youtubeEnd = youtubeEndVal;
+                project.imageUrl = selectedImageBase64;
+                project.imageUrl2 = selectedImageBase64_2;
+            } else {
+                const newProj = {
+                    id: `${categoryVal}-${Date.now()}`,
+                    category: categoryVal,
+                    title: titleVal,
+                    period: periodVal,
+                    year: yearVal,
+                    summary: summaryVal,
+                    description: descriptionVal,
+                    role: roleVal,
+                    highlights: highlightsVal,
+                    techStack: techStackVal,
+                    accentColor: colorVal,
+                    accentBg: bgVal,
+                    accentBorder: borderVal,
+                    icon: iconVal,
+                    youtubeUrl: youtubeUrlVal,
+                    youtubeStart: youtubeStartVal,
+                    youtubeEnd: youtubeEndVal,
+                    imageUrl: selectedImageBase64,
+                    imageUrl2: selectedImageBase64_2
+                };
+                portfolioData.push(newProj);
+            }
+            
+            saveAllData();
+            renderPortfolioGrid();
+            closeAdminModal();
+        });
     });
 }
 
