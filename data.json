@@ -405,6 +405,28 @@
       "googleDriveUrl": "",
       "imageUrl": "",
       "imageUrl2": ""
+    },
+    {
+      "id": "career-1782809281059",
+      "category": "career",
+      "title": "디자인 유어 라이프",
+      "period": "2018.05.30",
+      "year": "2018",
+      "summary": "Design Your Life\n진로설정과 탐색",
+      "description": "",
+      "role": "울산과학대학교",
+      "highlights": [],
+      "techStack": [],
+      "accentColor": "var(--color-career-end)",
+      "accentBg": "rgba(79, 172, 254, 0.1)",
+      "accentBorder": "rgba(79, 172, 254, 0.2)",
+      "icon": "fa-graduation-cap",
+      "youtubeUrl": "",
+      "youtubeStart": "",
+      "youtubeEnd": "",
+      "googleDriveUrl": "",
+      "imageUrl": "images/project-career-1782809281059.jpg",
+      "imageUrl2": "images/project-career-1782809281059-2.jpg"
     }
   ],
   "journeyData": [
