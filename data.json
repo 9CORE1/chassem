@@ -1,95 +1,6 @@
 {
   "portfolioData": [
     {
-      "id": "career-1",
-      "category": "career",
-      "title": "청년인재 커리어 빌드업 프로그램 컨설턴트",
-      "period": "2025.03 - 2026.02",
-      "year": "2025",
-      "summary": "대학 청년들을 대상으로 맞춤형 커리어 로드맵을 설계하고, 자기소개서 첨삭 및 면접 코칭을 전담하여 실질적인 취업률 향상에 기여했습니다.",
-      "description": "대학 청년들의 취업난을 해소하기 위해 마련된 정부 지원 대학 연계 사업에서 전담 취업 컨설턴트로 활동했습니다. 개인의 역량과 희망 분야를 객과적으로 분석하여 맞춤형 목표를 도출하고 실행 전략을 제공했습니다.",
-      "role": "주요 역량 분석 및 단계별 커리어 로드맵 설계, 이력서/자기소개서 정밀 클리닉, AI 및 대면 면접 시뮬레이션 및 피드백 제공, 취업 동향 트렌드 강의 운영.",
-      "highlights": [
-        "1:1 전담 관리 학생 120명 중 85%의 대기업 및 우수 중견기업 서류 전형 합격률 달성",
-        "참여자 설문 조사 기준 전문 상담 만족도 점수 4.9 / 5.0 획득",
-        "모의 면접 프로세스를 체계화하여 학생들의 실전 면접 불안감 지수 평균 40% 감소 유도",
-        "비대면 면접 대비용 1인 피드백 가이드북 자체 제작 및 배포 (누적 다운로드 500건+)"
-      ],
-      "techStack": [
-        "커리어 컨설팅",
-        "직무 역량 분석",
-        "강의/스피치",
-        "취업 진단 Tool"
-      ],
-      "accentColor": "var(--color-career-end)",
-      "accentBg": "rgba(79, 172, 254, 0.1)",
-      "accentBorder": "rgba(79, 172, 254, 0.2)",
-      "icon": "fa-graduation-cap",
-      "youtubeUrl": ""
-    },
-    {
-      "id": "media-2",
-      "category": "media",
-      "title": "로컬 청년 창업 인터뷰 다큐멘터리 제작 PD",
-      "period": "2023.07 - 2023.12",
-      "year": "2023",
-      "summary": "지역 청년 창업가들의 도전과 성장을 다룬 15분 분량의 휴먼 다큐멘터리를 연출하고 촬영 및 영상 편집 전 과정을 주도했습니다.",
-      "description": "지역 문화 재단의 미디어 공모전에 당선되어 제작비를 지원받아 진행된 청년 로컬 크리에이터 아카이빙 다큐멘터리입니다. 창업가 3인의 생생한 인터뷰와 시네마틱한 B-roll 컷을 결합하여 몰입감을 높였습니다.",
-      "role": "기획안 및 시나리오 연출, 출연자 섭외 및 인터뷰 스크립트 작성, 메인 카메라 촬영(Sony A7S3) 및 3점 조명 셋업, 사운드 믹싱 및 서정적 색보정(DLog -> REC709).",
-      "highlights": [
-        "지역 문화 재단 미디어 지원 부문 최우수작 선정 및 상패 수여",
-        "지역 독립영화관 및 메가박스 특별 세션에서 다큐멘터리 공식 초청 상영",
-        "스토리라인 구성을 통해 단순 인터뷰 방식을 탈피, 감성적이고 몰입감 높은 연출력으로 영상 집중도 점수 향상",
-        "유튜브 등 디지털 플랫폼 릴리즈 후 누적 2만 뷰 기록, 지역 청년 커뮤니티 활성화 기여"
-      ],
-      "techStack": [
-        "시네마토그래피",
-        "다큐멘터리 연출",
-        "인터뷰 촬영",
-        "다빈치 리졸브",
-        "색보정"
-      ],
-      "accentColor": "var(--color-media-end)",
-      "accentBg": "rgba(248, 87, 166, 0.1)",
-      "accentBorder": "rgba(248, 87, 166, 0.2)",
-      "icon": "fa-video",
-      "youtubeUrl": "",
-      "youtubeStart": "",
-      "youtubeEnd": "",
-      "imageUrl": "images/project-media-2.jpg",
-      "imageUrl2": "images/project-media-2-2.jpg"
-    },
-    {
-      "id": "media-3",
-      "category": "media",
-      "title": "모교 공식 홍보 캠페인 영상 제작 프로젝트",
-      "period": "2022.09 - 2022.12",
-      "year": "2022",
-      "summary": "모교 대학 홍보실과 협업하여, 예비 신입생을 위한 트렌디하고 감각적인 대학 소개 영상을 기획 및 연출하였습니다.",
-      "description": "기존의 딱딱하고 정형화된 대학 공식 홍보 영상에서 벗어나, 20대 대학생의 활기찬 일상을 브이로그와 시네마틱 스타일을 결합하여 풀어낸 뉴트로 감성 대학 홍보 영상입니다.",
-      "role": "아이디어 피칭 및 총 연출, 시나리오 작성 및 스토리보드 스케치, 모션 그래픽 타이틀 제작 및 화면 트랜지션 디자인.",
-      "highlights": [
-        "대학 공식 유튜브 채널 메인 영상 업로드 후 조회수 5만 회 이상 기록",
-        "해당 연도 대학 입학 설명회 및 정시 설명회 메인 스크린 공식 오프닝 영상으로 채택",
-        "After Effects 모션 그래픽을 활용하여 대학의 강점(장학제도, 교환학생)을 타이포그래피로 시각화해 정보 전달력 제고",
-        "학내 재학생 모델 5인과의 활발한 소통을 통해 2일이라는 한정된 촬영 타임라인 준수"
-      ],
-      "techStack": [
-        "영상 연출",
-        "모션 그래픽",
-        "Premiere Pro",
-        "After Effects",
-        "스토리보드"
-      ],
-      "accentColor": "var(--color-media-end)",
-      "accentBg": "rgba(248, 87, 166, 0.1)",
-      "accentBorder": "rgba(248, 87, 166, 0.2)",
-      "icon": "fa-video",
-      "youtubeUrl": "https://youtu.be/b0FMcIgdq_g",
-      "youtubeStart": "2",
-      "youtubeEnd": "5"
-    },
-    {
       "id": "it-1782718545995",
       "category": "it",
       "title": "글로벌 AI 최고위 과정",
@@ -128,6 +39,48 @@
       "youtubeEnd": "",
       "imageUrl": "images/project-career-1782720001520.jpg",
       "imageUrl2": "images/project-career-1782720001520-2.jpg"
+    },
+    {
+      "id": "it-1782783692691",
+      "category": "it",
+      "title": "생성형 AI 120% 활용법",
+      "period": "2025.11",
+      "year": "2025",
+      "summary": "대학 직원 실무 및 상담역량에 바로 쓰는 생성형AI 120% 활용법",
+      "description": "",
+      "role": "부산여자대학교",
+      "highlights": [],
+      "techStack": [],
+      "accentColor": "var(--color-it-end)",
+      "accentBg": "rgba(225, 0, 255, 0.1)",
+      "accentBorder": "rgba(225, 0, 255, 0.2)",
+      "icon": "fa-code",
+      "youtubeUrl": "",
+      "youtubeStart": "",
+      "youtubeEnd": "",
+      "imageUrl": "images/project-it-1782783692691.jpg",
+      "imageUrl2": "images/project-it-1782783692691-2.jpg"
+    },
+    {
+      "id": "career-1782784660338",
+      "category": "career",
+      "title": "생성형 AI 활용 전문가 자격 과정(거점형 프로그램)",
+      "period": "2024 ~ 2025",
+      "year": "2024",
+      "summary": "1. AI와 대학생활\n2. 생성형 AI 시장 맥락과 chatGPT 제대로 활용하기\n3. 생성형 AI 활용 이미지·음악·영상 작업\n4. 생성형 AI 활용 사무자동화 작업 1\n5. 생성형 AI 활용 사무자동화 작업 2\n6. 생성형 AI 활용 사무자동화 및 과정 마무리",
+      "description": "",
+      "role": "동의대학교",
+      "highlights": [],
+      "techStack": [],
+      "accentColor": "var(--color-career-end)",
+      "accentBg": "rgba(79, 172, 254, 0.1)",
+      "accentBorder": "rgba(79, 172, 254, 0.2)",
+      "icon": "fa-graduation-cap",
+      "youtubeUrl": "https://youtu.be/p2Bxc29gh-8?si=cCl4OzybkRg0BenP",
+      "youtubeStart": 1845,
+      "youtubeEnd": 1897,
+      "imageUrl": "",
+      "imageUrl2": ""
     }
   ],
   "journeyData": [
