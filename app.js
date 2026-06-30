@@ -1078,8 +1078,8 @@ function setupAdminMode() {
     const adminPortfolioActions = document.getElementById('admin-portfolio-actions');
     const adminJourneyActions = document.getElementById('admin-journey-actions');
     
-    // Always show timeline actions (Add button)
-    if (adminJourneyActions) adminJourneyActions.style.display = 'block';
+    // Only show timeline actions in admin mode
+    if (adminJourneyActions) adminJourneyActions.style.display = 'none';
     
     const savedAdmin = sessionStorage.getItem('isAdminMode') === 'true';
     if (savedAdmin) {
@@ -1090,6 +1090,7 @@ function setupAdminMode() {
         }
         if (adminBanner) adminBanner.style.display = 'flex';
         if (adminPortfolioActions) adminPortfolioActions.style.display = 'block';
+        if (adminJourneyActions) adminJourneyActions.style.display = 'block';
         document.body.classList.add('admin-active');
         
         // Re-render to show admin actions on page load
@@ -1109,7 +1110,7 @@ function setupAdminMode() {
                 adminToggle.innerHTML = '<i class="fa-solid fa-lock"></i>';
                 if (adminBanner) adminBanner.style.display = 'none';
                 if (adminPortfolioActions) adminPortfolioActions.style.display = 'none';
-                // adminJourneyActions is kept visible (do not set to 'none')
+                if (adminJourneyActions) adminJourneyActions.style.display = 'none';
                 document.body.classList.remove('admin-active');
                 
                 renderCompetencies();
