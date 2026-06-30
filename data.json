@@ -515,6 +515,28 @@
       "googleDriveUrl": "",
       "imageUrl": "images/project-career-1782810906954.jpg",
       "imageUrl2": "images/project-career-1782810906954-2.jpg"
+    },
+    {
+      "id": "it-1782811185770",
+      "category": "it",
+      "title": "직무역량강화(사무자동화)",
+      "period": "2019.06.26",
+      "year": "2019",
+      "summary": "기업맞춤형 기술사관 양성 프로그램\n현장실습 참가자 사전교육",
+      "description": "",
+      "role": "한국해양대학교",
+      "highlights": [],
+      "techStack": [],
+      "accentColor": "var(--color-it-end)",
+      "accentBg": "rgba(225, 0, 255, 0.1)",
+      "accentBorder": "rgba(225, 0, 255, 0.2)",
+      "icon": "fa-code",
+      "youtubeUrl": "",
+      "youtubeStart": "",
+      "youtubeEnd": "",
+      "googleDriveUrl": "",
+      "imageUrl": "images/project-it-1782811185770.jpg",
+      "imageUrl2": "images/project-it-1782811185770-2.jpg"
     }
   ],
   "journeyData": [
