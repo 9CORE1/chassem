@@ -467,6 +467,8 @@ function renderPortfolioGrid(filter = 'all') {
         else if (item.category === 'it') { catName = 'IT 미래기술'; catClass = 'text-it'; }
         
         card.style.setProperty('--card-accent-color', `var(--color-${item.category}-end)`);
+        card.style.setProperty('--card-accent-alpha', item.accentBg || 'rgba(255, 255, 255, 0.05)');
+        card.style.setProperty('--card-accent-border', item.accentBorder || 'var(--border-color)');
         
         let adminBtns = '';
         if (isAdminMode) {
@@ -482,7 +484,7 @@ function renderPortfolioGrid(filter = 'all') {
             ${adminBtns}
             <div class="portfolio-card-content">
                 <div class="card-top">
-                    <span class="card-category ${catClass}">${catName}</span>
+                    <span class="card-category">${catName}</span>
                     <span class="card-date">${item.period.split(' ')[0]}</span>
                 </div>
                 <h3>${item.title}</h3>

@@ -1038,12 +1038,9 @@ body.light-mode .portfolio-card:hover {
     letter-spacing: 0.1em;
     padding: 0.3rem 0.8rem;
     border-radius: 4px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--border-color);
-}
-
-body.light-mode .card-category {
-    background: rgba(0, 0, 0, 0.03);
+    background: var(--card-accent-alpha);
+    color: var(--card-accent-color);
+    border: 1px solid var(--card-accent-border);
 }
 
 .card-date {
