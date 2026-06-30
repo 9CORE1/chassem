@@ -1002,6 +1002,12 @@ function closeModal() {
     modal.classList.remove('active');
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = ''; // Unlock scroll
+    
+    // 모달을 닫을 때 동영상 재생 정지(iframe 파괴)를 위해 내부 컨텐츠 초기화
+    const container = document.getElementById('modal-content-container');
+    if (container) {
+        container.innerHTML = '';
+    }
 }
 
 // ==========================================================================
