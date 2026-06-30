@@ -951,6 +951,7 @@ body.light-mode .card-category {
     overflow: hidden;
     text-overflow: ellipsis;
     flex-grow: 1;
+    white-space: pre-wrap;
 }
 
 .card-bottom {
@@ -1500,6 +1501,7 @@ body.light-mode footer {
     font-size: 1.05rem;
     line-height: 1.7;
     color: var(--text-secondary);
+    white-space: pre-wrap;
 }
 
 /* Bullet list in Modal */
