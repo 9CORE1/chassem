@@ -760,6 +760,33 @@ function convertTimeToSeconds(timeStr) {
     return isNaN(num) ? '' : num;
 }
 
+function getGoogleDriveEmbedUrl(url) {
+    if (!url) return null;
+    url = url.trim();
+    let fileId = '';
+    
+    if (/^[a-zA-Z0-9_-]{28,45}$/.test(url)) {
+        fileId = url;
+    } else {
+        try {
+            const fileDMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+            if (fileDMatch) {
+                fileId = fileDMatch[1];
+            } else {
+                const idParamMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+                if (idParamMatch) {
+                    fileId = idParamMatch[1];
+                }
+            }
+        } catch (e) {
+            console.error('구글 드라이브 URL 파싱 오류:', e);
+        }
+    }
+    
+    if (!fileId) return null;
+    return `https://drive.google.com/file/d/${fileId}/preview`;
+}
+
 function getYouTubeEmbedUrl(url, start = null, end = null) {
     if (!url) return null;
     let videoId = '';
@@ -863,6 +890,25 @@ function openDetailsModal(id) {
         }
     }
     
+    let googleDriveSection = '';
+    if (item.googleDriveUrl) {
+        const embedUrl = getGoogleDriveEmbedUrl(item.googleDriveUrl);
+        console.log(`[Google Drive embed debugging] Original URL: ${item.googleDriveUrl} -> Generated Embed URL: ${embedUrl}`);
+        if (embedUrl) {
+            googleDriveSection = `
+                <div class="modal-section">
+                    <h4 class="modal-section-title">관련 영상</h4>
+                    <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 8px; margin-top: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                        <!-- 화면 제어/공유 방지를 위해 allowfullscreen 제거하고 allow="autoplay" 설정 -->
+                        <iframe src="${embedUrl}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="autoplay" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                        <!-- 우상단 팝아웃(새창열기)을 통한 다운로드 및 공유 방지용 반응형 투명 오버레이 (상단 약 20%) -->
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 20%; z-index: 5; background: transparent;"></div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
     let imageSection = '';
     if (item.imageUrl || item.imageUrl2) {
         let imagesHtml = '';
@@ -908,6 +954,7 @@ function openDetailsModal(id) {
         
         <div class="modal-body">
             ${youtubeSection}
+            ${googleDriveSection}
             ${imageSection}
             
             ${item.summary ? `
@@ -1774,6 +1821,11 @@ function renderProjectForm(project = null, modalTitleStr) {
                 <input type="text" id="proj-youtube" value="${isEdit && project.youtubeUrl ? project.youtubeUrl : ''}" placeholder="예: https://www.youtube.com/watch?v=xxxxxx" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
             </div>
             
+            <div class="form-group">
+                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">구글 드라이브 동영상 링크 (선택사항)</label>
+                <input type="text" id="proj-google-drive" value="${isEdit && project.googleDriveUrl ? project.googleDriveUrl : ''}" placeholder="예: https://drive.google.com/file/d/xxxxxx/view" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+            </div>
+            
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
                 <div class="form-group">
                     <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">영상 재생 시작 시간 (분:초 또는 초 단위, 선택사항)</label>
@@ -1961,6 +2013,7 @@ function renderProjectForm(project = null, modalTitleStr) {
             const youtubeUrlVal = document.getElementById('proj-youtube').value.trim();
             const youtubeStartVal = convertTimeToSeconds(document.getElementById('proj-youtube-start').value.trim());
             const youtubeEndVal = convertTimeToSeconds(document.getElementById('proj-youtube-end').value.trim());
+            const googleDriveUrlVal = document.getElementById('proj-google-drive').value.trim();
             
             const descriptionVal = isEdit ? project.description : '';
             const highlightsVal = isEdit ? project.highlights : [];
@@ -2010,6 +2063,7 @@ function renderProjectForm(project = null, modalTitleStr) {
                 project.youtubeUrl = youtubeUrlVal;
                 project.youtubeStart = youtubeStartVal;
                 project.youtubeEnd = youtubeEndVal;
+                project.googleDriveUrl = googleDriveUrlVal;
                 project.imageUrl = selectedImageBase64;
                 project.imageUrl2 = selectedImageBase64_2;
             } else {
@@ -2031,6 +2085,7 @@ function renderProjectForm(project = null, modalTitleStr) {
                     youtubeUrl: youtubeUrlVal,
                     youtubeStart: youtubeStartVal,
                     youtubeEnd: youtubeEndVal,
+                    googleDriveUrl: googleDriveUrlVal,
                     imageUrl: selectedImageBase64,
                     imageUrl2: selectedImageBase64_2
                 };
