@@ -723,14 +723,19 @@ function getYouTubeEmbedUrl(url, start = null, end = null) {
     
     if (!videoId) return null;
     
-    // 모바일 브라우저(iOS Safari 등)의 서드파티 쿠키 차단 정책을 우회하기 위해 youtube-nocookie.com 도메인 사용
-    let embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
+    // 일부 공개(unlisted) 영상의 안정적인 재생 및 모바일 기기 호환성을 위해 youtube.com 표준 도메인 사용
+    let embedUrl = `https://www.youtube.com/embed/${videoId}`;
     const params = [
         'controls=1',         // 재생 컨트롤러 활성화 (기기 호환성 및 모바일 지원)
         'rel=0',              // 관련 영상 추천 중단
         'modestbranding=1',   // 유튜브 로고 표시 최소화
         'iv_load_policy=3'    // 동영상 어노테이션(주석) 숨김
     ];
+    
+    // 도메인 권한 및 보안 검증을 위해 origin 파라미터 전달
+    if (window.location.origin && window.location.origin !== 'null') {
+        params.push(`origin=${encodeURIComponent(window.location.origin)}`);
+    }
     const parsedStart = convertTimeToSeconds(start);
     const parsedEnd = convertTimeToSeconds(end);
     if (parsedStart) {
@@ -771,8 +776,8 @@ function openDetailsModal(id) {
                 <div class="modal-section">
                     <h4 class="modal-section-title">관련 영상</h4>
                     <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 8px; margin-top: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                        <!-- 화면 확대 없이 100% 정상 비율 유지 -->
-                        <iframe src="${embedUrl}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                        <!-- 화면 확대 없이 100% 정상 비율 유지 및 일부 공개 영상을 위해 strict-origin-when-cross-origin 설정 -->
+                        <iframe src="${embedUrl}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                     </div>
                 </div>
             `;
