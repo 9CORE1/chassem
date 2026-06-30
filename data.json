@@ -165,6 +165,27 @@
       "youtubeEnd": "",
       "imageUrl": "",
       "imageUrl2": ""
+    },
+    {
+      "id": "career-1782796227757",
+      "category": "it",
+      "title": "ICT인력양성교육 오픈캠퍼스",
+      "period": "2024.09",
+      "year": "2024",
+      "summary": "부산지역 비전공자 ICT인력양성교육 오픈캠퍼스 사전교육",
+      "description": "",
+      "role": "부산정보산업진흥원",
+      "highlights": [],
+      "techStack": [],
+      "accentColor": "var(--color-it-end)",
+      "accentBg": "rgba(225, 0, 255, 0.1)",
+      "accentBorder": "rgba(225, 0, 255, 0.2)",
+      "icon": "fa-graduation-cap",
+      "youtubeUrl": "",
+      "youtubeStart": "",
+      "youtubeEnd": "",
+      "imageUrl": "",
+      "imageUrl2": ""
     }
   ],
   "journeyData": [
