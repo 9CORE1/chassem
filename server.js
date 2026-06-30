@@ -21,38 +21,51 @@ app.post('/api/save', (req, res) => {
     
     // Base64 형태의 이미지 데이터를 추출하여 images 폴더에 JPEG 파일로 저장 후 상대경로로 치환
     let updatedPortfolioData = portfolioData.map(item => {
-        if (item.imageUrl && item.imageUrl.startsWith('data:image/')) {
+        let updatedItem = { ...item };
+        const dirPath = path.join(__dirname, 'images');
+        
+        // images 디렉토리가 없으면 생성
+        if (!fs.existsSync(dirPath)) {
+            fs.mkdirSync(dirPath, { recursive: true });
+        }
+        
+        // 이미지 1 저장 (기존 필드)
+        if (updatedItem.imageUrl && updatedItem.imageUrl.startsWith('data:image/')) {
             try {
-                // 포맷 매칭: data:image/[타입];base64,[데이터]
-                const matches = item.imageUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+                const matches = updatedItem.imageUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
                 if (matches && matches.length === 3) {
                     const base64Data = matches[2];
                     const buffer = Buffer.from(base64Data, 'base64');
-                    
                     const filename = `project-${item.id}.jpg`;
-                    const dirPath = path.join(__dirname, 'images');
-                    
-                    // images 디렉토리가 없으면 생성
-                    if (!fs.existsSync(dirPath)) {
-                        fs.mkdirSync(dirPath, { recursive: true });
-                    }
-                    
                     const filePath = path.join(dirPath, filename);
                     fs.writeFileSync(filePath, buffer);
-                    
-                    console.log(`[${new Date().toLocaleTimeString()}] 이미지 저장 완료: ${filePath}`);
-                    
-                    // 상대 경로로 데이터 치환
-                    return {
-                        ...item,
-                        imageUrl: `images/${filename}`
-                    };
+                    console.log(`[${new Date().toLocaleTimeString()}] 이미지 1 저장 완료: ${filePath}`);
+                    updatedItem.imageUrl = `images/${filename}`;
                 }
             } catch (err) {
-                console.error('이미지 파일 저장 오류:', err);
+                console.error('이미지 1 파일 저장 오류:', err);
             }
         }
-        return item;
+        
+        // 이미지 2 저장 (신규 필드)
+        if (updatedItem.imageUrl2 && updatedItem.imageUrl2.startsWith('data:image/')) {
+            try {
+                const matches = updatedItem.imageUrl2.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+                if (matches && matches.length === 3) {
+                    const base64Data = matches[2];
+                    const buffer = Buffer.from(base64Data, 'base64');
+                    const filename = `project-${item.id}-2.jpg`;
+                    const filePath = path.join(dirPath, filename);
+                    fs.writeFileSync(filePath, buffer);
+                    console.log(`[${new Date().toLocaleTimeString()}] 이미지 2 저장 완료: ${filePath}`);
+                    updatedItem.imageUrl2 = `images/${filename}`;
+                }
+            } catch (err) {
+                console.error('이미지 2 파일 저장 오류:', err);
+            }
+        }
+        
+        return updatedItem;
     });
     
     const filePath = path.join(__dirname, 'data.json');

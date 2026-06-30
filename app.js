@@ -785,12 +785,27 @@ function openDetailsModal(id) {
     }
     
     let imageSection = '';
-    if (item.imageUrl) {
+    if (item.imageUrl || item.imageUrl2) {
+        let imagesHtml = '';
+        if (item.imageUrl) {
+            imagesHtml += `
+                <div class="image-wrapper-detail" style="flex: 1; min-width: 250px; max-width: 100%;">
+                    <img src="${item.imageUrl}" style="width: 100%; height: auto; display: block; max-height: 400px; object-fit: contain; background: rgba(0,0,0,0.2); border-radius: 6px; border: 1px solid var(--border-color);">
+                </div>
+            `;
+        }
+        if (item.imageUrl2) {
+            imagesHtml += `
+                <div class="image-wrapper-detail" style="flex: 1; min-width: 250px; max-width: 100%;">
+                    <img src="${item.imageUrl2}" style="width: 100%; height: auto; display: block; max-height: 400px; object-fit: contain; background: rgba(0,0,0,0.2); border-radius: 6px; border: 1px solid var(--border-color);">
+                </div>
+            `;
+        }
         imageSection = `
             <div class="modal-section">
                 <h4 class="modal-section-title">대표 이미지</h4>
-                <div class="image-container" style="width: 100%; border-radius: 8px; overflow: hidden; margin-top: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid var(--border-color);">
-                    <img src="${item.imageUrl}" style="width: 100%; height: auto; display: block; max-height: 450px; object-fit: contain; background: rgba(0,0,0,0.2);">
+                <div class="image-container-grid" style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">
+                    ${imagesHtml}
                 </div>
             </div>
         `;
@@ -1593,7 +1608,7 @@ function renderProjectForm(project = null, modalTitleStr) {
             </div>
             
             <div class="form-group">
-                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">대표 이미지 업로드 (선택사항)</label>
+                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">대표 이미지 1 업로드 (선택사항)</label>
                 <div style="display: flex; align-items: center; gap: 1rem;">
                     <input type="file" id="proj-image" accept="image/*" style="display: none;">
                     <button type="button" onclick="document.getElementById('proj-image').click()" class="btn btn-outline" style="padding: 0.6rem 1.2rem; font-size: 0.85rem;"><i class="fa-solid fa-image icon-left"></i>이미지 선택</button>
@@ -1604,6 +1619,21 @@ function renderProjectForm(project = null, modalTitleStr) {
                 </div>
                 <div id="proj-image-preview-wrapper" style="margin-top: 0.8rem; display: ${isEdit && project.imageUrl ? 'block' : 'none'};">
                     <img id="proj-image-preview" src="${isEdit && project.imageUrl ? project.imageUrl : ''}" style="max-height: 120px; border-radius: 6px; border: 1px solid var(--border-color); object-fit: cover;">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">대표 이미지 2 업로드 (선택사항)</label>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <input type="file" id="proj-image2" accept="image/*" style="display: none;">
+                    <button type="button" onclick="document.getElementById('proj-image2').click()" class="btn btn-outline" style="padding: 0.6rem 1.2rem; font-size: 0.85rem;"><i class="fa-solid fa-image icon-left"></i>이미지 선택</button>
+                    <span id="proj-image-filename2" style="font-size: 0.85rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 250px;">
+                        ${isEdit && project.imageUrl2 ? '등록된 이미지가 있습니다.' : '선택된 파일 없음'}
+                    </span>
+                    <button type="button" id="btn-delete-proj-image2" class="btn btn-outline" style="padding: 0.6rem 1rem; font-size: 0.85rem; color: #f43f5e; border-color: rgba(244,63,94,0.2); display: ${isEdit && project.imageUrl2 ? 'inline-flex' : 'none'};"><i class="fa-solid fa-trash"></i></button>
+                </div>
+                <div id="proj-image-preview-wrapper2" style="margin-top: 0.8rem; display: ${isEdit && project.imageUrl2 ? 'block' : 'none'};">
+                    <img id="proj-image-preview2" src="${isEdit && project.imageUrl2 ? project.imageUrl2 : ''}" style="max-height: 120px; border-radius: 6px; border: 1px solid var(--border-color); object-fit: cover;">
                 </div>
             </div>
             
@@ -1634,7 +1664,9 @@ function renderProjectForm(project = null, modalTitleStr) {
     
     // 이미지 파일 비동기 변환 바인딩
     let selectedImageBase64 = isEdit && project.imageUrl ? project.imageUrl : '';
+    let selectedImageBase64_2 = isEdit && project.imageUrl2 ? project.imageUrl2 : '';
     setTimeout(() => {
+        // 이미지 1 처리
         const fileInput = document.getElementById('proj-image');
         const filenameSpan = document.getElementById('proj-image-filename');
         const previewWrapper = document.getElementById('proj-image-preview-wrapper');
@@ -1650,20 +1682,13 @@ function renderProjectForm(project = null, modalTitleStr) {
                     reader.onload = (event) => {
                         const img = new Image();
                         img.onload = () => {
-                            // canvas를 사용해 업로드한 이미지 포맷을 jpeg로 강제 변환 및 압축 진행
                             const canvas = document.createElement('canvas');
                             const ctx = canvas.getContext('2d');
-                            
                             canvas.width = img.width;
                             canvas.height = img.height;
-                            
-                            // 투명 배경이 있는 이미지(PNG 등)의 경우 검은색 배경 방지를 위해 흰색 배경으로 채우기
                             ctx.fillStyle = '#ffffff';
                             ctx.fillRect(0, 0, canvas.width, canvas.height);
-                            
                             ctx.drawImage(img, 0, 0);
-                            
-                            // JPEG 포맷으로 변환 (품질 0.9 설정)
                             selectedImageBase64 = canvas.toDataURL('image/jpeg', 0.9);
                             previewImg.src = selectedImageBase64;
                             previewWrapper.style.display = 'block';
@@ -1684,6 +1709,52 @@ function renderProjectForm(project = null, modalTitleStr) {
                 previewWrapper.style.display = 'none';
                 previewImg.src = '';
                 deleteBtn.style.display = 'none';
+            });
+        }
+
+        // 이미지 2 처리
+        const fileInput2 = document.getElementById('proj-image2');
+        const filenameSpan2 = document.getElementById('proj-image-filename2');
+        const previewWrapper2 = document.getElementById('proj-image-preview-wrapper2');
+        const previewImg2 = document.getElementById('proj-image-preview2');
+        const deleteBtn2 = document.getElementById('btn-delete-proj-image2');
+        
+        if (fileInput2) {
+            fileInput2.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    filenameSpan2.textContent = file.name;
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                            ctx.fillStyle = '#ffffff';
+                            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                            ctx.drawImage(img, 0, 0);
+                            selectedImageBase64_2 = canvas.toDataURL('image/jpeg', 0.9);
+                            previewImg2.src = selectedImageBase64_2;
+                            previewWrapper2.style.display = 'block';
+                            if (deleteBtn2) deleteBtn2.style.display = 'inline-flex';
+                        };
+                        img.src = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+        
+        if (deleteBtn2) {
+            deleteBtn2.addEventListener('click', () => {
+                selectedImageBase64_2 = '';
+                if (fileInput2) fileInput2.value = '';
+                filenameSpan2.textContent = '선택된 파일 없음';
+                previewWrapper2.style.display = 'none';
+                previewImg2.src = '';
+                deleteBtn2.style.display = 'none';
             });
         }
     }, 100);
@@ -1750,6 +1821,7 @@ function renderProjectForm(project = null, modalTitleStr) {
             project.youtubeStart = youtubeStartVal;
             project.youtubeEnd = youtubeEndVal;
             project.imageUrl = selectedImageBase64;
+            project.imageUrl2 = selectedImageBase64_2;
         } else {
             const newProj = {
                 id: `${categoryVal}-${Date.now()}`,
@@ -1769,7 +1841,8 @@ function renderProjectForm(project = null, modalTitleStr) {
                 youtubeUrl: youtubeUrlVal,
                 youtubeStart: youtubeStartVal,
                 youtubeEnd: youtubeEndVal,
-                imageUrl: selectedImageBase64
+                imageUrl: selectedImageBase64,
+                imageUrl2: selectedImageBase64_2
             };
             portfolioData.push(newProj);
         }
@@ -2014,93 +2087,103 @@ window.updateServerGithub = function() {
         pathParts.pop(); // Remove data.json filename
         const parentPath = pathParts.length > 0 ? pathParts.join('/') + '/' : '';
         
-        const syncPromises = portfolioData.map(item => {
-            if (!item.imageUrl) return Promise.resolve();
-            
-            // 이미지 데이터가 Base64 형태인 경우
-            if (item.imageUrl.startsWith('data:image/')) {
-                const matches = item.imageUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
-                if (!matches || matches.length !== 3) return Promise.resolve();
+        const syncPromises = [];
+        
+        portfolioData.forEach(item => {
+            // 개별 이미지 파일 동기화 헬퍼 함수
+            const syncSingleImage = (urlField, filenameSuffix) => {
+                const imgUrl = item[urlField];
+                if (!imgUrl) return Promise.resolve();
                 
-                const base64Data = matches[2];
-                const githubImagePath = `${parentPath}images/project-${item.id}.jpg`;
-                const imageApiUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${githubImagePath}`;
-                
-                // 해당 파일이 저장소에 이미 존재하는지 SHA 확인
-                return fetch(`${imageApiUrl}?ref=${config.branch}`, { headers })
-                    .then(res => {
-                        if (res.status === 404) return { sha: null };
-                        if (!res.ok) throw new Error(`이미지 파일 SHA 조회 실패 (코드: ${res.status})`);
-                        return res.json();
-                    })
-                    .then(fileMeta => {
-                        const sha = fileMeta.sha;
-                        const commitPayload = {
-                            message: `upload project image: project-${item.id}.jpg`,
-                            content: base64Data,
-                            branch: config.branch
-                        };
-                        if (sha) commitPayload.sha = sha;
-                        
-                        return fetch(imageApiUrl, {
-                            method: 'PUT',
-                            headers,
-                            body: JSON.stringify(commitPayload)
+                // 이미지 데이터가 Base64 형태인 경우
+                if (imgUrl.startsWith('data:image/')) {
+                    const matches = imgUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+                    if (!matches || matches.length !== 3) return Promise.resolve();
+                    
+                    const base64Data = matches[2];
+                    const githubImagePath = `${parentPath}images/project-${item.id}${filenameSuffix}.jpg`;
+                    const imageApiUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${githubImagePath}`;
+                    
+                    // 해당 파일이 저장소에 이미 존재하는지 SHA 확인
+                    return fetch(`${imageApiUrl}?ref=${config.branch}`, { headers })
+                        .then(res => {
+                            if (res.status === 404) return { sha: null };
+                            if (!res.ok) throw new Error(`이미지 파일 SHA 조회 실패 (코드: ${res.status})`);
+                            return res.json();
+                        })
+                        .then(fileMeta => {
+                            const sha = fileMeta.sha;
+                            const commitPayload = {
+                                message: `upload project image: project-${item.id}${filenameSuffix}.jpg`,
+                                content: base64Data,
+                                branch: config.branch
+                            };
+                            if (sha) commitPayload.sha = sha;
+                            
+                            return fetch(imageApiUrl, {
+                                method: 'PUT',
+                                headers,
+                                body: JSON.stringify(commitPayload)
+                            });
+                        })
+                        .then(res => {
+                            if (!res.ok) throw new Error(`GitHub 이미지 업로드 실패 (코드: ${res.status})`);
+                            // 성공적으로 업로드 완료 후 이미지 경로를 상대 경로로 치환
+                            item[urlField] = `images/project-${item.id}${filenameSuffix}.jpg`;
                         });
-                    })
-                    .then(res => {
-                        if (!res.ok) throw new Error(`GitHub 이미지 업로드 실패 (코드: ${res.status})`);
-                        // 성공적으로 업로드 완료 후 이미지 경로를 상대 경로로 치환
-                        item.imageUrl = `images/project-${item.id}.jpg`;
-                    });
-            }
-            // 이미지 데이터가 로컬 서버의 상대 경로이고, 깃허브에 존재하지 않을 수 있는 경우
-            else if (item.imageUrl.startsWith('images/')) {
-                const githubImagePath = `${parentPath}${item.imageUrl}`;
-                const imageApiUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${githubImagePath}`;
-                
-                // GitHub 저장소에 이미 이미지가 존재하는지 확인
-                return fetch(`${imageApiUrl}?ref=${config.branch}`, { headers })
-                    .then(res => {
-                        if (res.status === 404) {
-                            // 깃허브에 파일이 없을 경우 로컬 서버에서 이미지를 다운받아 깃허브로 업로드
-                            return fetch(item.imageUrl)
-                                .then(localRes => {
-                                    if (!localRes.ok) throw new Error(`로컬 서버에서 이미지 가져오기 실패: ${item.imageUrl}`);
-                                    return localRes.blob();
-                                })
-                                .then(blob => {
-                                    return new Promise((resolve, reject) => {
-                                        const reader = new FileReader();
-                                        reader.onloadend = () => {
-                                            const base64Data = reader.result.split(',')[1];
-                                            resolve(base64Data);
+                }
+                // 이미지 데이터가 로컬 서버의 상대 경로이고, 깃허브에 존재하지 않을 수 있는 경우
+                else if (imgUrl.startsWith('images/')) {
+                    const githubImagePath = `${parentPath}${imgUrl}`;
+                    const imageApiUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${githubImagePath}`;
+                    
+                    // GitHub 저장소에 이미 이미지가 존재하는지 확인
+                    return fetch(`${imageApiUrl}?ref=${config.branch}`, { headers })
+                        .then(res => {
+                            if (res.status === 404) {
+                                // 깃허브에 파일이 없을 경우 로컬 서버에서 이미지를 다운받아 깃허브로 업로드
+                                return fetch(imgUrl)
+                                    .then(localRes => {
+                                        if (!localRes.ok) throw new Error(`로컬 서버에서 이미지 가져오기 실패: ${imgUrl}`);
+                                        return localRes.blob();
+                                    })
+                                    .then(blob => {
+                                        return new Promise((resolve, reject) => {
+                                            const reader = new FileReader();
+                                            reader.onloadend = () => {
+                                                const base64Data = reader.result.split(',')[1];
+                                                resolve(base64Data);
+                                            };
+                                            reader.onerror = reject;
+                                            reader.readAsDataURL(blob);
+                                        });
+                                    })
+                                    .then(base64Data => {
+                                        const commitPayload = {
+                                            message: `sync missing project image: ${imgUrl.split('/').pop()}`,
+                                            content: base64Data,
+                                            branch: config.branch
                                         };
-                                        reader.onerror = reject;
-                                        reader.readAsDataURL(blob);
+                                        return fetch(imageApiUrl, {
+                                            method: 'PUT',
+                                            headers,
+                                            body: JSON.stringify(commitPayload)
+                                        });
+                                    })
+                                    .then(uploadRes => {
+                                        if (!uploadRes.ok) throw new Error(`로컬 이미지 GitHub 동기화 실패 (코드: ${uploadRes.status})`);
                                     });
-                                })
-                                .then(base64Data => {
-                                    const commitPayload = {
-                                        message: `sync missing project image: ${item.imageUrl.split('/').pop()}`,
-                                        content: base64Data,
-                                        branch: config.branch
-                                    };
-                                    return fetch(imageApiUrl, {
-                                        method: 'PUT',
-                                        headers,
-                                        body: JSON.stringify(commitPayload)
-                                    });
-                                })
-                                .then(uploadRes => {
-                                    if (!uploadRes.ok) throw new Error(`로컬 이미지 GitHub 동기화 실패 (코드: ${uploadRes.status})`);
-                                });
-                        }
-                        return Promise.resolve();
-                    });
-            }
+                            }
+                            return Promise.resolve();
+                        });
+                }
+                return Promise.resolve();
+            };
             
-            return Promise.resolve();
+            // 대표 이미지 1 동기화 프로미스 추가
+            syncPromises.push(syncSingleImage('imageUrl', ''));
+            // 대표 이미지 2 동기화 프로미스 추가
+            syncPromises.push(syncSingleImage('imageUrl2', '-2'));
         });
         
         return Promise.all(syncPromises).then(() => {
