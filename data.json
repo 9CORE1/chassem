@@ -493,6 +493,28 @@
       "googleDriveUrl": "",
       "imageUrl": "images/project-career-1782810561834.jpg",
       "imageUrl2": "images/project-career-1782810561834-2.jpg"
+    },
+    {
+      "id": "career-1782810906954",
+      "category": "career",
+      "title": "자아탐색 및 진로설계",
+      "period": "2019 ~ 2023",
+      "year": "2019",
+      "summary": "지역주도형 청년일자리 사업 참여자 기본교육",
+      "description": "",
+      "role": "부산광역시, 부산경제진흥원",
+      "highlights": [],
+      "techStack": [],
+      "accentColor": "var(--color-career-end)",
+      "accentBg": "rgba(79, 172, 254, 0.1)",
+      "accentBorder": "rgba(79, 172, 254, 0.2)",
+      "icon": "fa-graduation-cap",
+      "youtubeUrl": "",
+      "youtubeStart": "",
+      "youtubeEnd": "",
+      "googleDriveUrl": "",
+      "imageUrl": "images/project-career-1782810906954.jpg",
+      "imageUrl2": "images/project-career-1782810906954-2.jpg"
     }
   ],
   "journeyData": [
