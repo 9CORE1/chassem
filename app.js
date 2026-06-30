@@ -787,17 +787,20 @@ function openDetailsModal(id) {
     let imageSection = '';
     if (item.imageUrl || item.imageUrl2) {
         let imagesHtml = '';
+        const cacheBuster = `?t=${Date.now()}`;
         if (item.imageUrl) {
+            const imgSrc = item.imageUrl.startsWith('data:') ? item.imageUrl : `${item.imageUrl}${cacheBuster}`;
             imagesHtml += `
                 <div class="image-wrapper-detail" style="flex: 1; min-width: 250px; max-width: 100%;">
-                    <img src="${item.imageUrl}" style="width: 100%; height: auto; display: block; max-height: 400px; object-fit: contain; background: rgba(0,0,0,0.2); border-radius: 6px; border: 1px solid var(--border-color);">
+                    <img src="${imgSrc}" style="width: 100%; height: auto; display: block; max-height: 400px; object-fit: contain; background: rgba(0,0,0,0.2); border-radius: 6px; border: 1px solid var(--border-color);">
                 </div>
             `;
         }
         if (item.imageUrl2) {
+            const imgSrc2 = item.imageUrl2.startsWith('data:') ? item.imageUrl2 : `${item.imageUrl2}${cacheBuster}`;
             imagesHtml += `
                 <div class="image-wrapper-detail" style="flex: 1; min-width: 250px; max-width: 100%;">
-                    <img src="${item.imageUrl2}" style="width: 100%; height: auto; display: block; max-height: 400px; object-fit: contain; background: rgba(0,0,0,0.2); border-radius: 6px; border: 1px solid var(--border-color);">
+                    <img src="${imgSrc2}" style="width: 100%; height: auto; display: block; max-height: 400px; object-fit: contain; background: rgba(0,0,0,0.2); border-radius: 6px; border: 1px solid var(--border-color);">
                 </div>
             `;
         }
@@ -1611,7 +1614,7 @@ function renderProjectForm(project = null, modalTitleStr) {
                 <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">대표 이미지 1 업로드 (선택사항)</label>
                 <div style="display: flex; align-items: center; gap: 1rem;">
                     <input type="file" id="proj-image" accept="image/*" style="display: none;">
-                    <button type="button" onclick="document.getElementById('proj-image').click()" class="btn btn-outline" style="padding: 0.6rem 1.2rem; font-size: 0.85rem;"><i class="fa-solid fa-image icon-left"></i>이미지 선택</button>
+                    <button type="button" onclick="document.getElementById('proj-image').click()" class="btn btn-outline" style="padding: 0.6rem 1.2rem; font-size: 0.85rem;"><i class="fa-solid fa-image icon-left"></i>${isEdit && project.imageUrl ? '이미지 변경' : '이미지 선택'}</button>
                     <span id="proj-image-filename" style="font-size: 0.85rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 250px;">
                         ${isEdit && project.imageUrl ? '등록된 이미지가 있습니다.' : '선택된 파일 없음'}
                     </span>
@@ -1626,7 +1629,7 @@ function renderProjectForm(project = null, modalTitleStr) {
                 <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">대표 이미지 2 업로드 (선택사항)</label>
                 <div style="display: flex; align-items: center; gap: 1rem;">
                     <input type="file" id="proj-image2" accept="image/*" style="display: none;">
-                    <button type="button" onclick="document.getElementById('proj-image2').click()" class="btn btn-outline" style="padding: 0.6rem 1.2rem; font-size: 0.85rem;"><i class="fa-solid fa-image icon-left"></i>이미지 선택</button>
+                    <button type="button" onclick="document.getElementById('proj-image2').click()" class="btn btn-outline" style="padding: 0.6rem 1.2rem; font-size: 0.85rem;"><i class="fa-solid fa-image icon-left"></i>${isEdit && project.imageUrl2 ? '이미지 변경' : '이미지 선택'}</button>
                     <span id="proj-image-filename2" style="font-size: 0.85rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 250px;">
                         ${isEdit && project.imageUrl2 ? '등록된 이미지가 있습니다.' : '선택된 파일 없음'}
                     </span>
