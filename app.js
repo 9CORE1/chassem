@@ -375,9 +375,16 @@ function initApp() {
 // 헬퍼 함수: 로컬 저장 및 서버 동기화
 function saveAllData() {
     // 1. 로컬 저장
-    localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
-    localStorage.setItem('journeyData', JSON.stringify(journeyData));
-    localStorage.setItem('competenciesData', JSON.stringify(competenciesData));
+    try {
+        localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
+        localStorage.setItem('journeyData', JSON.stringify(journeyData));
+        localStorage.setItem('competenciesData', JSON.stringify(competenciesData));
+    } catch (e) {
+        console.error('로컬 스토리지 저장 오류:', e);
+        if (e.name === 'QuotaExceededError') {
+            console.warn('로컬 스토리지 용량 초과로 브라우저에 임시 저장을 실패했습니다. 서버 저장 프로세스는 계속 진행됩니다.');
+        }
+    }
     
     // 2. 서버로 저장 요청 (Express 실행 환경일 때)
     const payload = {
@@ -401,7 +408,11 @@ function saveAllData() {
         console.log('데이터가 서버에 동기화되어 저장되었습니다:', result.message);
         if (result.portfolioData) {
             portfolioData = result.portfolioData;
-            localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
+            try {
+                localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
+            } catch (e) {
+                console.error('로컬 스토리지 포트폴리오 업데이트 오류:', e);
+            }
             renderPortfolioGrid(); // 새로운 이미지 상대경로를 카드에 즉시 반영
         }
     })
@@ -1564,6 +1575,34 @@ window.openEditCompModal = function(compId) {
     });
 };
 
+// 이미지 압축 및 리사이징 헬퍼 함수
+function compressAndResizeImage(img, maxWidth = 1024, maxHeight = 1024, quality = 0.8) {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    let width = img.width;
+    let height = img.height;
+    
+    if (width > height) {
+        if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+        }
+    } else {
+        if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+        }
+    }
+    
+    canvas.width = width;
+    canvas.height = height;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, width, height);
+    ctx.drawImage(img, 0, 0, width, height);
+    return canvas.toDataURL('image/jpeg', quality);
+}
+
 window.openEditProjectModal = function(projectId) {
     const project = portfolioData.find(p => p.id === projectId);
     if (!project) return;
@@ -1642,7 +1681,7 @@ function renderProjectForm(project = null, modalTitleStr) {
             
             <div class="form-group">
                 <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">유튜브 링크 (선택사항)</label>
-                <input type="url" id="proj-youtube" value="${isEdit && project.youtubeUrl ? project.youtubeUrl : ''}" placeholder="예: https://www.youtube.com/watch?v=xxxxxx" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+                <input type="text" id="proj-youtube" value="${isEdit && project.youtubeUrl ? project.youtubeUrl : ''}" placeholder="예: https://www.youtube.com/watch?v=xxxxxx" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
             </div>
             
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
@@ -1685,14 +1724,7 @@ function renderProjectForm(project = null, modalTitleStr) {
                     reader.onload = (event) => {
                         const img = new Image();
                         img.onload = () => {
-                            const canvas = document.createElement('canvas');
-                            const ctx = canvas.getContext('2d');
-                            canvas.width = img.width;
-                            canvas.height = img.height;
-                            ctx.fillStyle = '#ffffff';
-                            ctx.fillRect(0, 0, canvas.width, canvas.height);
-                            ctx.drawImage(img, 0, 0);
-                            selectedImageBase64 = canvas.toDataURL('image/jpeg', 0.9);
+                            selectedImageBase64 = compressAndResizeImage(img, 1024, 1024, 0.8);
                             previewImg.src = selectedImageBase64;
                             previewWrapper.style.display = 'block';
                             if (deleteBtn) deleteBtn.style.display = 'inline-flex';
@@ -1731,14 +1763,7 @@ function renderProjectForm(project = null, modalTitleStr) {
                     reader.onload = (event) => {
                         const img = new Image();
                         img.onload = () => {
-                            const canvas = document.createElement('canvas');
-                            const ctx = canvas.getContext('2d');
-                            canvas.width = img.width;
-                            canvas.height = img.height;
-                            ctx.fillStyle = '#ffffff';
-                            ctx.fillRect(0, 0, canvas.width, canvas.height);
-                            ctx.drawImage(img, 0, 0);
-                            selectedImageBase64_2 = canvas.toDataURL('image/jpeg', 0.9);
+                            selectedImageBase64_2 = compressAndResizeImage(img, 1024, 1024, 0.8);
                             previewImg2.src = selectedImageBase64_2;
                             previewWrapper2.style.display = 'block';
                             if (deleteBtn2) deleteBtn2.style.display = 'inline-flex';
