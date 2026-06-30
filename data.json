@@ -449,6 +449,28 @@
       "googleDriveUrl": "",
       "imageUrl": "images/project-career-1782810085735.jpg",
       "imageUrl2": "images/project-career-1782810085735-2.jpg"
+    },
+    {
+      "id": "it-1782810329054",
+      "category": "it",
+      "title": "유튜브 크리에이터 양성캠프",
+      "period": "2019.02.21 ~2019.02.22",
+      "year": "2019",
+      "summary": "YouTube Creators 양성캠프\n동계방학 직무수행 역량강화 특강",
+      "description": "",
+      "role": "대구대학교",
+      "highlights": [],
+      "techStack": [],
+      "accentColor": "var(--color-it-end)",
+      "accentBg": "rgba(225, 0, 255, 0.1)",
+      "accentBorder": "rgba(225, 0, 255, 0.2)",
+      "icon": "fa-code",
+      "youtubeUrl": "",
+      "youtubeStart": "",
+      "youtubeEnd": "",
+      "googleDriveUrl": "",
+      "imageUrl": "images/project-it-1782810329054.jpg",
+      "imageUrl2": "images/project-it-1782810329054-2.jpg"
     }
   ],
   "journeyData": [
