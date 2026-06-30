@@ -53,7 +53,11 @@
       "accentBg": "rgba(248, 87, 166, 0.1)",
       "accentBorder": "rgba(248, 87, 166, 0.2)",
       "icon": "fa-video",
-      "youtubeUrl": ""
+      "youtubeUrl": "",
+      "youtubeStart": "",
+      "youtubeEnd": "",
+      "imageUrl": "images/project-media-2.jpg",
+      "imageUrl2": "images/project-media-2-2.jpg"
     },
     {
       "id": "media-3",
