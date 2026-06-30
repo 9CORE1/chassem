@@ -209,8 +209,18 @@
                         <li><button class="filter-btn" data-filter="media" id="btn-filter-media"><i class="fa-solid fa-video icon-left"></i>영상콘텐츠</button></li>
                         <li><button class="filter-btn" data-filter="it" id="btn-filter-it"><i class="fa-solid fa-code icon-left"></i>IT 미래기술</button></li>
                     </ul>
-                    <div id="admin-portfolio-actions" style="display: none;">
-                        <button class="btn btn-primary" onclick="openAddProjectModal()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;"><i class="fa-solid fa-plus icon-left"></i>프로젝트 추가</button>
+                    <div class="portfolio-actions-wrapper" style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                        <div class="view-toggle" id="view-toggle">
+                            <button class="view-toggle-btn active" id="btn-view-grid" title="블록보기" aria-label="블록보기">
+                                <i class="fa-solid fa-table-cells-large"></i>
+                            </button>
+                            <button class="view-toggle-btn" id="btn-view-list" title="리스트보기" aria-label="리스트보기">
+                                <i class="fa-solid fa-list-ul"></i>
+                            </button>
+                        </div>
+                        <div id="admin-portfolio-actions" style="display: none; margin-bottom: 0;">
+                            <button class="btn btn-primary" onclick="openAddProjectModal()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;"><i class="fa-solid fa-plus icon-left"></i>프로젝트 추가</button>
+                        </div>
                     </div>
                 </div>
 

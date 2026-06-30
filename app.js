@@ -365,6 +365,7 @@ function initApp() {
     renderPortfolioGrid();
     renderTimeline('career');
     setupFilters();
+    setupViewToggle();
     setupModal();
     setupThemeToggle();
     setupMobileMenu();
@@ -651,6 +652,63 @@ function setupFilters() {
             }
         });
     });
+}
+
+function setupViewToggle() {
+    const btnGrid = document.getElementById('btn-view-grid');
+    const btnList = document.getElementById('btn-view-list');
+    const grid = document.getElementById('portfolio-grid');
+    
+    if (!btnGrid || !btnList || !grid) return;
+    
+    // Read saved view preference from localStorage (default: 'grid')
+    const savedView = localStorage.getItem('portfolioViewMode') || 'grid';
+    
+    // Apply initial view without animation
+    if (savedView === 'list') {
+        grid.classList.add('list-view');
+        btnList.classList.add('active');
+        btnGrid.classList.remove('active');
+    } else {
+        grid.classList.remove('list-view');
+        btnGrid.classList.add('active');
+        btnList.classList.remove('active');
+    }
+    
+    btnGrid.addEventListener('click', () => {
+        if (localStorage.getItem('portfolioViewMode') !== 'grid') {
+            transitionView('grid');
+        }
+    });
+    
+    btnList.addEventListener('click', () => {
+        if (localStorage.getItem('portfolioViewMode') !== 'list') {
+            transitionView('list');
+        }
+    });
+    
+    function transitionView(viewMode) {
+        grid.style.opacity = '0';
+        grid.style.transform = 'translateY(10px)';
+        grid.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+        
+        setTimeout(() => {
+            if (viewMode === 'list') {
+                grid.classList.add('list-view');
+                btnList.classList.add('active');
+                btnGrid.classList.remove('active');
+            } else {
+                grid.classList.remove('list-view');
+                btnGrid.classList.add('active');
+                btnList.classList.remove('active');
+            }
+            localStorage.setItem('portfolioViewMode', viewMode);
+            
+            grid.style.opacity = '1';
+            grid.style.transform = 'translateY(0)';
+            setupScrollEffects();
+        }, 250);
+    }
 }
 
 // ==========================================================================
