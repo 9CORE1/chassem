@@ -244,12 +244,12 @@
       "accentBg": "rgba(248, 87, 166, 0.1)",
       "accentBorder": "rgba(248, 87, 166, 0.2)",
       "icon": "fa-video",
-      "youtubeUrl": "https://drive.google.com/file/d/1rUf5kOSqr6_MJ_-YqEfF1FwtJrhGvO28/view?usp=drive_link",
-      "youtubeStart": "",
-      "youtubeEnd": "",
+      "youtubeUrl": "",
+      "youtubeStart": 284,
+      "youtubeEnd": 339,
       "imageUrl": "",
       "imageUrl2": "",
-      "googleDriveUrl": ""
+      "googleDriveUrl": "https://drive.google.com/file/d/1rUf5kOSqr6_MJ_-YqEfF1FwtJrhGvO28/view?usp=drive_link"
     }
   ],
   "journeyData": [
