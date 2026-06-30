@@ -427,6 +427,28 @@
       "googleDriveUrl": "",
       "imageUrl": "images/project-career-1782809281059.jpg",
       "imageUrl2": "images/project-career-1782809281059-2.jpg"
+    },
+    {
+      "id": "career-1782810085735",
+      "category": "career",
+      "title": "디자인 유어 라이프(인생 디자인)",
+      "period": "2019.03.07",
+      "year": "2019",
+      "summary": "Design Your Life",
+      "description": "",
+      "role": "부산광역시",
+      "highlights": [],
+      "techStack": [],
+      "accentColor": "var(--color-career-end)",
+      "accentBg": "rgba(79, 172, 254, 0.1)",
+      "accentBorder": "rgba(79, 172, 254, 0.2)",
+      "icon": "fa-graduation-cap",
+      "youtubeUrl": "",
+      "youtubeStart": "",
+      "youtubeEnd": "",
+      "googleDriveUrl": "",
+      "imageUrl": "images/project-career-1782810085735.jpg",
+      "imageUrl2": "images/project-career-1782810085735-2.jpg"
     }
   ],
   "journeyData": [
