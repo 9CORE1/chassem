@@ -1665,23 +1665,19 @@ function compressAndResizeImage(img, maxWidth = 1024, maxHeight = 1024, quality 
     return canvas.toDataURL('image/jpeg', quality);
 }
 
-// 이미지 비율을 유지하면서 타겟 크기에 맞춰 캔버스 중앙에 배치(Letterbox/Pillarbox)하는 헬퍼 함수
-function resizeAndPadImage(img, targetWidth, targetHeight) {
+// 이미지 비율을 유지하면서 타겟 크기에 맞춰 크롭(Cover)하여 캔버스 중앙에 배치하는 헬퍼 함수
+function resizeAndCropImage(img, targetWidth, targetHeight) {
     const canvas = document.createElement('canvas');
     canvas.width = targetWidth;
     canvas.height = targetHeight;
     const ctx = canvas.getContext('2d');
     
-    // 흰색 배경으로 채우기 (JPEG 표준 대응 및 여백 처리)
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, targetWidth, targetHeight);
-    
-    // 비율 맞춤용 스케일 팩터 계산 (Contain)
-    const scale = Math.min(targetWidth / img.width, targetHeight / img.height);
+    // 비율 맞춤용 스케일 팩터 계산 (Cover)
+    const scale = Math.max(targetWidth / img.width, targetHeight / img.height);
     const scaledWidth = img.width * scale;
     const scaledHeight = img.height * scale;
     
-    // 중앙 정렬 오프셋 계산
+    // 중앙 정렬 오프셋 계산 (초과되는 부분은 캔버스 경계 밖으로 나가 잘리게 됨)
     const x = (targetWidth - scaledWidth) / 2;
     const y = (targetHeight - scaledHeight) / 2;
     
@@ -1828,8 +1824,8 @@ function renderProjectForm(project = null, modalTitleStr) {
                     const targetWidth = Math.max(w1, w2);
                     const targetHeight = Math.max(h1, h2);
                     
-                    selectedImageBase64 = resizeAndPadImage(img1, targetWidth, targetHeight);
-                    selectedImageBase64_2 = resizeAndPadImage(img2, targetWidth, targetHeight);
+                    selectedImageBase64 = resizeAndCropImage(img1, targetWidth, targetHeight);
+                    selectedImageBase64_2 = resizeAndCropImage(img2, targetWidth, targetHeight);
                     
                     // Update preview display on form
                     const previewImg = document.getElementById('proj-image-preview');
