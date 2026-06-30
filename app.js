@@ -1821,8 +1821,8 @@ function renderProjectForm(project = null, modalTitleStr) {
                         return;
                     }
                     
-                    const targetWidth = Math.max(w1, w2);
-                    const targetHeight = Math.max(h1, h2);
+                    const targetWidth = Math.min(w1, w2);
+                    const targetHeight = Math.min(h1, h2);
                     
                     selectedImageBase64 = resizeAndCropImage(img1, targetWidth, targetHeight);
                     selectedImageBase64_2 = resizeAndCropImage(img2, targetWidth, targetHeight);
