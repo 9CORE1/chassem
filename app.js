@@ -297,33 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function loadDataAndInit() {
-    // 1. 로컬 스토리지를 우선 조회하여 최신 편집 데이터를 복원
-    const localPortfolio = localStorage.getItem('portfolioData');
-    const localJourney = localStorage.getItem('journeyData');
-    const localCompetencies = localStorage.getItem('competenciesData');
-    
-    if (localPortfolio && localJourney && localCompetencies) {
-        try {
-            portfolioData = JSON.parse(localPortfolio);
-            journeyData = JSON.parse(localJourney);
-            competenciesData = JSON.parse(localCompetencies);
-            console.log('로컬 스토리지로부터 최신 편집 데이터를 로드했습니다.');
-            initApp();
-            
-            // 백그라운드에서 서버 최신 파일 확인 (데이터 유실을 막기 위해 덮어쓰지는 않음)
-            fetch('data.json')
-                .then(res => res.json())
-                .then(data => {
-                    console.log('서버 백그라운드 데이터 동기화 확인 완료');
-                })
-                .catch(err => console.warn('서버 백그라운드 데이터 조회 비활성 상태:', err));
-            return;
-        } catch (e) {
-            console.error('로컬 스토리지 데이터 파싱 오류, 서버 데이터 로드를 우회 시도합니다:', e);
-        }
-    }
-
-    // 2. 로컬 스토리지가 비어있거나 파싱 오류가 난 경우에만 서버 data.json 로드
+    // 1. 서버 data.json 로드를 최우선으로 시도
     fetch('data.json')
         .then(res => {
             if (!res.ok) throw new Error('서버 데이터 로드 실패');
@@ -336,22 +310,50 @@ function loadDataAndInit() {
             competenciesData = data.competenciesData;
             
             // 로컬 스토리지 데이터 동기화
-            localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
-            localStorage.setItem('journeyData', JSON.stringify(journeyData));
-            localStorage.setItem('competenciesData', JSON.stringify(competenciesData));
+            try {
+                localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
+                localStorage.setItem('journeyData', JSON.stringify(journeyData));
+                localStorage.setItem('competenciesData', JSON.stringify(competenciesData));
+            } catch (e) {
+                console.error('로컬 스토리지 동기화 실패:', e);
+            }
             
             initApp();
         })
         .catch(err => {
-            console.warn('서버 데이터 로드 실패, 기본 템플릿 데이터를 로드합니다:', err);
+            console.warn('서버 데이터 로드 실패, 로컬 스토리지 백업을 확인합니다:', err);
             
+            // 2. 서버 로드 실패 시 로컬 스토리지 백업 확인
+            const localPortfolio = localStorage.getItem('portfolioData');
+            const localJourney = localStorage.getItem('journeyData');
+            const localCompetencies = localStorage.getItem('competenciesData');
+            
+            if (localPortfolio && localJourney && localCompetencies) {
+                try {
+                    portfolioData = JSON.parse(localPortfolio);
+                    journeyData = JSON.parse(localJourney);
+                    competenciesData = JSON.parse(localCompetencies);
+                    console.log('로컬 스토리지로부터 백업 데이터를 복원했습니다.');
+                    initApp();
+                    return;
+                } catch (e) {
+                    console.error('로컬 스토리지 백업 파싱 오류:', e);
+                }
+            }
+            
+            // 3. 로컬 스토리지도 비어있거나 오류 시 기본 템플릿 데이터 사용
+            console.log('기본 템플릿 데이터를 로드합니다.');
             portfolioData = defaultPortfolioData;
             journeyData = defaultJourneyData;
             competenciesData = defaultCompetenciesData;
             
-            localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
-            localStorage.setItem('journeyData', JSON.stringify(journeyData));
-            localStorage.setItem('competenciesData', JSON.stringify(competenciesData));
+            try {
+                localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
+                localStorage.setItem('journeyData', JSON.stringify(journeyData));
+                localStorage.setItem('competenciesData', JSON.stringify(competenciesData));
+            } catch (e) {
+                console.error('로컬 스토리지 초기화 실패:', e);
+            }
             
             initApp();
         });
@@ -2311,3 +2313,4 @@ window.downloadUploadedDataJson = function() {
             alert(`서버에 업로드된 Json파일 로드 실패: ${err.message}\n(설정하신 GitHub 정보가 정확하거나 파일이 업로드되어 있는지 확인해 주세요.)`);
         });
 };
+
