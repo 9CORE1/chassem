@@ -869,44 +869,49 @@ function openDetailsModal(id) {
     container.style.setProperty('--modal-accent-alpha', item.accentBg);
     container.style.setProperty('--modal-accent-border', item.accentBorder);
     
-    let youtubeSection = '';
+    let videoSection = '';
+    let videoPlayersHtml = '';
+    
     if (item.youtubeUrl) {
         const embedUrl = getYouTubeEmbedUrl(item.youtubeUrl, item.youtubeStart, item.youtubeEnd);
         console.log(`[YouTube embed debugging] Original URL: ${item.youtubeUrl} -> Generated Embed URL: ${embedUrl}`);
         if (embedUrl) {
-            youtubeSection = `
-                <div class="modal-section">
-                    <h4 class="modal-section-title">관련 영상</h4>
-                    <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 8px; margin-top: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                        <!-- 화면 제어/공유 방지를 위해 allow 속성 수정 및 allowfullscreen 제거 -->
-                        <iframe src="${embedUrl}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"></iframe>
-                        <!-- 상단 타이틀 및 공유/정보 버튼 클릭 차단용 반응형 투명 오버레이 -->
-                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 18%; z-index: 5; background: transparent;"></div>
-                        <!-- 하단 컨트롤러 및 유튜브 워터마크 클릭 차단용 반응형 투명 오버레이 -->
-                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 15%; z-index: 5; background: transparent;"></div>
-                    </div>
+            videoPlayersHtml += `
+                <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 8px; margin-top: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                    <!-- 화면 제어/공유 방지를 위해 allow 속성 수정 및 allowfullscreen 제거 -->
+                    <iframe src="${embedUrl}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                    <!-- 상단 타이틀 및 공유/정보 버튼 클릭 차단용 반응형 투명 오버레이 -->
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 18%; z-index: 5; background: transparent;"></div>
+                    <!-- 하단 컨트롤러 및 유튜브 워터마크 클릭 차단용 반응형 투명 오버레이 -->
+                    <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 15%; z-index: 5; background: transparent;"></div>
                 </div>
             `;
         }
     }
     
-    let googleDriveSection = '';
     if (item.googleDriveUrl) {
         const embedUrl = getGoogleDriveEmbedUrl(item.googleDriveUrl);
         console.log(`[Google Drive embed debugging] Original URL: ${item.googleDriveUrl} -> Generated Embed URL: ${embedUrl}`);
         if (embedUrl) {
-            googleDriveSection = `
-                <div class="modal-section">
-                    <h4 class="modal-section-title">관련 영상</h4>
-                    <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 8px; margin-top: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                        <!-- 화면 제어/공유 방지를 위해 allowfullscreen 제거하고 allow="autoplay" 설정 -->
-                        <iframe src="${embedUrl}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="autoplay" referrerpolicy="strict-origin-when-cross-origin"></iframe>
-                        <!-- 우상단 팝아웃(새창열기)을 통한 다운로드 및 공유 방지용 반응형 투명 오버레이 (상단 약 20%) -->
-                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 20%; z-index: 5; background: transparent;"></div>
-                    </div>
+            const marginStyle = videoPlayersHtml ? 'margin-top: 1.5rem;' : 'margin-top: 1rem;';
+            videoPlayersHtml += `
+                <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 8px; ${marginStyle} box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                    <!-- 화면 제어/공유 방지를 위해 allowfullscreen 제거하고 allow="autoplay" 설정 -->
+                    <iframe src="${embedUrl}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="autoplay" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                    <!-- 우상단 팝아웃(새창열기)을 통한 다운로드 및 공유 방지용 반응형 투명 오버레이 (상단 약 20%) -->
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 20%; z-index: 5; background: transparent;"></div>
                 </div>
             `;
         }
+    }
+    
+    if (videoPlayersHtml) {
+        videoSection = `
+            <div class="modal-section">
+                <h4 class="modal-section-title">관련 영상</h4>
+                ${videoPlayersHtml}
+            </div>
+        `;
     }
     
     let imageSection = '';
@@ -953,8 +958,7 @@ function openDetailsModal(id) {
         </div>
         
         <div class="modal-body">
-            ${youtubeSection}
-            ${googleDriveSection}
+            ${videoSection}
             ${imageSection}
             
             ${item.summary ? `
