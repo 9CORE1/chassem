@@ -21,7 +21,7 @@ const defaultPortfolioData = [
         period: '2025.03 - 2026.02',
         year: '2025',
         summary: '대학 청년들을 대상으로 맞춤형 커리어 로드맵을 설계하고, 자기소개서 첨삭 및 면접 코칭을 전담하여 실질적인 취업률 향상에 기여했습니다.',
-        description: '대학 청년들의 취업난을 해소하기 위해 마련된 정부 지원 대학 연계 사업에서 전담 취업 컨설턴트로 활동했습니다. 개인의 역량과 희망 분야를 객관적으로 분석하여 맞춤형 목표를 도출하고 실행 전략을 제공했습니다.',
+        description: '대학 청년들의 취업난을 해소하기 위해 마련된 정부 지원 대학 연계 사업에서 전담 취업 컨설턴트로 활동했습니다. 개인의 역량과 희망 분야를 객과적으로 분석하여 맞춤형 목표를 도출하고 실행 전략을 제공했습니다.',
         role: '주요 역량 분석 및 단계별 커리어 로드맵 설계, 이력서/자기소개서 정밀 클리닉, AI 및 대면 면접 시뮬레이션 및 피드백 제공, 취업 동향 트렌드 강의 운영.',
         highlights: [
             '1:1 전담 관리 학생 120명 중 85%의 대기업 및 우수 중견기업 서류 전형 합격률 달성',
@@ -665,29 +665,13 @@ function setupModal() {
 
 function convertTimeToSeconds(timeStr) {
     if (timeStr === null || timeStr === undefined) return '';
-    let str = String(timeStr).trim().toLowerCase();
+    const str = String(timeStr).trim();
     if (!str) return '';
     
-    // 1. YouTube의 t=1h2m3s 또는 t=85s 또는 t=1m 형식 파싱 지원
-    if (/[hms]/.test(str)) {
-        let totalSeconds = 0;
-        const hoursMatch = str.match(/(\d+)h/);
-        const minutesMatch = str.match(/(\d+)m/);
-        const secondsMatch = str.match(/(\d+)s/);
-        
-        if (hoursMatch) totalSeconds += parseInt(hoursMatch[1], 10) * 3600;
-        if (minutesMatch) totalSeconds += parseInt(minutesMatch[1], 10) * 60;
-        if (secondsMatch) totalSeconds += parseInt(secondsMatch[1], 10);
-        
-        if (totalSeconds > 0) return totalSeconds;
-    }
-    
-    // 2. 숫자로만 구성된 경우 (초 단위)
     if (/^\d+$/.test(str)) {
         return parseInt(str, 10);
     }
     
-    // 3. 분:초 (1:25) 또는 시:분:초 (1:05:30) 형식
     if (str.includes(':')) {
         const parts = str.split(':').map(Number);
         if (parts.some(isNaN)) return '';
@@ -708,34 +692,12 @@ function getYouTubeEmbedUrl(url, start = null, end = null) {
     let videoId = '';
     url = url.trim();
     
-    // 1. 만약 전체 <iframe ...> HTML 코드를 통째로 붙여넣은 경우 src 속성값만 자동 추출
-    if (url.startsWith('<iframe') && url.includes('src=')) {
-        const srcMatch = url.match(/src=["']([^"']+)["']/);
-        if (srcMatch && srcMatch[1]) {
-            url = srcMatch[1];
-        }
-    }
-    
-    // 2. 파라미터로 제공된 start/end가 없고 URL 자체에 시간 파라미터(t= 또는 start= 또는 end=)가 포함되어 있는 경우 추출
-    if (start === null || start === undefined || start === '') {
-        const startMatch = url.match(/[\?&](?:start|t)=([^&#]+)/);
-        if (startMatch && startMatch[1]) {
-            start = startMatch[1];
-        }
-    }
-    if (end === null || end === undefined || end === '') {
-        const endMatch = url.match(/[\?&]end=([^&#]+)/);
-        if (endMatch && endMatch[1]) {
-            end = endMatch[1];
-        }
-    }
-    
-    // 3. 만약 입력값이 11자리 비디오 ID 자체인 경우 직접 할당
+    // 1. 만약 입력값이 11자리 비디오 ID 자체인 경우 직접 할당
     if (url.length === 11 && !url.includes('/') && !url.includes('.')) {
         videoId = url;
     } else {
         try {
-            // 3. Shorts 및 Live 스트림 URL 처리
+            // 2. Shorts 및 Live 스트림 URL 처리
             if (url.includes('shorts/')) {
                 const parts = url.split('shorts/');
                 if (parts.length > 1) {
@@ -761,8 +723,8 @@ function getYouTubeEmbedUrl(url, start = null, end = null) {
     
     if (!videoId) return null;
     
-    // 일부 공개(unlisted) 영상 및 연령 제한/저작권 주장 클레임 영상의 임베드 재생 호환성 향상을 위해 일반 youtube.com 도메인 사용
-    let embedUrl = `https://www.youtube.com/embed/${videoId}`;
+    // 모바일 브라우저(iOS Safari 등)의 서드파티 쿠키 차단 정책을 우회하기 위해 youtube-nocookie.com 도메인 사용
+    let embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
     const params = [
         'controls=1',         // 재생 컨트롤러 활성화 (기기 호환성 및 모바일 지원)
         'rel=0',              // 관련 영상 추천 중단
@@ -809,16 +771,8 @@ function openDetailsModal(id) {
                 <div class="modal-section">
                     <h4 class="modal-section-title">관련 영상</h4>
                     <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 8px; margin-top: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                        <!-- 유튜브 공식 퍼가기(iframe) 사양 준수 -->
-                        <iframe 
-                            src="${embedUrl}" 
-                            title="YouTube video player" 
-                            frameborder="0; margin:0; padding:0;" 
-                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                            referrerpolicy="strict-origin-when-cross-origin" 
-                            allowfullscreen>
-                        </iframe>
+                        <!-- 화면 확대 없이 100% 정상 비율 유지 -->
+                        <iframe src="${embedUrl}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
                     </div>
                 </div>
             `;
@@ -832,42 +786,6 @@ function openDetailsModal(id) {
                 <h4 class="modal-section-title">대표 이미지</h4>
                 <div class="image-container" style="width: 100%; border-radius: 8px; overflow: hidden; margin-top: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid var(--border-color);">
                     <img src="${item.imageUrl}" style="width: 100%; height: auto; display: block; max-height: 450px; object-fit: contain; background: rgba(0,0,0,0.2);">
-                </div>
-            </div>
-        `;
-    }
-
-    let descriptionSection = '';
-    if (item.description) {
-        descriptionSection = `
-            <div class="modal-section">
-                <h4 class="modal-section-title">상세 설명</h4>
-                <p class="modal-desc-long" style="white-space: pre-wrap;">${item.description}</p>
-            </div>
-        `;
-    }
-
-    let highlightsSection = '';
-    if (item.highlights && item.highlights.length > 0) {
-        const listItems = item.highlights.map(h => `<li>${h}</li>`).join('');
-        highlightsSection = `
-            <div class="modal-section">
-                <h4 class="modal-section-title">주요 성과 및 특징</h4>
-                <ul class="modal-bullet-list">
-                    ${listItems}
-                </ul>
-            </div>
-        `;
-    }
-
-    let techStackSection = '';
-    if (item.techStack && item.techStack.length > 0) {
-        const tags = item.techStack.map(t => `<span class="modal-tech-tag">${t}</span>`).join('');
-        techStackSection = `
-            <div class="modal-section">
-                <h4 class="modal-section-title">핵심 역량 및 기술</h4>
-                <div class="modal-tech-list">
-                    ${tags}
                 </div>
             </div>
         `;
@@ -899,25 +817,12 @@ function openDetailsModal(id) {
             
             ${item.role ? `
             <div class="modal-section">
-                <h4 class="modal-section-title">담당 역할 및 주요 업무</h4>
+                <h4 class="modal-section-title">기관명</h4>
                 <p class="modal-desc-long">${item.role}</p>
             </div>
             ` : ''}
-
-            ${descriptionSection}
-            ${highlightsSection}
-            ${techStackSection}
         </div>
     `;
-    
-    // Bind close button event
-    container.querySelector('#modal-close-btn').addEventListener('click', closeModal);
-    
-    // Open modal
-    modal.classList.add('active');
-    modal.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden'; // Lock background scroll
-}
     
     // Bind close button event
     container.querySelector('#modal-close-btn').addEventListener('click', closeModal);
@@ -1173,8 +1078,8 @@ function setupAdminMode() {
     const adminPortfolioActions = document.getElementById('admin-portfolio-actions');
     const adminJourneyActions = document.getElementById('admin-journey-actions');
     
-    // Hide timeline actions by default
-    if (adminJourneyActions) adminJourneyActions.style.display = 'none';
+    // Always show timeline actions (Add button)
+    if (adminJourneyActions) adminJourneyActions.style.display = 'block';
     
     const savedAdmin = sessionStorage.getItem('isAdminMode') === 'true';
     if (savedAdmin) {
@@ -1185,7 +1090,6 @@ function setupAdminMode() {
         }
         if (adminBanner) adminBanner.style.display = 'flex';
         if (adminPortfolioActions) adminPortfolioActions.style.display = 'block';
-        if (adminJourneyActions) adminJourneyActions.style.display = 'block';
         document.body.classList.add('admin-active');
         
         // Re-render to show admin actions on page load
@@ -1205,7 +1109,7 @@ function setupAdminMode() {
                 adminToggle.innerHTML = '<i class="fa-solid fa-lock"></i>';
                 if (adminBanner) adminBanner.style.display = 'none';
                 if (adminPortfolioActions) adminPortfolioActions.style.display = 'none';
-                if (adminJourneyActions) adminJourneyActions.style.display = 'none';
+                // adminJourneyActions is kept visible (do not set to 'none')
                 document.body.classList.remove('admin-active');
                 
                 renderCompetencies();
@@ -1678,23 +1582,8 @@ function renderProjectForm(project = null, modalTitleStr) {
             </div>
             
             <div class="form-group">
-                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">담당 역할 및 소속 기관</label>
-                <input type="text" id="proj-role" value="${isEdit ? project.role : ''}" placeholder="예: 주요 역량 분석 및 로드맵 설계 또는 대학일자리플러스센터" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
-            </div>
-
-            <div class="form-group">
-                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">상세 설명</label>
-                <textarea id="proj-description" rows="3" placeholder="프로젝트에 대한 세부 업무 내용 및 설명을 입력하세요." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); resize: vertical;">${isEdit && project.description ? project.description : ''}</textarea>
-            </div>
-
-            <div class="form-group">
-                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">주요 성과 및 특징 (엔터키로 구분하여 여러 줄 입력 가능)</label>
-                <textarea id="proj-highlights" rows="3" placeholder="예:&#10;1:1 전담 학생 합격률 85% 달성&#10;상담 만족도 4.9점 획득" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); resize: vertical;">${isEdit && project.highlights ? project.highlights.join('\n') : ''}</textarea>
-            </div>
-
-            <div class="form-group">
-                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">핵심 역량 및 사용 기술 (쉼표 ','로 구분)</label>
-                <input type="text" id="proj-techstack" value="${isEdit && project.techStack ? project.techStack.join(', ') : ''}" placeholder="예: React, CSS Grid, Chart.js" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">기관명</label>
+                <input type="text" id="proj-role" value="${isEdit ? project.role : ''}" placeholder="예: 대학일자리플러스센터, (주)나인코어" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
             </div>
             
             <div class="form-group">
@@ -1806,13 +1695,9 @@ function renderProjectForm(project = null, modalTitleStr) {
         const youtubeStartVal = convertTimeToSeconds(document.getElementById('proj-youtube-start').value.trim());
         const youtubeEndVal = convertTimeToSeconds(document.getElementById('proj-youtube-end').value.trim());
         
-        const descriptionVal = document.getElementById('proj-description').value.trim();
-        
-        const highlightsText = document.getElementById('proj-highlights').value.trim();
-        const highlightsVal = highlightsText ? highlightsText.split('\n').map(l => l.trim()).filter(l => l !== '') : [];
-        
-        const techStackText = document.getElementById('proj-techstack').value.trim();
-        const techStackVal = techStackText ? techStackText.split(',').map(t => t.trim()).filter(t => t !== '') : [];
+        const descriptionVal = isEdit ? project.description : '';
+        const highlightsVal = isEdit ? project.highlights : [];
+        const techStackVal = isEdit ? project.techStack : [];
         
         let iconVal = 'fa-code';
         if (categoryVal === 'career') {
