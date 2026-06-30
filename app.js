@@ -905,10 +905,10 @@ function openDetailsModal(id) {
                 <div class="video-container" oncontextmenu="return false;" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 8px; ${marginStyle} box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
                     <!-- 화면 제어/공유 방지를 위해 allowfullscreen 제거, allow="autoplay" 설정 및 sandbox 설정으로 새창 팝업 차단 -->
                     <iframe src="${embedUrl}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="autoplay" sandbox="allow-scripts allow-same-origin allow-presentation" referrerpolicy="strict-origin-when-cross-origin"></iframe>
-                    <!-- 우상단 팝아웃(새창열기)을 통한 다운로드 및 공유 방지용 반응형 투명 오버레이 (상단 약 20%) -->
-                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 20%; z-index: 5; background: transparent;"></div>
-                    <!-- 하단 재생 바 탐색 및 조절 클릭 차단용 반응형 투명 오버레이 (하단 약 15%) -->
-                    <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 15%; z-index: 5; background: transparent;"></div>
+                    <!-- 우상단 팝아웃(새창열기)을 통한 다운로드 및 공유 방지용 고정 높이 투명 오버레이 (상단 60px) -->
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 60px; z-index: 5; background: transparent;"></div>
+                    <!-- 하단 재생 바 탐색 및 조절 클릭 차단용 고정 높이 투명 오버레이 (하단 65px) -->
+                    <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 65px; z-index: 5; background: transparent;"></div>
                 </div>
             `;
         }
