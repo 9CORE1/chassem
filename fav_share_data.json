@@ -1,0 +1,58 @@
+[
+  {
+    "id": "fav-1",
+    "title": "ChatGPT",
+    "url": "https://chatgpt.com",
+    "desc": "OpenAI의 대표적인 대화형 AI 서비스로, 다양한 프롬프트를 테스트하고 실행할 수 있습니다.",
+    "category": "AI 대화형 도구",
+    "createdAt": "2026-06-29T00:00:00.000Z"
+  },
+  {
+    "id": "fav-2",
+    "title": "Claude",
+    "url": "https://claude.ai",
+    "desc": "Anthropic의 대화형 AI 서비스로, 코딩 및 글쓰기 프롬프트 수행에 매우 탁월합니다.",
+    "category": "AI 대화형 도구",
+    "createdAt": "2026-06-29T00:00:00.000Z"
+  },
+  {
+    "id": "fav-1782708260281-eak5iw4mv",
+    "title": "Gemini",
+    "category": "AI 대화형 도구",
+    "url": "https://gemini.google.com/app",
+    "desc": "Google Gemini",
+    "createdAt": "2026-06-29T04:44:20.281Z"
+  },
+  {
+    "id": "fav-1782708964806-oe5j859r6",
+    "title": "Arena AI",
+    "category": "추천 사이트",
+    "url": "https://arena.ai/",
+    "desc": "The Official AI Ranking & LLM Leaderboard",
+    "createdAt": "2026-06-29T04:56:04.806Z"
+  },
+  {
+    "id": "fav-1782791749188-q17d6jj9l",
+    "title": "Daily Prompt",
+    "category": "추천 사이트",
+    "url": "https://blog.secondbrush.co.kr/",
+    "desc": "데일리 프롬프트\n메일링 서비스",
+    "createdAt": "2026-06-30T03:55:49.188Z"
+  },
+  {
+    "id": "fav-1782882760448-3wg74lgib",
+    "title": "Google NotebookLM",
+    "category": "AI 추천 서비스",
+    "url": "https://notebooklm.google/",
+    "desc": "NotebookLM",
+    "createdAt": "2026-07-01T05:12:40.448Z"
+  },
+  {
+    "id": "fav-1782882921629-4yff5ic4a",
+    "title": "genspark.ai",
+    "category": "AI 추천 서비스",
+    "url": "https://www.genspark.ai/",
+    "desc": "젠스파크 AI",
+    "createdAt": "2026-07-01T05:15:21.629Z"
+  }
+]
