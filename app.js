@@ -9,6 +9,11 @@ const EMAILJS_CONFIG = {
 };
 
 // ==========================================================================
+// Google Apps Script Configuration for Contact Form (Google Sheets Saving)
+// ==========================================================================
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzW7iQFbp9L0o2G8jSnlQqJabbBRsLFO6c1t4vOdhKIxdPADmOJgRWRrNygNih-dNA/exec'; // 배포된 Google Apps Script 웹 앱 URL을 여기에 입력하세요.
+
+// ==========================================================================
 // Portfolio & Experience Data Definition
 // ==========================================================================
 
@@ -1372,13 +1377,46 @@ function setupContactForm() {
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<span>메시지 전송 중...</span> <i class="fa-solid fa-spinner fa-spin"></i>';
         
-        // Mock API Request Delay
-        setTimeout(() => {
-            alert(`감사합니다, ${name}님! 메시지가 성공적으로 전달되었습니다.\n(작성하신 이메일: ${email}로 빠른 시일 내에 연락드리겠습니다.)`);
+        // If Google Apps Script URL is not set, fallback to Mockup
+        if (!APPS_SCRIPT_URL) {
+            console.log('Google Apps Script URL이 설정되지 않아 모의(Mock) 전송을 실행합니다.');
+            setTimeout(() => {
+                alert(`감사합니다, ${name}님! 메시지가 성공적으로 전달되었습니다.\n(작성하신 이메일: ${email}로 빠른 시일 내에 연락드리겠습니다.)`);
+                form.reset();
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span>메시지 전송하기</span> <i class="fa-solid fa-paper-plane"></i>';
+            }, 1500);
+            return;
+        }
+        
+        const payload = {
+            name: name,
+            email: email,
+            subject: subject,
+            message: message
+        };
+        
+        // Post content to Google Apps Script Web App
+        fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors', // standard workaround for redirection and CORS on Google Web Apps
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(() => {
+            alert(`감사합니다, ${name}님! 문의 내용이 Google 스프레드시트에 성공적으로 기록되었습니다.`);
             form.reset();
+        })
+        .catch(error => {
+            console.error('Google Apps Script 전송 에러:', error);
+            alert('메시지 전송에 실패했습니다. 다시 시도해 주세요.');
+        })
+        .finally(() => {
             submitBtn.disabled = false;
             submitBtn.innerHTML = '<span>메시지 전송하기</span> <i class="fa-solid fa-paper-plane"></i>';
-        }, 1500);
+        });
     });
 }
 
