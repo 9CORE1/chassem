@@ -11,7 +11,7 @@ const EMAILJS_CONFIG = {
 // ==========================================================================
 // Google Apps Script Configuration for Contact Form (Google Sheets Saving)
 // ==========================================================================
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzW7iQFbp9L0o2G8jSnlQqJabbBRsLFO6c1t4vOdhKIxdPADmOJgRWRrNygNih-dNA/exec'; // 배포된 Google Apps Script 웹 앱 URL을 여기에 입력하세요.
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwvvjcBVZLoeAoU3Np9GUkkAHvW5MSD4BHaXPxUg3yGw9wIdVEsT7Lfug47R6heL_tx/exec'; // 배포된 Google Apps Script 웹 앱 URL을 여기에 입력하세요.
 
 // ==========================================================================
 // Portfolio & Experience Data Definition
@@ -1369,6 +1369,7 @@ function setupContactForm() {
         const name = document.getElementById('form-name').value;
         const email = document.getElementById('form-email').value;
         const subject = document.getElementById('form-subject').value;
+        const phone = document.getElementById('form-phone').value;
         const message = document.getElementById('form-message').value;
         
         const submitBtn = document.getElementById('btn-submit');
@@ -1381,7 +1382,7 @@ function setupContactForm() {
         if (!APPS_SCRIPT_URL) {
             console.log('Google Apps Script URL이 설정되지 않아 모의(Mock) 전송을 실행합니다.');
             setTimeout(() => {
-                alert(`감사합니다, ${name}님! 메시지가 성공적으로 전달되었습니다.\n(작성하신 이메일: ${email}로 빠른 시일 내에 연락드리겠습니다.)`);
+                alert(`감사합니다, ${name}님! 메시지가 성공적으로 전달되었습니다.\n(작성하신 이메일: ${email} 또는 연락처: ${phone || '없음'}로 빠른 시일 내에 연락드리겠습니다.)`);
                 form.reset();
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<span>메시지 전송하기</span> <i class="fa-solid fa-paper-plane"></i>';
@@ -1392,6 +1393,7 @@ function setupContactForm() {
         const payload = {
             name: name,
             email: email,
+            phone: phone,
             subject: subject,
             message: message
         };
