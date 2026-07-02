@@ -362,10 +362,10 @@ function loadDataAndInit() {
 function initApp() {
     initEmailJS();
     renderCompetencies();
+    setupViewToggle();
     renderPortfolioGrid();
     renderTimeline('career');
     setupFilters();
-    setupViewToggle();
     setupModal();
     setupThemeToggle();
     setupMobileMenu();
@@ -416,7 +416,7 @@ function saveAllData() {
             } catch (e) {
                 console.error('로컬 스토리지 포트폴리오 업데이트 오류:', e);
             }
-            renderPortfolioGrid(); // 새로운 이미지 상대경로를 카드에 즉시 반영
+            renderPortfolioGrid(currentPortfolioFilter, currentPortfolioPage); // 새로운 이미지 상대경로를 카드에 즉시 반영
         }
     })
     .catch(err => {
@@ -443,7 +443,44 @@ window.downloadDataJson = function() {
 // Portfolio Grid Rendering
 // ==========================================================================
 
-function renderPortfolioGrid(filter = 'all') {
+// ==========================================================================
+// Portfolio Grid Rendering & Pagination
+// ==========================================================================
+
+let currentPortfolioFilter = 'all';
+let currentPortfolioPage = 1;
+
+function getGridColumns() {
+    const grid = document.getElementById('portfolio-grid');
+    if (!grid) return 3;
+    
+    const gridComputed = window.getComputedStyle(grid);
+    const gridTemplateColumns = gridComputed.getPropertyValue('grid-template-columns');
+    if (gridTemplateColumns && gridTemplateColumns !== 'none') {
+        const cols = gridTemplateColumns.trim().split(/\s+/).length;
+        if (cols && !isNaN(cols)) return cols;
+    }
+    
+    const width = window.innerWidth;
+    if (width < 768) return 1;
+    if (width < 1140) return 2;
+    return 3;
+}
+
+function getPortfolioPageSize() {
+    const grid = document.getElementById('portfolio-grid');
+    const isListView = grid ? grid.classList.contains('list-view') : false;
+    if (isListView) {
+        return 5;
+    } else {
+        return 2 * getGridColumns();
+    }
+}
+
+function renderPortfolioGrid(filter = 'all', page = 1) {
+    currentPortfolioFilter = filter;
+    currentPortfolioPage = page;
+    
     const grid = document.getElementById('portfolio-grid');
     if (!grid) return;
     
@@ -453,7 +490,21 @@ function renderPortfolioGrid(filter = 'all') {
         ? portfolioData 
         : portfolioData.filter(item => item.category === filter);
         
-    filteredData.forEach(item => {
+    const pageSize = getPortfolioPageSize();
+    const totalPages = Math.ceil(filteredData.length / pageSize) || 1;
+    
+    if (currentPortfolioPage > totalPages) {
+        currentPortfolioPage = totalPages;
+    }
+    if (currentPortfolioPage < 1) {
+        currentPortfolioPage = 1;
+    }
+    
+    const startIdx = (currentPortfolioPage - 1) * pageSize;
+    const endIdx = startIdx + pageSize;
+    const pageData = filteredData.slice(startIdx, endIdx);
+    
+    pageData.forEach(item => {
         const card = document.createElement('article');
         card.className = 'portfolio-card glass-panel reveal-on-scroll active';
         card.style.position = 'relative';
@@ -507,7 +558,96 @@ function renderPortfolioGrid(filter = 'all') {
         
         grid.appendChild(card);
     });
+    
+    renderPortfolioPagination(totalPages);
 }
+
+function renderPortfolioPagination(totalPages) {
+    const paginationContainer = document.getElementById('portfolio-pagination');
+    if (!paginationContainer) return;
+    
+    paginationContainer.innerHTML = '';
+    
+    if (totalPages <= 1) {
+        paginationContainer.style.display = 'none';
+        return;
+    }
+    
+    paginationContainer.style.display = 'flex';
+    
+    // Previous page button
+    const prevBtn = document.createElement('button');
+    prevBtn.className = `page-btn prev-btn ${currentPortfolioPage === 1 ? 'disabled' : ''}`;
+    prevBtn.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
+    prevBtn.title = '이전 페이지';
+    if (currentPortfolioPage > 1) {
+        prevBtn.addEventListener('click', () => {
+            const grid = document.getElementById('portfolio-grid');
+            grid.style.opacity = '0';
+            grid.style.transform = 'translateY(10px)';
+            setTimeout(() => {
+                renderPortfolioGrid(currentPortfolioFilter, currentPortfolioPage - 1);
+                grid.style.opacity = '1';
+                grid.style.transform = 'translateY(0)';
+                setupScrollEffects();
+            }, 250);
+        });
+    }
+    paginationContainer.appendChild(prevBtn);
+    
+    // Page number buttons
+    for (let i = 1; i <= totalPages; i++) {
+        const pageBtn = document.createElement('button');
+        pageBtn.className = `page-btn ${currentPortfolioPage === i ? 'active' : ''}`;
+        pageBtn.textContent = i;
+        if (currentPortfolioPage !== i) {
+            pageBtn.addEventListener('click', () => {
+                const grid = document.getElementById('portfolio-grid');
+                grid.style.opacity = '0';
+                grid.style.transform = 'translateY(10px)';
+                setTimeout(() => {
+                    renderPortfolioGrid(currentPortfolioFilter, i);
+                    grid.style.opacity = '1';
+                    grid.style.transform = 'translateY(0)';
+                    setupScrollEffects();
+                }, 250);
+            });
+        }
+        paginationContainer.appendChild(pageBtn);
+    }
+    
+    // Next page button
+    const nextBtn = document.createElement('button');
+    nextBtn.className = `page-btn next-btn ${currentPortfolioPage === totalPages ? 'disabled' : ''}`;
+    nextBtn.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+    nextBtn.title = '다음 페이지';
+    if (currentPortfolioPage < totalPages) {
+        nextBtn.addEventListener('click', () => {
+            const grid = document.getElementById('portfolio-grid');
+            grid.style.opacity = '0';
+            grid.style.transform = 'translateY(10px)';
+            setTimeout(() => {
+                renderPortfolioGrid(currentPortfolioFilter, currentPortfolioPage + 1);
+                grid.style.opacity = '1';
+                grid.style.transform = 'translateY(0)';
+                setupScrollEffects();
+            }, 250);
+        });
+    }
+    paginationContainer.appendChild(nextBtn);
+}
+
+// Debounced resize listener to update pagination layout when columns count changes
+let resizeTimeout;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        const grid = document.getElementById('portfolio-grid');
+        if (grid && !grid.classList.contains('list-view')) {
+            renderPortfolioGrid(currentPortfolioFilter, currentPortfolioPage);
+        }
+    }, 150);
+});
 
 // ==========================================================================
 // Timeline Rendering (Chronological order)
@@ -617,7 +757,7 @@ function setupFilters() {
             grid.style.transform = 'translateY(10px)';
             
             setTimeout(() => {
-                renderPortfolioGrid(filterValue);
+                renderPortfolioGrid(filterValue, 1);
                 grid.style.opacity = '1';
                 grid.style.transform = 'translateY(0)';
                 // Re-initialize intersection observers for new elements
@@ -705,6 +845,8 @@ function setupViewToggle() {
                 btnList.classList.remove('active');
             }
             localStorage.setItem('portfolioViewMode', viewMode);
+            
+            renderPortfolioGrid(currentPortfolioFilter, 1); // Reset to page 1 on view change
             
             grid.style.opacity = '1';
             grid.style.transform = 'translateY(0)';
@@ -1263,7 +1405,7 @@ function setupAdminMode() {
         
         // Re-render to show admin actions on page load
         renderCompetencies();
-        renderPortfolioGrid();
+        renderPortfolioGrid(currentPortfolioFilter, currentPortfolioPage);
         renderTimeline(getActiveJourneyFilter());
     }
     
@@ -1282,7 +1424,7 @@ function setupAdminMode() {
                 document.body.classList.remove('admin-active');
                 
                 renderCompetencies();
-                renderPortfolioGrid();
+                renderPortfolioGrid(currentPortfolioFilter, currentPortfolioPage);
                 renderTimeline(getActiveJourneyFilter());
                 alert('관리자 모드가 해제되었습니다.');
             } else {
@@ -1564,7 +1706,7 @@ function verifyAuthCode() {
         document.body.classList.add('admin-active');
         
         renderCompetencies();
-        renderPortfolioGrid();
+        renderPortfolioGrid(currentPortfolioFilter, currentPortfolioPage);
         renderTimeline(getActiveJourneyFilter());
         
         closeAuthModal();
@@ -2112,7 +2254,7 @@ function renderProjectForm(project = null, modalTitleStr) {
             }
             
             saveAllData();
-            renderPortfolioGrid();
+            renderPortfolioGrid(currentPortfolioFilter, currentPortfolioPage);
             closeAdminModal();
         });
     });
@@ -2122,7 +2264,7 @@ window.deleteProject = function(projectId) {
     if (confirm('이 프로젝트를 삭제하시겠습니까?')) {
         portfolioData = portfolioData.filter(p => p.id !== projectId);
         saveAllData();
-        renderPortfolioGrid();
+        renderPortfolioGrid(currentPortfolioFilter, currentPortfolioPage);
     }
 };
 
@@ -2453,7 +2595,7 @@ window.updateServerGithub = function() {
         return Promise.all(syncPromises).then(() => {
             // 변경된 상대경로들을 로컬 스토리지에 최종 반영하고 목록 다시 렌더링
             localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
-            renderPortfolioGrid();
+            renderPortfolioGrid(currentPortfolioFilter, currentPortfolioPage);
         });
     };
     

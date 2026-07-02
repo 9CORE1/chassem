@@ -2243,4 +2243,60 @@ body.light-mode .contact-sns-link img.kakao-icon {
     filter: invert(61%) sepia(74%) saturate(2250%) hue-rotate(182deg) brightness(102%) contrast(99%);
 }
 
+/* ==========================================================================
+   Portfolio Pagination
+   ========================================================================== */
+.pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 3rem;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.page-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.page-btn:hover:not(.disabled):not(.active) {
+    border-color: var(--accent-primary-start);
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-2px);
+}
+
+body.light-mode .page-btn:hover:not(.disabled):not(.active) {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+.page-btn.active {
+    background: linear-gradient(135deg, var(--accent-primary-start) 0%, var(--accent-primary-end) 100%);
+    color: #ffffff;
+    border-color: transparent;
+    box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+}
+
+.page-btn.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.page-btn.prev-btn, .page-btn.next-btn {
+    font-size: 0.8rem;
+}
+
+
 
