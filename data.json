@@ -537,6 +537,28 @@
       "googleDriveUrl": "",
       "imageUrl": "images/project-it-1782811185770.jpg",
       "imageUrl2": "images/project-it-1782811185770-2.jpg"
+    },
+    {
+      "id": "it-1782997113907",
+      "category": "it",
+      "title": "PROMPTORIES-프롬프트 저장소",
+      "period": "2026",
+      "year": "2026",
+      "summary": "프롬프트 공유 및 저장소\nhttps://9core1.github.io/promptories/",
+      "description": "",
+      "role": "개인",
+      "highlights": [],
+      "techStack": [],
+      "accentColor": "var(--color-it-end)",
+      "accentBg": "rgba(225, 0, 255, 0.1)",
+      "accentBorder": "rgba(225, 0, 255, 0.2)",
+      "icon": "fa-code",
+      "youtubeUrl": "",
+      "youtubeStart": "",
+      "youtubeEnd": "",
+      "googleDriveUrl": "",
+      "imageUrl": "images/project-it-1782997113907.jpg",
+      "imageUrl2": ""
     }
   ],
   "journeyData": [
