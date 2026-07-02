@@ -490,8 +490,23 @@ function renderPortfolioGrid(filter = 'all', page = 1) {
         ? portfolioData 
         : portfolioData.filter(item => item.category === filter);
         
+    // Sort by period descending (newest first)
+    const sortedData = [...filteredData].sort((a, b) => {
+        const getSortableValue = (periodStr) => {
+            if (!periodStr) return 0;
+            const startStr = periodStr.split(/[-~]/)[0].trim();
+            const matches = startStr.match(/\d+/g);
+            if (!matches || matches.length === 0) return 0;
+            const year = parseInt(matches[0], 10) || 0;
+            const month = matches[1] ? (parseInt(matches[1], 10) || 0) : 0;
+            const day = matches[2] ? (parseInt(matches[2], 10) || 0) : 0;
+            return (year * 10000) + (month * 100) + day;
+        };
+        return getSortableValue(b.period) - getSortableValue(a.period);
+    });
+        
     const pageSize = getPortfolioPageSize();
-    const totalPages = Math.ceil(filteredData.length / pageSize) || 1;
+    const totalPages = Math.ceil(sortedData.length / pageSize) || 1;
     
     if (currentPortfolioPage > totalPages) {
         currentPortfolioPage = totalPages;
@@ -502,7 +517,7 @@ function renderPortfolioGrid(filter = 'all', page = 1) {
     
     const startIdx = (currentPortfolioPage - 1) * pageSize;
     const endIdx = startIdx + pageSize;
-    const pageData = filteredData.slice(startIdx, endIdx);
+    const pageData = sortedData.slice(startIdx, endIdx);
     
     pageData.forEach(item => {
         const card = document.createElement('article');
