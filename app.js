@@ -1390,22 +1390,18 @@ function setupContactForm() {
             return;
         }
         
-        const payload = {
-            name: name,
-            email: email,
-            phone: phone,
-            subject: subject,
-            message: message
-        };
+        const params = new URLSearchParams();
+        params.append('name', name);
+        params.append('email', email);
+        params.append('phone', phone);
+        params.append('subject', subject);
+        params.append('message', message);
         
         // Post content to Google Apps Script Web App
         fetch(APPS_SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors', // standard workaround for redirection and CORS on Google Web Apps
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
+            body: params
         })
         .then(() => {
             alert(`감사합니다, ${name}님! 문의 내용이 Google 스프레드시트에 성공적으로 기록되었습니다.`);
