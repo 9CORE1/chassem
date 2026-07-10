@@ -1,0 +1,13 @@
+{
+  "name": "cha-eunjung-portfolio",
+  "version": "1.0.0",
+  "description": "차은정 포트폴리오 웹 애플리케이션",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>차은정 포트폴리오 | Career, Media & IT</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="취업진로 컨설팅, 영상콘텐츠 기획 및 제작, IT 기술을 융합하여 새로운 가치를 만드는 차은정의 포트폴리오입니다.">
+    <meta name="keywords" content="차은정, 포트폴리오, 취업진로, 영상콘텐츠, IT, 프론트엔드, 영상 편집, 취업 컨설팅">
+    <meta name="author" content="차은정">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="차은정 포트폴리오 | Career, Media & IT">
+    <meta property="og:description" content="취업진로, 영상콘텐츠, IT 분야의 다채로운 경험과 전문성을 소개합니다.">
+    <meta property="og:image" content="images/차은정-profile.jpg">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="images/favicon.png" type="image/png">
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dark-mode">
+    <!-- Admin Mode Banner -->
+    <div id="admin-banner" style="display: none; position: fixed; top: 0; left: 0; width: 100%; background: linear-gradient(90deg, var(--color-career-start), var(--color-career-end)); color: white; text-align: center; padding: 0.5rem 1rem; font-size: 0.9rem; font-weight: 600; z-index: 9999; box-shadow: 0 4px 10px rgba(0,0,0,0.25); align-items: center; justify-content: center; gap: 1rem;">
+        <span>🛠️ 관리자 편집 모드가 활성화되어 있습니다.</span>
+        <button onclick="resetAllToDefault()" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.2s;">초기값으로 재설정</button>
+    </div>
+
+    <!-- background decorative elements -->
+    <div class="bg-blur-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Header / Navigation -->
+    <header id="header">
+        <div class="container header-container">
+            <a href="#" class="logo">
+                <span class="logo-accent">EUNJUNG</span>.CHA
+            </a>
+            
+            <nav class="nav-menu" id="nav-menu">
+                <ul>
+                    <li><a href="#hero" class="nav-link active">Home</a></li>
+                    <li><a href="#about" class="nav-link">About</a></li>
+                    <li><a href="#portfolio" class="nav-link">Portfolio</a></li>
+                    <li><a href="#experience" class="nav-link">Timeline</a></li>
+                    <li><a href="#contact" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-actions">
+                <button id="admin-toggle" class="admin-toggle-btn" aria-label="관리자 모드 전환" title="관리자 모드" style="margin-right: 0.5rem;">
+                    <i class="fa-solid fa-lock"></i>
+                </button>
+                <button id="theme-toggle" class="theme-toggle-btn" aria-label="화면 테마 변경" title="화면 테마">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="메뉴 열기">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="hero" class="hero-section">
+            <div class="container hero-container">
+                <div class="hero-content">
+                    <div class="badge fade-in">Hands-on Solution Builder</div>
+                    <h1 class="hero-title fade-in">
+                        안녕하세요, <br>
+                        <span class="text-gradient">차은정</span>입니다.
+                    </h1>
+                    <p class="hero-subtitle fade-in">
+                        취업진로 컨설팅의 전문성, 영상콘텐츠의 창의성, 그리고 IT 기술의 논리력을 융합하여 
+                        사람과 기술을 잇는 가치있는 솔루션을 제안합니다.
+                    </p>
+                    <div class="hero-cta fade-in">
+                        <a href="#portfolio" class="btn btn-primary">포트폴리오 보기</a>
+                        <a href="#contact" class="btn btn-outline">연락하기</a>
+                    </div>
+                </div>
+                <div class="hero-image-container fade-in">
+                    <div class="hero-image-wrapper">
+                        <img src="images/차은정-profile.jpg" alt="차은정 프로필 사진" class="hero-image">
+                    </div>
+                    <div class="floating-card card-career">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        <span>취업진로 컨설턴트</span>
+                    </div>
+                    <div class="floating-card card-media">
+                        <i class="fa-solid fa-video"></i>
+                        <span>크리에이티브 디렉터</span>
+                    </div>
+                    <div class="floating-card card-it">
+                        <i class="fa-solid fa-code"></i>
+                        <span>IT 미래기술</span>
+                    </div>
+                </div>
+            </div>
+            <div class="scroll-down">
+                <a href="#about" aria-label="소개 섹션으로 스크롤">
+                    <span class="mouse">
+                        <span class="wheel"></span>
+                    </span>
+                </a>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about-section section-padding">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">About Me</span>
+                    <h2 class="section-title">다재다능한 융합형 인재</h2>
+                </div>
+                
+                <div class="about-grid">
+                    <div class="about-left reveal-on-scroll">
+                        <div class="profile-card-mini">
+                            <img src="images/차은정-3x4cm_배경수정.jpg" alt="차은정 증명사진" class="mini-profile-img">
+                            <h3>차은정</h3>
+                            <p class="role-desc">융합형 콘텐츠 & 커리어 스페셜리스트</p>
+                            <div class="profile-info-list">
+                                <div class="info-item">
+                                    <span class="info-label">Email</span>
+                                    <div class="info-val-group">
+                                        <span class="info-val">teacha99@gmail.com</span>
+                                        <span class="info-val-separator">/</span>
+                                        <span class="info-val">jjung9935@naver.com</span>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">SNS / Channel</span>
+                                    <div class="social-links" style="margin-top: 0.25rem;">
+                                        <a href="https://qr.kakao.com/talk/p/chaeunjung9" target="_blank" aria-label="KakaoTalk" title="카카오톡 ID: chaeunjung9"><img src="images/kakao.png" alt="KakaoTalk" class="kakao-icon"></a>
+                                        <a href="https://instagram.com/chaeunjung9" target="_blank" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                                        <a href="https://facebook.com/hrdmaker" target="_blank" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+                                        <a href="https://www.youtube.com/hrdmaker" target="_blank" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Location</span>
+                                    <span class="info-val">대한민국 부산광역시</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="about-right reveal-on-scroll">
+                        <h3 class="about-intro-title">서로 다른 분야를 연결하여 시너지를 창출합니다.</h3>
+                        <p class="about-text">
+                            저는 고유한 개성과 전문성을 가진 세 가지 분야를 고루 탐구하며 성장해왔습니다. 
+                            <strong>'취업진로'</strong> 영역에서는 사람들의 잠재력을 발견하고 성장 경로를 컨설팅하며 소통의 가치를 배웠습니다. 
+                            <strong>'영상콘텐츠'</strong> 영역에서는 메시지를 직관적이고 감각적으로 전달하는 시각적 스토리텔링 능력을 길렀습니다. 
+                            마지막으로 <strong>'IT'</strong> 분야의 경험은 논리적인 문제 해결력과 디지털 환경을 직접 구축할 수 있는 실무적 역량을 주었습니다.
+                        </p>
+                        <p class="about-text">
+                            이 삼각 융합 역량을 바탕으로, 복잡한 사용자 니즈를 파악하여 친근한 콘텐츠로 기획하고, 이를 완성도 높은 IT 솔루션으로 구현해내는 프로젝트를 지향합니다.
+                        </p>
+                        
+                        <!-- Core Competencies -->
+                        <div class="skills-container">
+                            <h4 class="skills-title">Core Competencies</h4>
+                            <div class="skills-grid" id="competencies-grid">
+                                <!-- Dynamic rendering by app.js -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Portfolio Filter Section -->
+        <section id="portfolio" class="portfolio-section section-padding">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Portfolio</span>
+                    <h2 class="section-title">프로젝트 및 경력 사항</h2>
+                    <p class="section-subtitle">각 카테고리를 선택하여 세부 경험 및 실무 이력을 확인해보세요.</p>
+                </div>
+
+                <!-- Category Filters -->
+                <div class="filter-wrapper reveal-on-scroll" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+                    <ul class="portfolio-filters" id="portfolio-filters" style="margin-bottom: 0;">
+                        <li><button class="filter-btn active" data-filter="all" id="btn-filter-all">전체보기</button></li>
+                        <li><button class="filter-btn" data-filter="career" id="btn-filter-career"><i class="fa-solid fa-graduation-cap icon-left"></i>취업진로</button></li>
+                        <li><button class="filter-btn" data-filter="media" id="btn-filter-media"><i class="fa-solid fa-video icon-left"></i>영상콘텐츠</button></li>
+                        <li><button class="filter-btn" data-filter="it" id="btn-filter-it"><i class="fa-solid fa-code icon-left"></i>IT 미래기술</button></li>
+                    </ul>
+                    <div id="admin-portfolio-actions" style="display: none;">
+                        <button class="btn btn-primary" onclick="openAddProjectModal()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;"><i class="fa-solid fa-plus icon-left"></i>프로젝트 추가</button>
+                    </div>
+                </div>
+
+                <!-- Portfolio Grid -->
+                <div class="portfolio-grid" id="portfolio-grid">
+                    <!-- Dynamic rendering by app.js -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Career Timeline Section -->
+        <section id="experience" class="timeline-section section-padding">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Journey</span>
+                    <h2 class="section-title">성장 스토리 타임라인</h2>
+                    <p class="section-subtitle">주요 활동과 경력을 시간 흐름에 따라 확인하실 수 있습니다.</p>
+                </div>
+                
+                <!-- Journey Filters -->
+                <div class="filter-wrapper reveal-on-scroll" style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 3rem;">
+                    <ul class="portfolio-filters" id="journey-filters" style="margin-bottom: 0;">
+                        <li><button class="filter-btn" data-filter="all" id="btn-jfilter-all">전체보기</button></li>
+                        <li><button class="filter-btn active" data-filter="career" id="btn-jfilter-career"><i class="fa-solid fa-briefcase icon-left"></i>경력사항</button></li>
+                        <li><button class="filter-btn" data-filter="education" id="btn-jfilter-education"><i class="fa-solid fa-graduation-cap icon-left"></i>학력사항</button></li>
+                        <li><button class="filter-btn" data-filter="cert" id="btn-jfilter-cert"><i class="fa-solid fa-award icon-left"></i>자격 및 수료사항</button></li>
+                    </ul>
+                </div>
+
+                <!-- Admin Journey Actions -->
+                <div id="admin-journey-actions" style="display: none; text-align: center; margin-bottom: 3.5rem;">
+                    <button class="btn btn-primary" onclick="openAddJourneyModal()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;"><i class="fa-solid fa-plus icon-left"></i>타임라인 추가</button>
+                </div>
+                
+                <div class="timeline-container reveal-on-scroll" id="timeline-container">
+                    <!-- Dynamic rendering by app.js -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact-section section-padding">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Get In Touch</span>
+                    <h2 class="section-title">함께 일하고 성장하기</h2>
+                    <p class="section-subtitle">새로운 기회, 협업 문의 등 언제든 환영합니다.</p>
+                </div>
+                
+                <div class="contact-grid reveal-on-scroll">
+                    <div class="contact-info">
+                        <div class="contact-details">
+                            <div class="contact-card">
+                                <div class="contact-icon bg-career">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </div>
+                                <div class="contact-text">
+                                    <span class="label">Email</span>
+                                    <a href="mailto:teacha99@gmail.com" class="val">teacha99@gmail.com</a>
+                                    <a href="mailto:jjung9935@naver.com" class="val">jjung9935@naver.com</a>
+                                </div>
+                            </div>
+                            <div class="contact-card">
+                                <div class="contact-icon bg-it">
+                                    <i class="fa-solid fa-share-nodes"></i>
+                                </div>
+                                <div class="contact-text">
+                                    <span class="label">SNS</span>
+                                    <a href="https://qr.kakao.com/talk/p/chaeunjung9" target="_blank" class="val contact-sns-link"><img src="images/kakao.png" alt="KakaoTalk" class="kakao-icon"> Kakao Talk ID: chaeunjung9</a>
+                                    <a href="https://instagram.com/chaeunjung9" target="_blank" class="val contact-sns-link"><i class="fa-brands fa-instagram"></i> Instagram: @chaeunjung9</a>
+                                    <a href="https://facebook.com/hrdmaker" target="_blank" class="val contact-sns-link"><i class="fa-brands fa-facebook"></i> Facebook: hrdmaker</a>
+                                </div>
+                            </div>
+                            <div class="contact-card">
+                                <div class="contact-icon bg-media">
+                                    <i class="fa-brands fa-youtube"></i>
+                                </div>
+                                <div class="contact-text">
+                                    <span class="label">YouTube</span>
+                                    <a href="https://www.youtube.com/hrdmaker" target="_blank" class="val">youtube.com/hrdmaker</a>
+                                </div>
+                            </div>
+                            <div class="contact-card">
+                                <div class="contact-icon bg-media">
+                                    <i class="fa-solid fa-phone"></i>
+                                </div>
+                                <div class="contact-text">
+                                    <span class="label">Phone</span>
+                                    <a href="tel:01067401860" class="val">010-6740-1860</a>
+                                </div>
+                            </div>
+                            <div class="contact-card">
+                                <div class="contact-icon bg-it">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                </div>
+                                <div class="contact-text">
+                                    <span class="label">Location</span>
+                                    <span class="val">대한민국 부산광역시</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-form-wrapper">
+                        <h3 class="contact-info-title">언제든 편하게 연락해 주세요.</h3>
+                        <p class="contact-info-text">
+                            제시된 카테고리 융합 프로젝트나 개별 분야의 협업이 필요하시다면 아래 연락처 혹은 문의 폼을 통해 메시지를 남겨주세요. 빠른 시일 내에 답변해 드리겠습니다.
+                        </p>
+                        
+                        <form id="contact-form" class="contact-form">
+                            <div class="form-group-row">
+                                <div class="form-group">
+                                    <label for="form-name">이름 / 기업명</label>
+                                    <input type="text" id="form-name" required placeholder="성함 혹은 회사명을 입력하세요">
+                                </div>
+                                <div class="form-group">
+                                    <label for="form-email">이메일 주소</label>
+                                    <input type="email" id="form-email" required placeholder="답변받으실 이메일">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="form-subject">문의 주제</label>
+                                <select id="form-subject" required>
+                                    <option value="" disabled selected>문의할 카테고리를 선택해 주세요</option>
+                                    <option value="career">취업진로 컨설팅 관련</option>
+                                    <option value="media">영상 콘텐츠 제작 관련</option>
+                                    <option value="it">IT 프로젝트 / 개발 협업</option>
+                                    <option value="general">기타 비즈니스 제안</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="form-message">메시지</label>
+                                <textarea id="form-message" rows="5" required placeholder="문의하실 내용을 자유롭게 작성해주세요."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block" id="btn-submit">
+                                <span>메시지 전송하기</span>
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <div class="footer-left">
+                <a href="#" class="logo-footer"><span>EUNJUNG</span>.CHA</a>
+                <p class="footer-desc">
+                    사람과 사람, 사람과 기술을 연결하는 융합 크리에이터 차은정의 포트폴리오입니다.
+                </p>
+            </div>
+            <div class="footer-right">
+                <div class="social-links">
+                    <a href="https://qr.kakao.com/talk/p/chaeunjung9" target="_blank" aria-label="KakaoTalk" title="카카오톡 ID: chaeunjung9"><img src="images/kakao.png" alt="KakaoTalk" class="kakao-icon"></a>
+                    <a href="https://github.com" target="_blank" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+                    <a href="https://www.youtube.com/hrdmaker" target="_blank" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="https://instagram.com/chaeunjung9" target="_blank" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://facebook.com/hrdmaker" target="_blank" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+                </div>
+                <p class="copyright">&copy; 2026 Cha Eun-jung. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Details Modal (Popup for portfolio details) -->
+    <div id="details-modal" class="modal-overlay" aria-hidden="true" role="dialog">
+        <div class="modal-content" id="modal-content-container">
+            <!-- Dynamic contents rendering by app.js -->
+        </div>
+    </div>
+
+    <!-- Admin Edit Modal -->
+    <div id="admin-modal" class="modal-overlay" aria-hidden="true" role="dialog">
+        <div class="modal-content" style="padding: 2.5rem; max-width: 650px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+                <h3 id="admin-modal-title" style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary);">관리자 편집</h3>
+                <button id="btn-close-admin-modal" style="font-size: 2rem; cursor: pointer; color: var(--text-muted); background: none; border: none;">&times;</button>
+            </div>
+            <div id="admin-modal-body">
+                <!-- Dynamic form rendering -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Auth Modal -->
+    <div id="admin-auth-modal" class="modal-overlay" aria-hidden="true" role="dialog">
+        <div class="modal-content" style="padding: 2.5rem; max-width: 400px; text-align: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+                <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">관리자 인증</h3>
+                <button id="btn-close-auth-modal" style="font-size: 1.75rem; cursor: pointer; color: var(--text-muted); background: none; border: none; line-height: 1;">&times;</button>
+            </div>
+            <div id="auth-modal-body">
+                <!-- Step 1: Send Code -->
+                <div id="auth-step-send" style="display: block;">
+                    <i class="fa-solid fa-shield-halved" style="font-size: 3rem; color: var(--accent-primary-start); margin-bottom: 1rem;"></i>
+                    <p style="font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 1.25rem; line-height: 1.6;">
+                        관리자 모드로 전환하려면 이메일 인증이 필요합니다.<br>
+                        등록된 관리자 이메일 주소를 입력해 주세요.
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem;">
+                        <input type="email" id="auth-email-input" placeholder="관리자 이메일 주소 입력" style="width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); text-align: center; font-size: 0.95rem;" required>
+                        <span id="auth-email-error-msg" style="color: #f43f5e; font-size: 0.85rem; display: none;">등록된 관리자 이메일 주소가 아닙니다.</span>
+                    </div>
+                    <button id="btn-send-code" class="btn btn-primary btn-block">인증번호 발송</button>
+                </div>
+                <!-- Step 2: Verify Code -->
+                <div id="auth-step-verify" style="display: none;">
+                    <i class="fa-solid fa-key" style="font-size: 3rem; color: var(--color-career-end); margin-bottom: 1rem;"></i>
+                    <p style="font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.6;">
+                        이메일로 발송된 6자리 인증번호를 입력하세요.
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem;">
+                        <div style="position: relative;">
+                            <input type="text" id="auth-code-input" maxlength="6" placeholder="인증번호 6자리" style="width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); text-align: center; font-size: 1.25rem; font-weight: 700; letter-spacing: 0.25em;" required>
+                            <span id="auth-timer" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); font-size: 0.85rem; color: #f43f5e; font-weight: 600;">03:00</span>
+                        </div>
+                        <span id="auth-error-msg" style="color: #f43f5e; font-size: 0.85rem; display: none;">잘못된 인증번호입니다. 다시 확인해 주세요.</span>
+                    </div>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <button id="btn-resend-code" class="btn btn-outline" style="flex: 1; padding: 0.6rem; font-size: 0.9rem;">재발송</button>
+                        <button id="btn-verify-code" class="btn btn-primary" style="flex: 1.5; padding: 0.6rem; font-size: 0.9rem;">인증 확인</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Navigator -->
+    <div id="floating-navigator" class="floating-navigator">
+        <button class="nav-toggle-fab" id="nav-toggle-fab" aria-label="빠른 이동 메뉴" title="빠른 이동">
+            <i class="fa-solid fa-compass"></i>
+        </button>
+        <div class="nav-menu-panel glass-panel" id="nav-menu-panel">
+            <a href="#hero" class="panel-item" title="Home"><i class="fa-solid fa-house"></i><span>Home</span></a>
+            <a href="#about" class="panel-item" title="About"><i class="fa-solid fa-user"></i><span>About Me</span></a>
+            <a href="#portfolio" class="panel-item" title="Portfolio"><i class="fa-solid fa-briefcase"></i><span>Portfolio</span></a>
+            <a href="#experience" class="panel-item" title="Timeline"><i class="fa-solid fa-route"></i><span>Timeline</span></a>
+            <a href="#contact" class="panel-item" title="Contact"><i class="fa-solid fa-paper-plane"></i><span>Contact</span></a>
+            <button id="btn-scroll-top" class="panel-item scroll-top" title="Top"><i class="fa-solid fa-arrow-up"></i><span>Top</span></button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

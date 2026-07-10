@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@CHAEUNJUNG9 링크트리 | 차은정</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="(주)나인코어 차은정의 도서, 프로젝트 및 주요 소셜 미디어 링크 모음 페이지입니다.">
+    <meta name="keywords" content="차은정, 나인코어, 링크트리, 챗GPT, 자기소개서, 면접 트레이닝, OA Master, PROMPTORIES, 차쌤의 통하는 클라스">
+    <meta name="author" content="차은정">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="@CHAEUNJUNG9 링크트리 | 차은정">
+    <meta property="og:description" content="(주)나인코어 차은정의 도서, 프로젝트 및 주요 링크 모음">
+    <meta property="og:image" content="images/cha-eunjung-profile.jpg">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --font-family-ko: 'Noto Sans KR', sans-serif;
+            /* Harmonizes with the rich terracotta brown jacket and warm red inner shirt in the photo */
+            --bg-gradient: radial-gradient(circle at center, #8a3f29 0%, #3d150b 100%);
+            --button-bg: #ffffff;
+            --button-text: #000000;
+            --button-border: #000000;
+            --text-primary: #ffffff; /* White text for excellent contrast on dark background */
+            --text-secondary: #ebdcd7; /* Warm light beige secondary text */
+            --card-shadow: 4px 4px 0px #000000;
+            --transition: all 0.15s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family-ko);
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 1rem 1.25rem 1rem 1.25rem;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Container */
+        .container {
+            width: 100%;
+            max-width: 480px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            min-height: auto;
+            padding-top: 3rem;
+        }
+
+        /* Home Return Button (Top Left) */
+        .home-btn {
+            position: absolute;
+            top: 1rem;
+            left: 1.25rem;
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--text-primary);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition);
+            z-index: 10;
+        }
+
+        .home-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.08);
+        }
+
+        .home-btn i {
+            font-size: 1rem;
+        }
+
+        /* Profile Section */
+        .profile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            text-align: center;
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-bottom: 0.75rem;
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            left: 7px;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .username {
+            font-size: 1.65rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+        }
+
+        .subtitle {
+            font-size: 0.98rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Social Icons */
+        .social-icons {
+            display: flex;
+            gap: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .social-icon {
+            color: var(--text-primary);
+            font-size: 1.75rem;
+            transition: var(--transition);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+        }
+
+        .social-icon:hover {
+            transform: scale(1.15);
+            color: #ffaca0; /* Soft warm coral/red matching the inner shirt red for hover effect */
+        }
+
+        /* Links List */
+        .links-list {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Link Card */
+        .link-card {
+            width: 100%;
+            height: 64px;
+            background: var(--button-bg);
+            border-radius: 12px;
+            color: var(--button-text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--button-border);
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .link-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #000000;
+        }
+
+        .link-card:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #000000;
+        }
+
+        .link-thumb {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            object-fit: cover;
+            margin-right: 1rem;
+            flex-shrink: 0;
+            border: 1px solid #f0f0f0;
+            background-color: #ffffff;
+        }
+
+        .logo-img {
+            object-fit: contain;
+            padding: 2px;
+        }
+
+        .link-text {
+            flex-grow: 1;
+            font-size: 0.98rem;
+            font-weight: 500;
+            color: #000000;
+            text-align: left;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.35;
+        }
+
+        .more-btn {
+            color: #8e8e93;
+            font-size: 1.15rem;
+            flex-shrink: 0;
+            margin-left: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+        }
+
+        .link-card:hover .more-btn {
+            color: #000000;
+        }
+
+
+
+        /* Toast notification for sharing */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            z-index: 1000;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Home Return Button (aligned with close button on parent modal) -->
+    <a href="index.html" class="home-btn" title="포트폴리오 돌아가기" id="btn-back-portfolio" onclick="handleHomeClick(event)">
+        <i class="fa-solid fa-house"></i>
+    </a>
+
+    <div class="container">
+
+        <!-- Profile Section -->
+        <div class="profile">
+            <div class="avatar-wrapper">
+                <img src="images/cha-eunjung-3x4cm-bg-modified.jpg" alt="차은정 프로필 사진" class="avatar">
+            </div>
+            <h1 class="username">@CHAEUNJUNG9</h1>
+            <p class="subtitle">(주)나인코어 차은정</p>
+            
+            <!-- Social Icons -->
+            <div class="social-icons">
+                <a href="https://instagram.com/chaeunjung9" class="social-icon" target="_blank" title="Instagram" id="link-instagram">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+                <a href="mailto:teacha99@gmail.com" class="social-icon" title="Email" id="link-email">
+                    <i class="fa-solid fa-envelope"></i>
+                </a>
+                <a href="https://www.youtube.com/hrdmaker" class="social-icon" target="_blank" title="YouTube" id="link-youtube">
+                    <i class="fa-brands fa-youtube"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Links List -->
+        <div class="links-list">
+            <!-- Link 1 (Book 1) -->
+            <a href="https://www.bookk.co.kr/book/view/172226" class="link-card" target="_blank" id="link-book-resume">
+                <img src="images/book-resume.jpg" alt="챗GPT로만 자기소개서 쓰기 표지" class="link-thumb">
+                <span class="link-text">[도서] 챗GPT로만 자기소개서 쓰기</span>
+                <i class="fa-solid fa-ellipsis-vertical more-btn"></i>
+            </a>
+
+            <!-- Link 2 (Book 2) -->
+            <a href="https://www.bookk.co.kr/book/view/174644" class="link-card" target="_blank" id="link-book-interview">
+                <img src="images/book-interview.jpg" alt="면접 트레이닝 with chatGPT 표지" class="link-thumb">
+                <span class="link-text">[도서] 면접 트레이닝 with chatGPT</span>
+                <i class="fa-solid fa-ellipsis-vertical more-btn"></i>
+            </a>
+
+            <!-- Link 3 (OA Master) -->
+            <a href="https://9core1.github.io/oa_master" class="link-card" target="_blank" id="link-oa-master">
+                <img src="images/logo-oa-master.png" alt="OA Master 로고" class="link-thumb logo-img">
+                <span class="link-text">OA Master - 사무자동화 마스터</span>
+                <i class="fa-solid fa-ellipsis-vertical more-btn"></i>
+            </a>
+
+            <!-- Link 4 (PROMPTORIES) -->
+            <a href="https://9core1.github.io/promptories" class="link-card" target="_blank" id="link-promptories">
+                <img src="images/logo-promptories.jpg" alt="PROMPTORIES 로고" class="link-thumb">
+                <span class="link-text">PROMPTORIES - 나만의 프롬프트 라이브러리</span>
+                <i class="fa-solid fa-ellipsis-vertical more-btn"></i>
+            </a>
+
+            <!-- Link 5 (Naver Cafe) -->
+            <a href="https://cafe.naver.com/9core1" class="link-card" target="_blank" id="link-cafe">
+                <img src="images/logo-naver-cafe.png" alt="네이버 카페 로고" class="link-thumb logo-img">
+                <span class="link-text">[카페] 차쌤의 통하는 클라스</span>
+                <i class="fa-solid fa-ellipsis-vertical more-btn"></i>
+            </a>
+        </div>
+
+
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="share-toast" class="toast">
+        <i class="fa-solid fa-check-circle"></i>
+        <span>링크가 클립보드에 복사되었습니다!</span>
+    </div>
+
+    <script>
+        function copyLinkTreeUrl() {
+            const dummy = document.createElement('input');
+            const text = window.location.href;
+            
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            
+            try {
+                document.execCommand('copy');
+                const toast = document.getElementById('share-toast');
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2000);
+            } catch (err) {
+                console.error('URL 복사 실패:', err);
+            } finally {
+                document.body.removeChild(dummy);
+            }
+        }
+        function handleHomeClick(event) {
+            if (window.self !== window.top) {
+                event.preventDefault();
+                window.parent.postMessage('close-linktree-modal', '*');
+            }
+        }
+    </script>
+</body>
+</html>

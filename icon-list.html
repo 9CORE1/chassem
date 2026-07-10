@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>포트폴리오 아이콘 라이브러리 가이드</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome v6.4.0 CDN (프로젝트 동기화) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #111827;
+            --bg-tertiary: #1f2937;
+            --accent-primary: #6d28d9;
+            --accent-secondary: #a855f7;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --glass-bg: rgba(17, 24, 39, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 3rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Background Deco */
+        .bg-glow {
+            position: fixed;
+            width: 40vw;
+            height: 40vw;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(109, 40, 217, 0.15) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1;
+            top: -10vw;
+            right: -10vw;
+            filter: blur(80px);
+        }
+        .bg-glow-2 {
+            position: fixed;
+            width: 50vw;
+            height: 50vw;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1;
+            bottom: -15vw;
+            left: -15vw;
+            filter: blur(100px);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            z-index: 10;
+        }
+
+        /* Header Styles */
+        header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+
+        header h1 {
+            font-size: 2.75rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            background: linear-gradient(135deg, #a855f7, #6d28d9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        header span {
+            color: var(--accent-secondary);
+            font-weight: 600;
+        }
+
+        /* Controls Section */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Search input */
+        .search-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3.25rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: var(--transition-smooth);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-secondary);
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.25);
+        }
+
+        /* Filter Tabs */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            list-style: none;
+        }
+
+        .filter-btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-btn:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--text-secondary);
+        }
+
+        .filter-btn.active {
+            color: #ffffff;
+            background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(109, 40, 217, 0.4);
+        }
+
+        /* Grid Layout */
+        .grid-header {
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .grid-header span {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .icons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 4rem;
+        }
+
+        /* Card Styles */
+        .icon-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.75rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .icon-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.08), rgba(109, 40, 217, 0.08));
+            opacity: 0;
+            transition: var(--transition-smooth);
+        }
+
+        .icon-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(168, 85, 247, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .icon-card:hover::before {
+            opacity: 1;
+        }
+
+        .icon-card i {
+            font-size: 2.25rem;
+            margin-bottom: 1.25rem;
+            background: linear-gradient(135deg, #ffffff, var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: var(--transition-smooth);
+            z-index: 2;
+        }
+
+        .icon-card:hover i {
+            background: linear-gradient(135deg, #ffffff, var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transform: scale(1.1);
+        }
+
+        .icon-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            z-index: 2;
+        }
+
+        .icon-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-align: center;
+            z-index: 2;
+        }
+
+        .copy-badge {
+            position: absolute;
+            bottom: 0.5rem;
+            font-size: 0.7rem;
+            color: var(--accent-secondary);
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(5px);
+            transition: var(--transition-smooth);
+            z-index: 2;
+        }
+
+        .icon-card:hover .copy-badge {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Toast Popup Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: #ffffff;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(109, 40, 217, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast i {
+            font-size: 1.2rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.2rem;
+            }
+            .controls {
+                padding: 1.25rem;
+            }
+            .icons-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+    <div class="bg-glow-2"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>아이콘 라이브러리 가이드</h1>
+            <p>포트폴리오의 <span>Core Competencies (역량 카드)</span> 설정 시 바로 활용할 수 있는 아이콘 목록입니다. 카드를 클릭하면 설정용 텍스트가 클립보드에 자동으로 복사됩니다.</p>
+        </header>
+
+        <!-- Search and Filter Controls -->
+        <div class="controls">
+            <div class="search-wrapper">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="search-input" class="search-input" placeholder="원하는 아이콘 이름이나 설명 키워드를 입력해 검색해 보세요...">
+            </div>
+            
+            <ul class="filters" id="filters">
+                <li><button class="filter-btn active" data-filter="all"><i class="fa-solid fa-border-all"></i>전체보기</button></li>
+                <li><button class="filter-btn" data-filter="it"><i class="fa-solid fa-robot"></i>인공지능 & IT 미래기술</button></li>
+                <li><button class="filter-btn" data-filter="oa"><i class="fa-solid fa-laptop-file"></i>사무자동화 & 비즈니스</button></li>
+                <li><button class="filter-btn" data-filter="media"><i class="fa-solid fa-video"></i>콘텐츠 제작 & 크리에이티브</button></li>
+                <li><button class="filter-btn" data-filter="writing"><i class="fa-solid fa-book"></i>저작활동 & 교육</button></li>
+            </ul>
+        </div>
+
+        <!-- Grid Header -->
+        <div class="grid-header">
+            <div id="grid-title">모든 아이콘</div>
+            <span id="icon-counter">총 0개 아이콘 목록</span>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="empty-state">
+            <i class="fa-solid fa-face-sad-tear"></i>
+            <h3>검색 결과가 없습니다.</h3>
+            <p>다른 키워드로 다시 검색해 보세요.</p>
+        </div>
+
+        <!-- Icons Grid -->
+        <div class="icons-grid" id="icons-grid">
+            <!-- Dynamic Injection -->
+        </div>
+    </div>
+
+    <!-- Toast Success Popup -->
+    <div class="toast" id="toast">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toast-text">복사 완료! data.json 파일의 "icon" 필드에 붙여넣어 설정하세요.</span>
+    </div>
+
+    <script>
+        // Icon Library Dataset
+        const iconsData = [
+            // IT / AI
+            { name: 'fa-robot', category: 'it', desc: '인공지능, 챗봇, 자동화' },
+            { name: 'fa-brain', category: 'it', desc: 'AI 지능, 딥러닝, 생각' },
+            { name: 'fa-code', category: 'it', desc: '퍼블리싱, 웹 프론트엔드 개발' },
+            { name: 'fa-laptop-code', category: 'it', desc: '소프트웨어 엔지니어링, 코딩' },
+            { name: 'fa-database', category: 'it', desc: '데이터 수집, 데이터베이스' },
+            { name: 'fa-microchip', category: 'it', desc: '시스템 제어, 하드웨어, 반도체' },
+            { name: 'fa-gears', category: 'it', desc: '엔지니어링, 시스템 자동 구축' },
+            { name: 'fa-server', category: 'it', desc: '백엔드 인프라, 서버 호스팅' },
+            { name: 'fa-terminal', category: 'it', desc: '개발자 툴, 명령 콘솔 환경' },
+            { name: 'fa-network-wired', category: 'it', desc: '네트워크 연결, 망 구축' },
+            
+            // OA / Business
+            { name: 'fa-laptop-file', category: 'oa', desc: '스마트 워크, 노션 워크스페이스' },
+            { name: 'fa-chart-pie', category: 'oa', desc: 'Excel/Sheets 데이터 시각화, 통계' },
+            { name: 'fa-chart-line', category: 'oa', desc: '데이터 성장 곡선, 비즈니스 성과' },
+            { name: 'fa-briefcase', category: 'oa', desc: '경력 관리, 취업 및 진로 컨설팅' },
+            { name: 'fa-calendar-days', category: 'oa', desc: '스케줄 기획, 마일스톤 관리' },
+            { name: 'fa-envelope', category: 'oa', desc: '비즈니스 메일링, 고객 소통' },
+            { name: 'fa-address-card', category: 'oa', desc: '퍼스널 브랜딩, 명함/이력서 작성' },
+            { name: 'fa-file-invoice', category: 'oa', desc: '기획서, 견적서, 공식 문서' },
+            { name: 'fa-table', category: 'oa', desc: '스프레드시트 분석, 테이블 데이터' },
+            { name: 'fa-user-tie', category: 'oa', desc: '전문 컨설팅, 멘토링, 면접 코칭' },
+            
+            // Media / Creative
+            { name: 'fa-video', category: 'media', desc: '유튜브 채널 운영, 영상 제작 연출' },
+            { name: 'fa-clapperboard', category: 'media', desc: '영상 연출 PD, 슬레이트, 감독' },
+            { name: 'fa-camera', category: 'media', desc: '스튜디오 촬영, 시네마 카메라' },
+            { name: 'fa-photo-film', category: 'media', desc: '디지털 사진, 홍보물 필름 제작' },
+            { name: 'fa-palette', category: 'media', desc: 'UI/UX 비주얼 디자인, 컬러 배색' },
+            { name: 'fa-pen-nib', category: 'media', desc: '디지털 브랜딩, 일러스트 그래픽' },
+            { name: 'fa-bullhorn', category: 'media', desc: '마케팅, 프로모션, 인스타그램 캠페인' },
+            { name: 'fa-microphone', category: 'media', desc: '스피치 트레이닝, 나레이션 녹음' },
+            { name: 'fa-share-nodes', category: 'media', desc: 'SNS 마케팅 채널, 공유 활성화' },
+            { name: 'fa-music', category: 'media', desc: '오디오 믹싱, 사운드트랙, 효과음' },
+            
+            // Education / Writing
+            { name: 'fa-book', category: 'writing', desc: 'eBook 발간, 책 집필' },
+            { name: 'fa-book-open', category: 'writing', desc: '학습 교재 공동 개발, 참고문헌' },
+            { name: 'fa-pen-fancy', category: 'writing', desc: '수필/칼럼 저술, 원고 작성' },
+            { name: 'fa-graduation-cap', category: 'writing', desc: '학사/석사 졸업, 교육 진로 지도' },
+            { name: 'fa-award', category: 'writing', desc: '국가자격증 취득, 수상 경력' },
+            { name: 'fa-certificate', category: 'writing', desc: '수료증 발급, 자격 검증 완료' },
+            { name: 'fa-scroll', category: 'writing', desc: '학술 논문, 특허 자료, 역사 기록물' },
+            { name: 'fa-bookmark', category: 'writing', desc: '자료 조사 북마크, 핵심 가이드북' },
+            { name: 'fa-school', category: 'writing', desc: '진로 교육 강의 출강, 학교 연계 사업' },
+            { name: 'fa-quote-left', category: 'writing', desc: '명언 인용구, 교육 철학, 스피치 주제' }
+        ];
+
+        const iconsGrid = document.getElementById('icons-grid');
+        const searchInput = document.getElementById('search-input');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const iconCounter = document.getElementById('icon-counter');
+        const gridTitle = document.getElementById('grid-title');
+        const emptyState = document.getElementById('empty-state');
+        const toast = document.getElementById('toast');
+        const toastText = document.getElementById('toast-text');
+
+        let currentFilter = 'all';
+        let searchQuery = '';
+
+        // Render Icons
+        function renderIcons() {
+            iconsGrid.innerHTML = '';
+            
+            const filtered = iconsData.filter(icon => {
+                const matchesCategory = currentFilter === 'all' || icon.category === currentFilter;
+                const matchesSearch = icon.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                      icon.desc.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                emptyState.style.display = 'flex';
+                iconCounter.textContent = '검색된 아이콘 없음';
+            } else {
+                emptyState.style.display = 'none';
+                iconCounter.textContent = `총 ${filtered.length}개 아이콘`;
+                
+                filtered.forEach(icon => {
+                    const card = document.createElement('div');
+                    card.className = 'icon-card';
+                    card.innerHTML = `
+                        <i class="fa-solid ${icon.name}"></i>
+                        <div class="icon-name">${icon.name}</div>
+                        <div class="icon-desc">${icon.desc}</div>
+                        <span class="copy-badge">클릭하여 복사</span>
+                    `;
+                    
+                    // Click Event -> Copy to Clipboard
+                    card.addEventListener('click', () => {
+                        copyToClipboard(icon.name);
+                    });
+                    
+                    iconsGrid.appendChild(card);
+                });
+            }
+        }
+
+        // Copy Handler
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast(`"${text}" 복사 완료! data.json의 "icon" 필드에 붙여넣으세요.`);
+            }).catch(err => {
+                console.error('클립보드 복사 실패:', err);
+                // Fallback for older browsers
+                const tempEl = document.createElement('textarea');
+                tempEl.value = text;
+                document.body.appendChild(tempEl);
+                tempEl.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempEl);
+                showToast(`"${text}" 복사 완료! data.json의 "icon" 필드에 붙여넣으세요.`);
+            });
+        }
+
+        // Toast Trigger
+        function showToast(message) {
+            toastText.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Search Input Event
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value.trim();
+            renderIcons();
+        });
+
+        // Filter Click Events
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(f => f.classList.remove('active'));
+                btn.classList.add('active');
+                
+                currentFilter = btn.getAttribute('data-filter');
+                
+                // Update grid title
+                const filterLabels = {
+                    all: '모든 아이콘',
+                    it: '인공지능 & IT 미래기술 아이콘',
+                    oa: '사무자동화 & 비즈니스 아이콘',
+                    media: '콘텐츠 제작 & 크리에이티브 아이콘',
+                    writing: '저작활동 & 교육 아이콘'
+                };
+                gridTitle.textContent = filterLabels[currentFilter] || '아이콘 목록';
+                
+                renderIcons();
+            });
+        });
+
+        // Initial Execution
+        renderIcons();
+    </script>
+</body>
+</html>
