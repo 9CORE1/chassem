@@ -13,7 +13,7 @@ app.use(express.static(__dirname));
 
 // API to save updated data back to data.json
 app.post('/api/save', (req, res) => {
-    let { portfolioData, journeyData, competenciesData } = req.body;
+    let { portfolioData, journeyData, competenciesData, popupConfig } = req.body;
     
     if (!portfolioData || !journeyData || !competenciesData) {
         return res.status(400).json({ error: '필수 데이터 항목이 누락되었습니다.' });
@@ -68,8 +68,36 @@ app.post('/api/save', (req, res) => {
         return updatedItem;
     });
     
+    // 팝업 이미지 저장
+    let updatedPopupConfig = popupConfig ? { ...popupConfig } : null;
+    if (updatedPopupConfig && updatedPopupConfig.imageUrl && updatedPopupConfig.imageUrl.startsWith('data:image/')) {
+        try {
+            const dirPath = path.join(__dirname, 'images');
+            if (!fs.existsSync(dirPath)) {
+                fs.mkdirSync(dirPath, { recursive: true });
+            }
+            const matches = updatedPopupConfig.imageUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+            if (matches && matches.length === 3) {
+                const base64Data = matches[2];
+                const buffer = Buffer.from(base64Data, 'base64');
+                const filename = 'popup-image.jpg';
+                const filePath = path.join(dirPath, filename);
+                fs.writeFileSync(filePath, buffer);
+                console.log(`[${new Date().toLocaleTimeString()}] 팝업 이미지 저장 완료: ${filePath}`);
+                updatedPopupConfig.imageUrl = `images/${filename}`;
+            }
+        } catch (err) {
+            console.error('팝업 이미지 파일 저장 오류:', err);
+        }
+    }
+    
     const filePath = path.join(__dirname, 'data.json');
-    const fileContent = JSON.stringify({ portfolioData: updatedPortfolioData, journeyData, competenciesData }, null, 2);
+    const fileContent = JSON.stringify({ 
+        portfolioData: updatedPortfolioData, 
+        journeyData, 
+        competenciesData, 
+        popupConfig: updatedPopupConfig 
+    }, null, 2);
     
     fs.writeFile(filePath, fileContent, 'utf8', (err) => {
         if (err) {
@@ -80,9 +108,71 @@ app.post('/api/save', (req, res) => {
         res.json({ 
             success: true, 
             message: '서버 데이터 및 이미지 파일 저장 완료',
-            portfolioData: updatedPortfolioData
+            portfolioData: updatedPortfolioData,
+            popupConfig: updatedPopupConfig
         });
     });
+});
+
+// API to receive course applications
+app.post('/api/apply', (req, res) => {
+    const appData = req.body;
+    if (!appData.name || !appData.phone || !appData.email) {
+        return res.status(400).json({ error: '필수 항목(이름, 연락처, 이메일)이 누락되었습니다.' });
+    }
+    
+    const filePath = path.join(__dirname, 'applications.json');
+    let applications = [];
+    if (fs.existsSync(filePath)) {
+        try {
+            applications = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        } catch (e) {
+            console.error('Error reading applications file:', e);
+        }
+    }
+    applications.push(appData);
+    
+    fs.writeFile(filePath, JSON.stringify(applications, null, 2), 'utf8', (err) => {
+        if (err) {
+            return res.status(500).json({ error: '신청 정보 저장 실패' });
+        }
+        console.log(`[${new Date().toLocaleTimeString()}] 신규 수강 신청 등록 완료: ${appData.name}`);
+        res.json({ success: true, message: '수강 신청이 완료되었습니다.' });
+    });
+});
+
+// API to retrieve all applications (Admin only)
+app.get('/api/applications', (req, res) => {
+    const filePath = path.join(__dirname, 'applications.json');
+    let applications = [];
+    if (fs.existsSync(filePath)) {
+        try {
+            applications = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        } catch (e) {
+            console.error('Error reading applications file:', e);
+        }
+    }
+    res.json(applications);
+});
+
+// API to delete an application (Admin only)
+app.post('/api/applications/delete', (req, res) => {
+    const { index } = req.body;
+    const filePath = path.join(__dirname, 'applications.json');
+    if (fs.existsSync(filePath)) {
+        try {
+            let applications = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+            if (index >= 0 && index < applications.length) {
+                const deleted = applications.splice(index, 1);
+                fs.writeFileSync(filePath, JSON.stringify(applications, null, 2), 'utf8');
+                console.log(`[${new Date().toLocaleTimeString()}] 수강 신청 삭제 완료: ${deleted[0].name}`);
+                return res.json({ success: true, message: '신청 정보가 삭제되었습니다.' });
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+    res.status(400).json({ error: '삭제 처리에 실패했습니다.' });
 });
 
 // Serve index.html for all other routes

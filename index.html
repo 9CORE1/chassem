@@ -35,6 +35,7 @@
     <div id="admin-banner" style="display: none; position: fixed; top: 0; left: 0; width: 100%; background: linear-gradient(90deg, var(--color-career-start), var(--color-career-end)); color: white; text-align: center; padding: 0.5rem 1rem; font-size: 0.9rem; font-weight: 600; z-index: 9999; box-shadow: 0 4px 10px rgba(0,0,0,0.25); align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap;">
         <span>🛠️ 관리자 편집 모드가 활성화되어 있습니다.</span>
         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button onclick="openPopupConfigModal()" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 0.25rem;"><i class="fa-solid fa-window-restore"></i>팝업창 설정</button>
             <button onclick="openGithubConfigModal()" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.2s;"><i class="fa-brands fa-github" style="margin-right: 0.25rem;"></i>GitHub 연동 설정</button>
             <button onclick="updateServerGithub()" id="btn-github-sync" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.2s;"><i class="fa-solid fa-cloud-arrow-up" style="margin-right: 0.25rem;"></i>서버 업데이트</button>
             <button onclick="downloadUploadedDataJson()" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.2s;"><i class="fa-solid fa-cloud-download" style="margin-right: 0.25rem;"></i>데이터 백업 다운로드</button>
@@ -63,6 +64,7 @@
                     <li><a href="#portfolio" class="nav-link">Portfolio</a></li>
                     <li><a href="#experience" class="nav-link">Timeline</a></li>
                     <li><a href="#contact" class="nav-link">Contact</a></li>
+                    <li id="nav-project-mgmt" style="display: none;"><a href="#portfolio" class="nav-link">Project Management</a></li>
                 </ul>
             </nav>
             
@@ -594,5 +596,38 @@
             }
         });
     </script>
+    <!-- Load-Time Popup Modal -->
+    <div id="load-popup-modal" class="modal-overlay" aria-hidden="true" role="dialog" style="z-index: 9000;">
+        <div class="modal-content" style="max-width: 480px; padding: 0; overflow: hidden; border-radius: 20px; background: var(--bg-primary); border: 1px solid var(--border-color); display: flex; flex-direction: column; max-height: 85vh;">
+            <!-- Scrollable Body (Image + Content) -->
+            <div style="overflow-y: auto; flex: 1; scrollbar-width: thin; scrollbar-color: var(--border-color) transparent;">
+                <div id="popup-image-container" style="width: 100%; display: none; position: relative; aspect-ratio: 1 / 1; background: var(--bg-secondary); overflow: hidden;">
+                    <img id="popup-image" src="" alt="Popup Image" style="width: 100%; height: 100%; display: block; object-fit: cover;">
+                </div>
+                <div style="padding: 1.5rem 1.5rem 1.25rem 1.5rem;">
+                    <h3 id="popup-title" style="font-size: 1.35rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.75rem; line-height: 1.4;"></h3>
+                    <p id="popup-content" style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; white-space: pre-wrap; margin-bottom: 1.25rem;"></p>
+                    <div id="popup-link-container" style="display: none; margin-bottom: 0.5rem; gap: 0.75rem; flex-direction: row; align-items: center;">
+                        <a id="popup-apply-link" href="" target="_blank" class="btn btn-outline btn-block" style="text-align: center; justify-content: center; display: flex; align-items: center; gap: 0.5rem; flex: 1; margin-top: 0; padding: 0.6rem 0.8rem; font-size: 0.9rem;">
+                            <span>접수하러 가기</span> <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                        <button id="popup-detail-btn" class="btn btn-primary btn-block" style="text-align: center; justify-content: center; display: flex; align-items: center; gap: 0.5rem; flex: 1; margin-top: 0; padding: 0.6rem 0.8rem; font-size: 0.9rem; background: linear-gradient(135deg, var(--color-career-start), var(--color-career-end)); border: none; color: white; cursor: pointer;">
+                            <span>자세히 보기</span> <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Sticky Footer (Do not show for today + Close) -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1.25rem; background: var(--bg-secondary); border-top: 1px solid var(--border-color); font-size: 0.85rem; color: var(--text-secondary); flex-shrink: 0;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; user-select: none;">
+                    <input type="checkbox" id="popup-today-hide" style="width: 16px; height: 16px; border-radius: 4px; border: 1px solid var(--border-color); accent-color: var(--color-career-end); cursor: pointer;">
+                    <span>오늘 하루 보지 않기</span>
+                </label>
+                <button id="popup-close-btn" style="background: none; border: none; color: var(--text-primary); font-weight: 600; cursor: pointer; padding: 0.25rem 0.5rem; transition: color 0.2s ease;">
+                    닫기
+                </button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
