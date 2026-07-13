@@ -13,7 +13,7 @@ app.use(express.static(__dirname));
 
 // API to save updated data back to data.json
 app.post('/api/save', (req, res) => {
-    let { portfolioData, journeyData, competenciesData, popupConfig } = req.body;
+    let { portfolioData, journeyData, competenciesData, popupConfig, courseConfig } = req.body;
     
     if (!portfolioData || !journeyData || !competenciesData) {
         return res.status(400).json({ error: '필수 데이터 항목이 누락되었습니다.' });
@@ -91,12 +91,40 @@ app.post('/api/save', (req, res) => {
         }
     }
     
+    // 다중 강좌 배너 이미지 저장 및 디코딩
+    let updatedCoursesData = coursesData ? coursesData.map(c => {
+        let updatedCourse = { ...c };
+        if (updatedCourse.bannerUrl && updatedCourse.bannerUrl.startsWith('data:image/')) {
+            try {
+                const dirPath = path.join(__dirname, 'images');
+                if (!fs.existsSync(dirPath)) {
+                    fs.mkdirSync(dirPath, { recursive: true });
+                }
+                const matches = updatedCourse.bannerUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+                if (matches && matches.length === 3) {
+                    const base64Data = matches[2];
+                    const buffer = Buffer.from(base64Data, 'base64');
+                    const filename = `course-banner-${c.id}.jpg`;
+                    const filePath = path.join(dirPath, filename);
+                    fs.writeFileSync(filePath, buffer);
+                    console.log(`[${new Date().toLocaleTimeString()}] 강좌 배너 저장 완료: ${filePath}`);
+                    updatedCourse.bannerUrl = `images/${filename}`;
+                }
+            } catch (err) {
+                console.error('강좌 배너 이미지 파일 저장 오류:', err);
+            }
+        }
+        return updatedCourse;
+    }) : [];
+    
     const filePath = path.join(__dirname, 'data.json');
     const fileContent = JSON.stringify({ 
         portfolioData: updatedPortfolioData, 
         journeyData, 
         competenciesData, 
-        popupConfig: updatedPopupConfig 
+        popupConfig: updatedPopupConfig,
+        courseConfig: updatedCoursesData[0] || null,
+        coursesData: updatedCoursesData
     }, null, 2);
     
     fs.writeFile(filePath, fileContent, 'utf8', (err) => {
@@ -109,7 +137,9 @@ app.post('/api/save', (req, res) => {
             success: true, 
             message: '서버 데이터 및 이미지 파일 저장 완료',
             portfolioData: updatedPortfolioData,
-            popupConfig: updatedPopupConfig
+            popupConfig: updatedPopupConfig,
+            coursesData: updatedCoursesData,
+            courseConfig: updatedCoursesData[0] || null
         });
     });
 });

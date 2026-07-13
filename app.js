@@ -293,6 +293,41 @@ let portfolioData = [];
 let journeyData = [];
 let competenciesData = [];
 let popupConfig = { enabled: false, title: '', content: '', imageUrl: '', linkUrl: '', linkProjectId: '' };
+let coursesData = [
+    {
+        id: "project-management",
+        tag: "IT & PM 실무 특강",
+        title: "프로젝트 관리(Project Management) 실무 마스터 과정",
+        bannerUrl: "images/project_management_banner.jpg",
+        schedule: "매주 토요일 (4주 완성)",
+        time: "10:00 - 13:00 (3시간)",
+        instructor: "차은정 대표",
+        description: "성공적인 프로젝트 수행을 위해 필수적인 일정 관리, 자원 배분, 리스크 완화 전략뿐만 아니라 현업에서 널리 활용되고 있는 애자일(Agile) 및 스크럼(Scrum) 방법론, 그리고 글로벌 협업 도구인 Jira 실습까지 올인원으로 아우르는 실무형 PM 양성 과정입니다. 기업의 디지털 전환(DX) 프로젝트를 기획하거나 팀의 작업 생산성을 비약적으로 높이고 싶은 실무자에게 즉각적인 솔루션을 제공합니다.",
+        curriculum: [
+            {
+                week: "Week 1",
+                title: "PM 기초 및 프로젝트 범위(Scope) 설정",
+                desc: "프로젝트 라이프사이클의 이해, 프로젝트 헌장 작성, 이해관계자 관리 및 범위 정의서 작성, 범위 관리를 위한 WBS(작업분할구조도) 실습."
+            },
+            {
+                week: "Week 2",
+                title: "프로젝트 일정 및 리스크 관리",
+                desc: "의존성 분석을 통한 일정 네트워크도 설계, 주공정표(CPM) 분석과 간트차트 작성 실습, 리스크 식별 및 정량/정성 평가 기법, 리스크 대응 계획 설계."
+            },
+            {
+                week: "Week 3",
+                title: "애자일 방법론 & 스크럼 실무",
+                desc: "폭포수(Waterfall) 모델과의 차이 분석, 애자일 선언과 4대 가치 이해, 스크럼 프레임워크(스프린트 기획, 데일리 스크럼, 스프린트 리뷰 및 회고) 롤플레잉."
+            },
+            {
+                week: "Week 4",
+                title: "협업 툴 실습 (Jira & Confluence)",
+                desc: "Jira 소프트웨어를 활용한 프로젝트 백로그 작성 및 스프린트 구동, 칸반 보드 설정과 번다운 차트 분석, Confluence를 사용한 요구사항 분석서 작성 및 문서 협업."
+            }
+        ]
+    }
+];
+let courseConfig = coursesData[0];
 
 // ==========================================================================
 // Initialization & DOM Event Binding
@@ -315,6 +350,13 @@ function loadDataAndInit() {
             journeyData = data.journeyData;
             competenciesData = data.competenciesData;
             popupConfig = data.popupConfig || { enabled: false, title: '', content: '', imageUrl: '', linkUrl: '', linkProjectId: '' };
+            if (data.coursesData && Array.isArray(data.coursesData) && data.coursesData.length > 0) {
+                coursesData = data.coursesData;
+            } else if (data.courseConfig) {
+                // 백워드 호환성: 단일 courseConfig 객체가 있는 경우 배열로 래핑
+                coursesData = [{ id: "project-management", ...data.courseConfig }];
+            }
+            courseConfig = coursesData[0];
             
             // 로컬 스토리지 데이터 동기화
             try {
@@ -322,6 +364,7 @@ function loadDataAndInit() {
                 localStorage.setItem('journeyData', JSON.stringify(journeyData));
                 localStorage.setItem('competenciesData', JSON.stringify(competenciesData));
                 localStorage.setItem('popupConfig', JSON.stringify(popupConfig));
+                localStorage.setItem('coursesData', JSON.stringify(coursesData));
             } catch (e) {
                 console.error('로컬 스토리지 동기화 실패:', e);
             }
@@ -336,6 +379,7 @@ function loadDataAndInit() {
             const localJourney = localStorage.getItem('journeyData');
             const localCompetencies = localStorage.getItem('competenciesData');
             const localPopup = localStorage.getItem('popupConfig');
+            const localCourses = localStorage.getItem('coursesData');
             
             if (localPortfolio && localJourney && localCompetencies) {
                 try {
@@ -344,6 +388,10 @@ function loadDataAndInit() {
                     competenciesData = JSON.parse(localCompetencies);
                     if (localPopup) {
                         popupConfig = JSON.parse(localPopup);
+                    }
+                    if (localCourses) {
+                        coursesData = JSON.parse(localCourses);
+                        courseConfig = coursesData[0];
                     }
                     console.log('로컬 스토리지로부터 백업 데이터를 복원했습니다.');
                     initApp();
@@ -359,12 +407,15 @@ function loadDataAndInit() {
             journeyData = defaultJourneyData;
             competenciesData = defaultCompetenciesData;
             popupConfig = { enabled: false, title: '', content: '', imageUrl: '', linkUrl: '', linkProjectId: '' };
+            // coursesData is already declared with default values above
+            courseConfig = coursesData[0];
             
             try {
                 localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
                 localStorage.setItem('journeyData', JSON.stringify(journeyData));
                 localStorage.setItem('competenciesData', JSON.stringify(competenciesData));
                 localStorage.setItem('popupConfig', JSON.stringify(popupConfig));
+                localStorage.setItem('coursesData', JSON.stringify(coursesData));
             } catch (e) {
                 console.error('로컬 스토리지 초기화 실패:', e);
             }
@@ -400,6 +451,7 @@ function saveAllData() {
         localStorage.setItem('journeyData', JSON.stringify(journeyData));
         localStorage.setItem('competenciesData', JSON.stringify(competenciesData));
         localStorage.setItem('popupConfig', JSON.stringify(popupConfig));
+        localStorage.setItem('coursesData', JSON.stringify(coursesData));
     } catch (e) {
         console.error('로컬 스토리지 저장 오류:', e);
         if (e.name === 'QuotaExceededError') {
@@ -412,7 +464,8 @@ function saveAllData() {
         portfolioData,
         journeyData,
         competenciesData,
-        popupConfig
+        popupConfig,
+        coursesData
     };
     
     fetch('/api/save', {
@@ -445,6 +498,15 @@ function saveAllData() {
                 console.error('로컬 스토리지 팝업설정 업데이트 오류:', e);
             }
         }
+        if (result.coursesData) {
+            coursesData = result.coursesData;
+            courseConfig = coursesData[0];
+            try {
+                localStorage.setItem('coursesData', JSON.stringify(coursesData));
+            } catch (e) {
+                console.error('로컬 스토리지 강좌설정 업데이트 오류:', e);
+            }
+        }
     })
     .catch(err => {
         console.warn('서버 저장 실패 (오프라인 혹은 정적 호스팅 환경일 수 있습니다):', err);
@@ -457,7 +519,8 @@ window.downloadDataJson = function() {
         portfolioData,
         journeyData,
         competenciesData,
-        popupConfig
+        popupConfig,
+        coursesData
     }, null, 2));
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute("href", dataStr);
@@ -2737,10 +2800,51 @@ window.updateServerGithub = function() {
             }
         }
         
+        // 다중 강좌 배너 이미지 동기화 추가
+        coursesData.forEach(c => {
+            if (c.bannerUrl && c.bannerUrl.startsWith('data:image/')) {
+                const matches = c.bannerUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+                if (matches && matches.length === 3) {
+                    const base64Data = matches[2];
+                    const githubImagePath = `${parentPath}images/course-banner-${c.id}.jpg`;
+                    const imageApiUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${githubImagePath}`;
+                    
+                    const courseImgPromise = fetch(`${imageApiUrl}?ref=${config.branch}`, { headers })
+                        .then(res => {
+                            if (res.status === 404) return { sha: null };
+                            if (!res.ok) throw new Error(`강좌 배너 이미지 SHA 조회 실패 (코드: ${res.status})`);
+                            return res.json();
+                        })
+                        .then(fileMeta => {
+                            const sha = fileMeta.sha;
+                            const commitPayload = {
+                                message: `upload course banner: course-banner-${c.id}.jpg`,
+                                content: base64Data,
+                                branch: config.branch
+                            };
+                            if (sha) commitPayload.sha = sha;
+                            
+                            return fetch(imageApiUrl, {
+                                method: 'PUT',
+                                headers,
+                                body: JSON.stringify(commitPayload)
+                            });
+                        })
+                        .then(res => {
+                            if (!res.ok) throw new Error(`GitHub 강좌 배너 이미지 업로드 실패 (코드: ${res.status})`);
+                            c.bannerUrl = `images/course-banner-${c.id}.jpg`;
+                            localStorage.setItem('coursesData', JSON.stringify(coursesData));
+                        });
+                    syncPromises.push(courseImgPromise);
+                }
+            }
+        });
+        
         return Promise.all(syncPromises).then(() => {
             // 변경된 상대경로들을 로컬 스토리지에 최종 반영하고 목록 다시 렌더링
             localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
             localStorage.setItem('popupConfig', JSON.stringify(popupConfig));
+            localStorage.setItem('coursesData', JSON.stringify(coursesData));
             renderPortfolioGrid(currentPortfolioFilter, currentPortfolioPage);
         });
     };
@@ -2767,7 +2871,8 @@ window.updateServerGithub = function() {
                 portfolioData,
                 journeyData,
                 competenciesData,
-                popupConfig
+                popupConfig,
+                courseConfig
             };
             const jsonStr = JSON.stringify(dataPayload, null, 2);
             // Safe UTF-8 Base64 encoding
@@ -2898,7 +3003,7 @@ function checkAndShowPopup() {
     
     newDetailBtnEl.addEventListener('click', () => {
         closePopupModal();
-        window.location.href = 'project-management.html';
+        window.location.href = 'project-contents.html';
     });
     hasButtons = true;
     
@@ -3082,65 +3187,395 @@ window.openProjectMgmtDashboard = function(e) {
         alert('관리자 권한이 필요합니다.');
         return;
     }
+    window.location.href = 'project-management-admin.html';
+};
+
+window.closeCourseAdminSection = function() {
+    const adminSec = document.getElementById('course-admin-section');
+    if (adminSec) adminSec.style.display = 'none';
     
+    // Show all main page sections
+    const mainSections = ['#hero', '#about', '#competencies', '#portfolio', '#experience', '#contact'];
+    mainSections.forEach(sel => {
+        const el = document.querySelector(sel);
+        if (el) el.style.display = '';
+    });
+    
+    // Re-render components to ensure visual consistency
+    renderCompetencies();
+    renderPortfolioGrid(currentPortfolioFilter, currentPortfolioPage);
+    renderTimeline(getActiveJourneyFilter());
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+// Auto close admin section when normal nav links or logo is clicked
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.nav-menu a, .logo').forEach(link => {
+        link.addEventListener('click', () => {
+            if (!link.closest('#nav-project-mgmt')) {
+                closeCourseAdminSection();
+            }
+        });
+    });
+});
+
+window.renderCourseAdminDashboard = function() {
     fetch('/api/applications')
         .then(res => {
             if (!res.ok) throw new Error('서버 신청 목록 로드 실패');
             return res.json();
         })
         .then(apps => {
-            renderApplicationsDashboard(apps);
+            renderCourseAdminDashboardWithApps(apps);
         })
         .catch(err => {
             console.warn('서버 신청 목록 로드 실패, 로컬 스토리지 확인:', err);
             const localApps = JSON.parse(localStorage.getItem('courseApplications') || '[]');
-            renderApplicationsDashboard(localApps);
+            renderCourseAdminDashboardWithApps(localApps);
         });
 };
 
-function renderApplicationsDashboard(apps) {
+function renderCourseAdminDashboardWithApps(apps) {
+    const dashboardContainer = document.getElementById('course-admin-dashboard');
+    if (!dashboardContainer) return;
+    
+    // Build Course Cards List
+    let coursesHtml = '';
+    coursesData.forEach(c => {
+        coursesHtml += `
+            <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px; background: var(--bg-secondary); border: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: space-between; min-height: 250px;">
+                <div>
+                    <div style="width: 100%; height: 120px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); margin-bottom: 1rem;">
+                        <img src="${c.bannerUrl || 'images/project_management_banner.jpg'}" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <span style="font-size: 0.75rem; font-weight: 700; color: var(--color-it-end); text-transform: uppercase;">${c.tag || '일반 강좌'}</span>
+                    <h3 style="font-size: 1.15rem; font-weight: 700; margin-top: 0.25rem; color: var(--text-primary); line-height: 1.4;">${c.title}</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;"><i class="fa-solid fa-calendar-days" style="margin-right: 0.4rem; color: var(--color-it-end);"></i>${c.schedule}</p>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);"><i class="fa-solid fa-user" style="margin-right: 0.4rem; color: var(--color-it-end);"></i>강사: ${c.instructor}</p>
+                </div>
+                <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem; border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+                    <button onclick="showCourseForm('${c.id}')" class="btn btn-outline" style="flex: 1; font-size: 0.8rem; padding: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem; border-radius: 6px;">
+                        <i class="fa-solid fa-edit"></i> 수정
+                    </button>
+                    <button onclick="deleteCourse('${c.id}')" class="btn btn-outline" style="font-size: 0.8rem; padding: 0.5rem; color: #f43f5e; border-color: rgba(244,63,94,0.2); display: flex; align-items: center; justify-content: center; border-radius: 6px;">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                    <a href="project-contents.html?id=${c.id}" target="_blank" class="btn btn-outline" style="flex: 1; font-size: 0.8rem; padding: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem; text-align: center; border-radius: 6px; color: var(--text-primary);">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> 보기
+                    </a>
+                </div>
+            </div>
+        `;
+    });
+    
+    // Dropdown to filter applicants by course
+    let selectOptionsHtml = '<option value="all">전체 신청 내역 보기</option>';
+    coursesData.forEach(c => {
+        selectOptionsHtml += `<option value="${c.title}">${c.title}</option>`;
+    });
+    
+    dashboardContainer.innerHTML = `
+        <!-- Courses Grid Container -->
+        <div style="margin-bottom: 3rem;">
+            <h3 style="font-size: 1.35rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span style="display:inline-block; width:4px; height:18px; background:var(--color-it-end); border-radius:2px;"></span> 운영 강좌 목록
+            </h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+                ${coursesHtml}
+            </div>
+        </div>
+        
+        <!-- Applicants Section -->
+        <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 1rem;">
+                <h3 style="font-size: 1.35rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="display:inline-block; width:4px; height:18px; background:var(--color-it-end); border-radius:2px;"></span> 수강 신청 현황
+                </h3>
+                <div>
+                    <select id="applicants-filter" onchange="filterApplicantsTable()" style="padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); font-size: 0.85rem; font-weight: 600; cursor: pointer; outline: none;">
+                        ${selectOptionsHtml}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="glass-panel" style="border-radius: 16px; background: var(--bg-secondary); border: 1px solid var(--border-color); overflow: hidden;">
+                <div style="width: 100%; overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border-color); color: var(--text-secondary); font-weight: 600; background: rgba(0,0,0,0.15);">
+                                <th style="padding: 0.9rem 1rem;">이름</th>
+                                <th style="padding: 0.9rem 1rem;">연락처</th>
+                                <th style="padding: 0.9rem 1rem;">이메일</th>
+                                <th style="padding: 0.9rem 1rem;">신청 강좌</th>
+                                <th style="padding: 0.9rem 1rem;">문의사항</th>
+                                <th style="padding: 0.9rem 1rem;">신청일시</th>
+                                <th style="padding: 0.9rem 1rem; text-align: center;">관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="applicants-table-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Store applications array on window for filtering access
+    window.currentApplicants = apps;
+    
+    // Populate table initially
+    filterApplicantsTable();
+}
+
+window.filterApplicantsTable = function() {
+    const filterSelect = document.getElementById('applicants-filter');
+    const tableBody = document.getElementById('applicants-table-body');
+    if (!tableBody || !window.currentApplicants) return;
+    
+    const filterVal = filterSelect ? filterSelect.value : 'all';
+    const filteredApps = window.currentApplicants.filter(app => {
+        if (filterVal === 'all') return true;
+        // Match course name (e.g. app.course)
+        return app.course === filterVal;
+    });
+    
     let rowsHtml = '';
-    if (!apps || apps.length === 0) {
-        rowsHtml = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">등록된 수강 신청 내역이 없습니다.</td></tr>`;
+    if (filteredApps.length === 0) {
+        rowsHtml = `<tr><td colspan="7" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">신청 내역이 존재하지 않습니다.</td></tr>`;
     } else {
-        apps.forEach((app, index) => {
+        filteredApps.forEach((app, index) => {
+            // Find absolute index in window.currentApplicants to support delete
+            const absIndex = window.currentApplicants.indexOf(app);
             rowsHtml += `
-                <tr style="border-bottom: 1px solid var(--border-color);">
-                    <td style="padding: 1rem 0.75rem; font-weight: 600; color: var(--text-primary);">${app.name}</td>
-                    <td style="padding: 1rem 0.75rem; color: var(--text-primary);">${app.phone}</td>
-                    <td style="padding: 1rem 0.75rem;"><a href="mailto:${app.email}" style="color: var(--color-it-end); text-decoration: underline;">${app.email}</a></td>
-                    <td style="padding: 1rem 0.75rem; font-size: 0.85rem; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-secondary);" title="${app.message || ''}">${app.message || '-'}</td>
-                    <td style="padding: 1rem 0.75rem; font-size: 0.8rem; color: var(--text-muted);">${app.appliedAt || '-'}</td>
-                    <td style="padding: 1rem 0.75rem; text-align: center;">
-                        <button onclick="deleteApplication(${index})" style="background: none; border: none; color: #f43f5e; cursor: pointer; padding: 0.25rem 0.5rem; transition: color 0.2s;" title="삭제"><i class="fa-solid fa-trash-can"></i></button>
+                <tr style="border-bottom: 1px solid var(--border-color); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.01)'" onmouseout="this.style.background='transparent'">
+                    <td style="padding: 1rem; font-weight: 600; color: var(--text-primary);">${app.name}</td>
+                    <td style="padding: 1rem; color: var(--text-primary);">${app.phone}</td>
+                    <td style="padding: 1rem;"><a href="mailto:${app.email}" style="color: var(--color-it-end); text-decoration: underline;">${app.email}</a></td>
+                    <td style="padding: 1rem; font-weight: 600; color: var(--color-it-end); font-size: 0.85rem;">${app.course || '일반 과정'}</td>
+                    <td style="padding: 1rem; font-size: 0.85rem; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-secondary);" title="${app.message || ''}">${app.message || '-'}</td>
+                    <td style="padding: 1rem; font-size: 0.8rem; color: var(--text-muted);">${app.appliedAt || '-'}</td>
+                    <td style="padding: 1rem; text-align: center;">
+                        <button onclick="deleteApplication(${absIndex})" style="background: none; border: none; color: #f43f5e; cursor: pointer; padding: 0.25rem 0.5rem; transition: color 0.2s;" title="삭제">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
                     </td>
                 </tr>
             `;
         });
     }
     
-    const dashboardHtml = `
-        <div style="width: 100%; overflow-x: auto; margin-top: 1rem;">
-            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
-                <thead>
-                    <tr style="border-bottom: 2px solid var(--border-color); color: var(--text-secondary); font-weight: 600;">
-                        <th style="padding: 0.75rem;">이름</th>
-                        <th style="padding: 0.75rem;">연락처</th>
-                        <th style="padding: 0.75rem;">이메일</th>
-                        <th style="padding: 0.75rem;">문의사항</th>
-                        <th style="padding: 0.75rem;">신청일시</th>
-                        <th style="padding: 0.75rem; text-align: center;">관리</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${rowsHtml}
-                </tbody>
-            </table>
+    tableBody.innerHTML = rowsHtml;
+};
+
+window.showCourseForm = function(courseId) {
+    const dashboardContainer = document.getElementById('course-admin-dashboard');
+    if (!dashboardContainer) return;
+    
+    const isEdit = !!courseId;
+    const course = isEdit ? coursesData.find(c => c.id === courseId) : null;
+    
+    const config = course || {
+        id: 'course-' + Date.now(),
+        tag: 'IT & PM 실무 특강',
+        title: '',
+        bannerUrl: 'images/project_management_banner.jpg',
+        schedule: '',
+        time: '',
+        instructor: '',
+        description: '',
+        curriculum: [
+            { week: 'Week 1', title: '', desc: '' },
+            { week: 'Week 2', title: '', desc: '' },
+            { week: 'Week 3', title: '', desc: '' },
+            { week: 'Week 4', title: '', desc: '' }
+        ]
+    };
+    
+    const cur = config.curriculum || [];
+    while (cur.length < 4) {
+        cur.push({ week: `Week ${cur.length + 1}`, title: '', desc: '' });
+    }
+    
+    dashboardContainer.innerHTML = `
+        <div class="glass-panel" style="padding: 2.5rem; border-radius: 20px; background: var(--bg-secondary); border: 1px solid var(--border-color); max-width: 800px; margin: 0 auto;">
+            <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 1.5rem; border-left: 4px solid var(--color-it-end); padding-left: 0.75rem;">
+                ${isEdit ? '강좌 상세 정보 수정' : '신규 강좌 추가 등록'}
+            </h3>
+            
+            <form id="course-config-form" onsubmit="saveCourse(event, '${config.id}')" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <!-- Banner Image -->
+                <div>
+                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">대표 배너 이미지 (16:9 비율 권장)</label>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <div id="course-banner-preview-container" style="width: 160px; height: 90px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-tertiary); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;">
+                            ${config.bannerUrl ? `<img id="course-banner-preview" src="${config.bannerUrl}" style="width: 100%; height: 100%; object-fit: cover;">` : '<span style="font-size: 0.75rem; color: var(--text-muted);">이미지 없음</span>'}
+                        </div>
+                        <div style="flex: 1;">
+                            <input type="file" id="course-banner-file" accept="image/*" style="display: none;" onchange="handleCourseBannerFileChange(event)">
+                            <button type="button" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem;" onclick="document.getElementById('course-banner-file').click()">
+                                <i class="fa-solid fa-image"></i> 이미지 선택
+                            </button>
+                            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.4rem;">최대 5MB 이하의 이미지 파일만 등록 가능합니다.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tag & Title -->
+                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.25rem;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">강좌 분류 태그</label>
+                        <input type="text" id="course-input-tag" value="${config.tag || ''}" placeholder="예: IT & PM 실무 특강" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">강좌명</label>
+                        <input type="text" id="course-input-title" value="${config.title || ''}" placeholder="예: 프로젝트 관리 실무 마스터 과정" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+                    </div>
+                </div>
+                
+                <!-- Schedule, Time, Instructor -->
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">강의 일정</label>
+                        <input type="text" id="course-input-schedule" value="${config.schedule || ''}" placeholder="예: 매주 토요일 (4주)" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">강의 시간</label>
+                        <input type="text" id="course-input-time" value="${config.time || ''}" placeholder="예: 10:00 - 13:00" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">담당 강사</label>
+                        <input type="text" id="course-input-instructor" value="${config.instructor || ''}" placeholder="예: 차은정 대표" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+                    </div>
+                </div>
+                
+                <!-- Description -->
+                <div>
+                    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">과정 상세 소개</label>
+                    <textarea id="course-input-desc" rows="4" placeholder="과정의 상세 설명 단락을 작성해 주세요." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-family: inherit; resize: vertical;" required>${config.description || ''}</textarea>
+                </div>
+                
+                <!-- Curriculum Weeks -->
+                <div>
+                    <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+                        <i class="fa-solid fa-list-check" style="color: var(--color-it-end);"></i> 주차별 커리큘럼 구성 (4주과정)
+                    </h4>
+                    <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                        ${cur.map((c, i) => `
+                            <div style="padding: 1.25rem; border-radius: 12px; background: rgba(255,255,255,0.015); border: 1px solid var(--border-color);">
+                                <span style="display: inline-block; font-size: 0.8rem; font-weight: 900; color: var(--color-it-end); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.5rem;">${c.week}</span>
+                                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                    <div>
+                                        <input type="text" id="curriculum-title-${i}" value="${c.title || ''}" placeholder="${c.week} 주제 제목을 입력하세요." style="width: 100%; padding: 0.7rem 0.9rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-size: 0.9rem;" required>
+                                    </div>
+                                    <div>
+                                        <textarea id="curriculum-desc-${i}" rows="2" placeholder="${c.week} 세부 학습 요약 내용을 설명해 주세요." style="width: 100%; padding: 0.7rem 0.9rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-size: 0.85rem; font-family: inherit; resize: vertical;" required>${c.desc || ''}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                    <button type="button" onclick="renderCourseAdminDashboard()" class="btn btn-outline" style="padding: 0.65rem 1.75rem; font-size: 0.95rem; border-radius: 8px;">이전으로</button>
+                    <button type="submit" class="btn btn-primary" style="padding: 0.65rem 2.25rem; font-size: 0.95rem; background: linear-gradient(135deg, var(--color-career-start), var(--color-career-end)); border: none; color: white; border-radius: 8px;">
+                        ${isEdit ? '수정 내용 저장' : '새로운 강좌 등록'}
+                    </button>
+                </div>
+            </form>
         </div>
     `;
+};
+
+window.saveCourse = function(e, courseId) {
+    e.preventDefault();
     
-    openAdminModal('Project Management 수강 신청 관리', dashboardHtml);
-}
+    const previewImg = document.getElementById('course-banner-preview');
+    
+    // Compile curriculum data
+    const updatedCurriculum = [];
+    for (let i = 0; i < 4; i++) {
+        updatedCurriculum.push({
+            week: `Week ${i + 1}`,
+            title: document.getElementById(`curriculum-title-${i}`).value,
+            desc: document.getElementById(`curriculum-desc-${i}`).value
+        });
+    }
+    
+    const coursePayload = {
+        id: courseId,
+        tag: document.getElementById('course-input-tag').value,
+        title: document.getElementById('course-input-title').value,
+        bannerUrl: previewImg ? previewImg.src : 'images/project_management_banner.jpg',
+        schedule: document.getElementById('course-input-schedule').value,
+        time: document.getElementById('course-input-time').value,
+        instructor: document.getElementById('course-input-instructor').value,
+        description: document.getElementById('course-input-desc').value,
+        curriculum: updatedCurriculum
+    };
+    
+    // Check if course already exists
+    const idx = coursesData.findIndex(c => c.id === courseId);
+    if (idx !== -1) {
+        coursesData[idx] = coursePayload;
+    } else {
+        coursesData.push(coursePayload);
+    }
+    
+    // Sync fallback reference
+    courseConfig = coursesData[0];
+    
+    // Save locally
+    localStorage.setItem('coursesData', JSON.stringify(coursesData));
+    
+    // Save to server
+    saveAllData();
+    
+    alert('강좌 데이터가 성공적으로 저장되었습니다.');
+    renderCourseAdminDashboard();
+};
+
+window.deleteCourse = function(courseId) {
+    if (coursesData.length <= 1) {
+        alert('최소 1개 이상의 강좌가 유지되어야 하므로 이 강좌를 삭제할 수 없습니다.');
+        return;
+    }
+    if (!confirm('이 강좌를 삭제하시겠습니까? (강좌의 모든 내용이 완전히 삭제됩니다.)')) return;
+    
+    coursesData = coursesData.filter(c => c.id !== courseId);
+    courseConfig = coursesData[0];
+    
+    // Save locally
+    localStorage.setItem('coursesData', JSON.stringify(coursesData));
+    
+    // Save to server
+    saveAllData();
+    
+    alert('강좌가 성공적으로 삭제되었습니다.');
+    renderCourseAdminDashboard();
+};
+
+window.handleCourseBannerFileChange = function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    if (file.size > 5 * 1024 * 1024) {
+        alert('이미지 크기는 최대 5MB를 초과할 수 없습니다.');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const previewContainer = document.getElementById('course-banner-preview-container');
+        if (previewContainer) {
+            previewContainer.innerHTML = `<img id="course-banner-preview" src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
+        }
+    };
+    reader.readAsDataURL(file);
+};
 
 window.deleteApplication = function(index) {
     if (!confirm('이 수강 신청 내역을 완전히 삭제하시겠습니까?')) return;
@@ -3155,7 +3590,7 @@ window.deleteApplication = function(index) {
         return res.json();
     })
     .then(data => {
-        openProjectMgmtDashboard(); // Reload dashboard
+        renderCourseAdminDashboard(); // Reload dashboard
     })
     .catch(err => {
         console.warn('서버 삭제 실패, 로컬 스토리지에서 삭제합니다:', err);
@@ -3168,7 +3603,7 @@ window.deleteApplication = function(index) {
         } catch (e) {
             console.error(e);
         }
-        openProjectMgmtDashboard(); // Reload dashboard
+        renderCourseAdminDashboard(); // Reload dashboard
     });
 };
 

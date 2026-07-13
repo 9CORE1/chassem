@@ -295,13 +295,13 @@
             </a>
 
             <div class="course-title-section">
-                <span class="course-tag">IT & PM 실무 특강</span>
-                <h1>프로젝트 관리(Project Management) 실무 마스터 과정</h1>
+                <span class="course-tag" id="course-tag">IT & PM 실무 특강</span>
+                <h1 id="course-title">프로젝트 관리(Project Management) 실무 마스터 과정</h1>
             </div>
 
             <!-- Course Banner Image -->
             <div class="course-banner">
-                <img src="images/project_management_banner.jpg" alt="프로젝트 관리 강좌 배너">
+                <img id="course-banner-img" src="images/project_management_banner.jpg" alt="프로젝트 관리 강좌 배너">
             </div>
 
             <!-- Course Grid Layout -->
@@ -316,21 +316,21 @@
                             <i class="fa-solid fa-calendar-days"></i>
                             <div class="info-card-text">
                                 <span>강좌 일정</span>
-                                <p>매주 토요일 (4주 완성)</p>
+                                <p id="course-schedule">매주 토요일 (4주 완성)</p>
                             </div>
                         </div>
                         <div class="info-card">
                             <i class="fa-solid fa-clock"></i>
                             <div class="info-card-text">
                                 <span>강의 시간</span>
-                                <p>10:00 - 13:00 (3시간)</p>
+                                <p id="course-time">10:00 - 13:00 (3시간)</p>
                             </div>
                         </div>
                         <div class="info-card">
                             <i class="fa-solid fa-user-tie"></i>
                             <div class="info-card-text">
                                 <span>담당 강사</span>
-                                <p>차은정 대표</p>
+                                <p id="course-instructor">차은정 대표</p>
                             </div>
                         </div>
                     </div>
@@ -338,7 +338,7 @@
                     <!-- Course Description -->
                     <div class="course-content-block">
                         <h2><i class="fa-solid fa-info-circle"></i> 과정 소개</h2>
-                        <p style="line-height: 1.7; color: var(--text-secondary); font-size: 1rem;">
+                        <p id="course-description" style="line-height: 1.7; color: var(--text-secondary); font-size: 1rem;">
                             성공적인 프로젝트 수행을 위해 필수적인 일정 관리, 자원 배분, 리스크 완화 전략뿐만 아니라 현업에서 널리 활용되고 있는 애자일(Agile) 및 스크럼(Scrum) 방법론, 그리고 글로벌 협업 도구인 Jira 실습까지 올인원으로 아우르는 실무형 PM 양성 과정입니다. 기업의 디지털 전환(DX) 프로젝트를 기획하거나 팀의 작업 생산성을 비약적으로 높이고 싶은 실무자에게 즉각적인 솔루션을 제공합니다.
                         </p>
                     </div>
@@ -346,7 +346,7 @@
                     <!-- Course Curriculum -->
                     <div class="course-content-block">
                         <h2><i class="fa-solid fa-list-check"></i> 커리큘럼</h2>
-                        <div class="curriculum-list">
+                        <div class="curriculum-list" id="curriculum-list">
                             <div class="curriculum-item">
                                 <div class="curriculum-week">Week 1</div>
                                 <div class="curriculum-title">PM 기초 및 프로젝트 범위(Scope) 설정</div>
@@ -440,7 +440,7 @@
                 phone: document.getElementById('applicant-phone').value,
                 email: document.getElementById('applicant-email').value,
                 message: document.getElementById('applicant-message').value,
-                course: '프로젝트 관리(PM) 실무 마스터 과정',
+                course: document.getElementById('course-title').textContent,
                 appliedAt: new Date().toLocaleString()
             };
             
@@ -478,6 +478,101 @@
         function showSuccess() {
             document.getElementById('form-container').style.display = 'none';
             document.getElementById('success-container').style.display = 'block';
+        }
+
+        // Dynamic Content Loader
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const courseId = urlParams.get('id');
+            
+            fetch('data.json')
+                .then(res => {
+                    if (!res.ok) throw new Error('서버 데이터 로드 실패');
+                    return res.json();
+                })
+                .then(data => {
+                    let matchedCourse = null;
+                    if (data) {
+                        if (courseId && data.coursesData) {
+                            matchedCourse = data.coursesData.find(c => c.id === courseId);
+                        }
+                        if (!matchedCourse && data.coursesData && data.coursesData.length > 0) {
+                            matchedCourse = data.coursesData[0];
+                        }
+                        if (!matchedCourse && data.courseConfig) {
+                            matchedCourse = data.courseConfig;
+                        }
+                    }
+                    
+                    if (matchedCourse) {
+                        applyCourseConfig(matchedCourse);
+                    } else {
+                        loadFromLocal(courseId);
+                    }
+                })
+                .catch(err => {
+                    console.warn('서버로부터 코스 데이터 로드 실패, 로컬 백업 확인:', err);
+                    loadFromLocal(courseId);
+                });
+        });
+
+        function loadFromLocal(courseId) {
+            try {
+                const localCourses = localStorage.getItem('coursesData');
+                let matchedCourse = null;
+                if (localCourses) {
+                    const parsedCourses = JSON.parse(localCourses);
+                    if (courseId) {
+                        matchedCourse = parsedCourses.find(c => c.id === courseId);
+                    }
+                    if (!matchedCourse && parsedCourses.length > 0) {
+                        matchedCourse = parsedCourses[0];
+                    }
+                }
+                if (!matchedCourse) {
+                    const localConfig = localStorage.getItem('courseConfig');
+                    if (localConfig) {
+                        matchedCourse = JSON.parse(localConfig);
+                    }
+                }
+                if (matchedCourse) {
+                    applyCourseConfig(matchedCourse);
+                }
+            } catch (e) {
+                console.error('로컬스토리지 코스 로드 실패:', e);
+            }
+        }
+
+        function applyCourseConfig(config) {
+            if (!config) return;
+            
+            if (config.tag) document.getElementById('course-tag').textContent = config.tag;
+            if (config.title) {
+                document.getElementById('course-title').textContent = config.title;
+                document.title = config.title + " | 차은정";
+            }
+            if (config.bannerUrl) document.getElementById('course-banner-img').src = config.bannerUrl;
+            if (config.schedule) document.getElementById('course-schedule').textContent = config.schedule;
+            if (config.time) document.getElementById('course-time').textContent = config.time;
+            if (config.instructor) document.getElementById('course-instructor').textContent = config.instructor;
+            if (config.description) document.getElementById('course-description').textContent = config.description;
+            
+            if (config.curriculum && config.curriculum.length > 0) {
+                const curriculumList = document.getElementById('curriculum-list');
+                if (curriculumList) {
+                    let html = '';
+                    config.curriculum.forEach(c => {
+                        html += `
+                            <div class="curriculum-item">
+                                <div class="curriculum-week">${c.week}</div>
+                                <div class="curriculum-title">${c.title}</div>
+                                <div class="curriculum-desc">${c.desc}</div>
+                            </div>
+                        `;
+                    });
+                    curriculumList.innerHTML = html;
+                }
+            }
         }
     </script>
 </body>
