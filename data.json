@@ -709,5 +709,13 @@
         "교육 콘텐츠 및 학습경험 설계 역량"
       ]
     }
-  ]
+  ],
+  "popupConfig": {
+    "enabled": false,
+    "title": "",
+    "content": "",
+    "imageUrl": "",
+    "linkUrl": "",
+    "linkProjectId": ""
+  }
 }
