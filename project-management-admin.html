@@ -25,7 +25,7 @@
     <div id="admin-banner" style="position: fixed; top: 0; left: 0; width: 100%; background: linear-gradient(90deg, var(--color-career-start), var(--color-career-end)); color: white; text-align: center; padding: 0.5rem 1rem; font-size: 0.9rem; font-weight: 600; z-index: 9999; box-shadow: 0 4px 10px rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; gap: 0.75rem; flex-wrap: wrap;">
         <span>🛠️ 관리자 편집 모드가 활성화되어 있습니다.</span>
         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-            <button onclick="openPopupConfigModal()" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 0.25rem;"><i class="fa-solid fa-window-restore"></i>팝업창 설정</button>
+            <button onclick="showPopupConfigForm()" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 0.25rem;"><i class="fa-solid fa-window-restore"></i>팝업창 설정</button>
             <button onclick="openGithubConfigModal()" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.2s;"><i class="fa-brands fa-github" style="margin-right: 0.25rem;"></i>GitHub 연동 설정</button>
             <button onclick="updateServerGithub()" id="btn-github-sync" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.2s;"><i class="fa-solid fa-cloud-arrow-up" style="margin-right: 0.25rem;"></i>서버 업데이트</button>
             <button onclick="downloadUploadedDataJson()" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.2s;"><i class="fa-solid fa-cloud-download" style="margin-right: 0.25rem;"></i>데이터 백업 다운로드</button>
@@ -565,7 +565,7 @@
             saveAllData();
         };
 
-        function saveAllData() {
+        function saveAllData(successMsg) {
             const payload = {
                 portfolioData,
                 journeyData,
@@ -584,7 +584,7 @@
                 return res.json();
             })
             .then(result => {
-                alert('강좌 데이터가 성공적으로 저장되었습니다.');
+                alert(successMsg || '강좌 데이터가 성공적으로 저장되었습니다.');
                 if (result.coursesData) {
                     coursesData = result.coursesData;
                     localStorage.setItem('coursesData', JSON.stringify(coursesData));
@@ -683,7 +683,10 @@
             }
         };
 
-        window.openPopupConfigModal = function() {
+        window.showPopupConfigForm = function() {
+            const dashboardContainer = document.getElementById('course-admin-dashboard');
+            if (!dashboardContainer) return;
+
             const config = popupConfig || { enabled: false, title: '', content: '', imageUrl: '', linkUrl: '', linkProjectId: '' };
             
             let projectOptionsHtml = '<option value="">-- 상세페이지 연결할 강의/프로젝트 선택 --</option>';
@@ -691,74 +694,92 @@
                 const catName = p.category === 'career' ? '취업진로' : (p.category === 'media' ? '영상콘텐츠' : 'IT 미래기술');
                 projectOptionsHtml += `<option value="${p.id}" ${config.linkProjectId === p.id ? 'selected' : ''}>[${catName}] ${p.title}</option>`;
             });
-            
-            const formHtml = `
-                <form id="popup-config-form" style="display: flex; flex-direction: column; gap: 1.2rem;">
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <input type="checkbox" id="popup-config-enabled" ${config.enabled ? 'checked' : ''} style="width: 18px; height: 18px; cursor: pointer;">
-                        <label for="popup-config-enabled" style="font-weight: 600; font-size: 0.95rem; color: var(--text-primary); cursor: pointer;">홈페이지 접속 시 팝업창 띄우기</label>
-                    </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">팝업 제목</label>
-                        <input type="text" id="popup-config-title" value="${config.title || ''}" placeholder="팝업창 제목을 입력하세요." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
-                    </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">팝업 내용</label>
-                        <textarea id="popup-config-content" rows="4" placeholder="팝업창에 노출할 내용을 입력하세요." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-family: inherit; resize: vertical;" required>${config.content || ''}</textarea>
-                    </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">팝업 이미지</label>
-                        <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 0.5rem;">
-                            <div id="popup-config-img-preview-container" style="width: 80px; height: 80px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;">
-                                ${config.imageUrl ? `<img id="popup-config-img-preview" src="${config.imageUrl}" style="width: 100%; height: 100%; object-fit: cover;">` : '<span style="font-size: 0.75rem; color: var(--text-muted);">이미지 없음</span>'}
-                            </div>
-                            <div>
-                                <input type="file" id="popup-config-file" accept="image/*" style="display: none;" onchange="handlePopupFileChange(event)">
-                                <button type="button" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem;" onclick="document.getElementById('popup-config-file').click()">
-                                    <i class="fa-solid fa-image"></i> 이미지 변경
-                                </button>
-                                <button type="button" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem; color: #f43f5e; border-color: rgba(244, 63, 94, 0.2); background: rgba(244, 63, 94, 0.05); margin-left: 0.5rem; display: ${config.imageUrl ? 'inline-block' : 'none'};" id="btn-popup-image-remove" onclick="removePopupImage()">삭제</button>
+
+            dashboardContainer.innerHTML = `
+                <div class="glass-panel" style="padding: 2.5rem; border-radius: 20px; background: var(--bg-secondary); border: 1px solid var(--border-color); max-width: 800px; margin: 0 auto;">
+                    <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 1.5rem; border-left: 4px solid var(--color-career-end); padding-left: 0.75rem;">
+                        홈페이지 접속 공지 팝업창 설정
+                    </h3>
+                    
+                    <form id="popup-config-form" onsubmit="savePopupConfigInline(event)" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <!-- Enabled -->
+                        <div style="display: flex; align-items: center; gap: 0.5rem; background: var(--bg-tertiary); padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <input type="checkbox" id="popup-config-enabled" ${config.enabled ? 'checked' : ''} style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--color-career-end);">
+                            <label for="popup-config-enabled" style="font-weight: 600; font-size: 0.95rem; color: var(--text-primary); cursor: pointer;">홈페이지 접속 시 팝업창 활성화</label>
+                        </div>
+                        
+                        <!-- Title -->
+                        <div>
+                            <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">팝업 제목</label>
+                            <input type="text" id="popup-config-title" value="${config.title || ''}" placeholder="팝업창 제목을 입력하세요." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+                        </div>
+                        
+                        <!-- Content -->
+                        <div>
+                            <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">팝업 내용</label>
+                            <textarea id="popup-config-content" rows="4" placeholder="팝업창에 노출할 공지 내용을 입력하세요." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-family: inherit; resize: vertical;" required>${config.content || ''}</textarea>
+                        </div>
+                        
+                        <!-- Image -->
+                        <div>
+                            <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">팝업 이미지</label>
+                            <div style="display: flex; gap: 1rem; align-items: center;">
+                                <div id="popup-config-img-preview-container" style="width: 120px; height: 120px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;">
+                                    ${config.imageUrl ? `<img id="popup-config-img-preview" src="${config.imageUrl}" style="width: 100%; height: 100%; object-fit: cover;">` : '<span style="font-size: 0.75rem; color: var(--text-muted);">이미지 없음</span>'}
+                                </div>
+                                <div style="flex: 1;">
+                                    <input type="file" id="popup-config-file" accept="image/*" style="display: none;" onchange="handlePopupFileChangeInline(event)">
+                                    <button type="button" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem;" onclick="document.getElementById('popup-config-file').click()">
+                                        <i class="fa-solid fa-image"></i> 이미지 변경
+                                    </button>
+                                    <button type="button" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem; color: #f43f5e; border-color: rgba(244, 63, 94, 0.2); background: rgba(244, 63, 94, 0.05); margin-top: 0.5rem; display: ${config.imageUrl ? 'block' : 'none'};" id="btn-popup-image-remove" onclick="removePopupImageInline()">
+                                        <i class="fa-solid fa-trash-can"></i> 이미지 삭제
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">접수하러 가기 링크 (URL)</label>
-                        <input type="url" id="popup-config-link" value="${config.linkUrl || ''}" placeholder="예: https://example.com" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
-                    </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">자세히 보기 연결할 강의/프로젝트 상세페이지</label>
-                        <select id="popup-config-link-project" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); cursor: pointer;">
-                            ${projectOptionsHtml}
-                        </select>
-                    </div>
-                    <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
-                        <button type="button" onclick="closeAdminModal()" class="btn btn-outline" style="padding: 0.6rem 1.5rem; font-size: 0.95rem;">취소</button>
-                        <button type="submit" class="btn btn-primary" style="padding: 0.6rem 2rem; font-size: 0.95rem; background: linear-gradient(135deg, var(--color-career-start), var(--color-career-end)); border: none; color: white;">저장</button>
-                    </div>
-                </form>
+
+                        
+                        <!-- Link Project -->
+                        <div>
+                            <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">자세히 보기 연결할 강의/프로젝트 상세페이지</label>
+                            <select id="popup-config-link-project" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); cursor: pointer;">
+                                ${projectOptionsHtml}
+                            </select>
+                        </div>
+                        
+                        <!-- Actions -->
+                        <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
+                            <button type="button" onclick="loadApplicantsAndRender()" class="btn btn-outline" style="padding: 0.6rem 1.5rem; font-size: 0.95rem;">
+                                <i class="fa-solid fa-xmark"></i> 취소
+                            </button>
+                            <button type="submit" class="btn btn-primary" style="padding: 0.6rem 2rem; font-size: 0.95rem; background: linear-gradient(135deg, var(--color-career-start), var(--color-career-end)); border: none; color: white; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <i class="fa-solid fa-save"></i> 설정 저장
+                            </button>
+                        </div>
+                    </form>
+                </div>
             `;
-            
-            openAdminModal('팝업창 설정', formHtml);
-            
-            document.getElementById('popup-config-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const previewImg = document.getElementById('popup-config-img-preview');
-                popupConfig = {
-                    enabled: document.getElementById('popup-config-enabled').checked,
-                    title: document.getElementById('popup-config-title').value,
-                    content: document.getElementById('popup-config-content').value,
-                    imageUrl: previewImg ? previewImg.src : '',
-                    linkUrl: document.getElementById('popup-config-link').value,
-                    linkProjectId: document.getElementById('popup-config-link-project').value
-                };
-                localStorage.setItem('popupConfig', JSON.stringify(popupConfig));
-                saveAllData();
-                closeAdminModal();
-                alert('팝업창 설정이 성공적으로 저장되었습니다.');
-            });
         };
 
-        window.handlePopupFileChange = function(event) {
+        window.savePopupConfigInline = function(event) {
+            if (event) event.preventDefault();
+            
+            const previewImg = document.getElementById('popup-config-img-preview');
+            popupConfig = {
+                enabled: document.getElementById('popup-config-enabled').checked,
+                title: document.getElementById('popup-config-title').value,
+                content: document.getElementById('popup-config-content').value,
+                imageUrl: (previewImg && previewImg.src.startsWith('data:') || previewImg && previewImg.src.startsWith('images/')) ? previewImg.src : '',
+                linkUrl: '',
+                linkProjectId: document.getElementById('popup-config-link-project').value
+            };
+            
+            localStorage.setItem('popupConfig', JSON.stringify(popupConfig));
+            saveAllData('팝업창 설정이 성공적으로 저장되었습니다.');
+        };
+
+        window.handlePopupFileChangeInline = function(event) {
             const file = event.target.files[0];
             if (!file) return;
             
@@ -775,13 +796,13 @@
                     previewContainer.innerHTML = `<img id="popup-config-img-preview" src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
                 }
                 if (removeBtn) {
-                    removeBtn.style.display = 'inline-block';
+                    removeBtn.style.display = 'block';
                 }
             };
             reader.readAsDataURL(file);
         };
 
-        window.removePopupImage = function() {
+        window.removePopupImageInline = function() {
             const previewContainer = document.getElementById('popup-config-img-preview-container');
             const removeBtn = document.getElementById('btn-popup-image-remove');
             if (previewContainer) {
@@ -1051,6 +1072,7 @@
                 window.location.reload();
             }
         };
+
     </script>
 </body>
 </html>

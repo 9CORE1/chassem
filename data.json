@@ -717,9 +717,6 @@
     "imageUrl": "",
     "linkUrl": "",
     "linkProjectId": ""
-<<<<<<< HEAD
-  }
-=======
   },
   "courseConfig": {
     "tag": "IT & PM 실무 특강",
@@ -786,5 +783,4 @@
       ]
     }
   ]
->>>>>>> 4391d40 (강좌 관리 페이지 수정)
 }
