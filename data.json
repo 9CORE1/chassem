@@ -711,7 +711,7 @@
     }
   ],
   "popupConfig": {
-    "enabled": false,
+    "enabled": true,
     "title": "Antigravity & GitHub를 활용한 개인 포트폴리오 웹페이지 제작 및 배포",
     "content": "교육 시간: 총 2일, 6시간\n교육 구성: 공통 과제 실습 3시간 + 개인 과제 실습 및 코칭 3시간\n교육 대상: 웹개발 입문자, 비전공자, 강사, 컨설턴트, 프리랜서, 1인 창업자, 개인 포트폴리오가 필요한 분\n교육 장소: [온라인 또는 오프라인 장소 입력]\n교육 일정: [교육 날짜 및 시간 입력]\n모집 인원: [모집 인원 입력]\n참가비: [참가비 입력]",
     "imageUrl": "https://chassem.ai.kr/images/popup-image.jpg",
