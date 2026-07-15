@@ -775,7 +775,7 @@
             `;
         };
 
-        window.saveIntegratedConfig = function(event) {
+        window.saveIntegratedConfig = async function(event) {
             if (event) event.preventDefault();
             try {
                 const titleInput = document.getElementById('popup-config-title');
@@ -792,11 +792,26 @@
                     return;
                 }
 
-                const previewImg = document.getElementById('course-banner-preview');
-                const bannerUrl = (previewImg && (previewImg.src.startsWith('data:') || previewImg.src.startsWith('images/') || previewImg.src.startsWith('http'))) ? previewImg.src : 'images/project_management_banner.jpg';
+                // 0. 이미지 경량화(압축) 작업 수행
+                const bannerFileInput = document.getElementById('course-banner-file');
+                const detailFileInput = document.getElementById('course-detail-file');
                 
-                const detailPreviewImg = document.getElementById('course-detail-preview');
-                const detailImageUrl = (detailPreviewImg && (detailPreviewImg.src.startsWith('data:') || detailPreviewImg.src.startsWith('images/') || detailPreviewImg.src.startsWith('http'))) ? detailPreviewImg.src : '';
+                let bannerUrl = 'images/project_management_banner.jpg';
+                let detailImageUrl = '';
+
+                if (bannerFileInput && bannerFileInput.files && bannerFileInput.files[0]) {
+                    bannerUrl = await compressImageToJpeg(bannerFileInput.files[0]);
+                } else {
+                    const previewImg = document.getElementById('course-banner-preview');
+                    bannerUrl = (previewImg && (previewImg.src.startsWith('data:') || previewImg.src.startsWith('images/') || previewImg.src.startsWith('http'))) ? previewImg.src : 'images/project_management_banner.jpg';
+                }
+
+                if (detailFileInput && detailFileInput.files && detailFileInput.files[0]) {
+                    detailImageUrl = await compressImageToJpeg(detailFileInput.files[0]);
+                } else {
+                    const detailPreviewImg = document.getElementById('course-detail-preview');
+                    detailImageUrl = (detailPreviewImg && (detailPreviewImg.src.startsWith('data:') || detailPreviewImg.src.startsWith('images/') || detailPreviewImg.src.startsWith('http'))) ? detailPreviewImg.src : '';
+                }
 
                 const tagInput = document.getElementById('course-tag');
                 const instructorInput = document.getElementById('course-instructor');
@@ -884,34 +899,34 @@
             const file = event.target.files[0];
             if (!file) return;
             
-            compressImageToJpeg(file)
-                .then(compressedBase64 => {
-                    const previewContainer = document.getElementById('course-banner-preview-container');
-                    if (previewContainer) {
-                        previewContainer.innerHTML = `<img id="course-banner-preview" src="${compressedBase64}" style="width: 100%; height: 100%; object-fit: cover;">`;
-                    }
-                })
-                .catch(err => {
-                    console.error('배너 이미지 압축 실패:', err);
-                    alert('이미지 압축 및 로딩 중 오류가 발생했습니다.');
-                });
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const previewContainer = document.getElementById('course-banner-preview-container');
+                if (previewContainer) {
+                    previewContainer.innerHTML = `<img id="course-banner-preview" src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                }
+            };
+            reader.onerror = (err) => {
+                console.error('배너 이미지 로드 실패:', err);
+            };
+            reader.readAsDataURL(file);
         };
 
         window.handleCourseDetailFileChange = function(event) {
             const file = event.target.files[0];
             if (!file) return;
             
-            compressImageToJpeg(file)
-                .then(compressedBase64 => {
-                    const previewContainer = document.getElementById('course-detail-preview-container');
-                    if (previewContainer) {
-                        previewContainer.innerHTML = `<img id="course-detail-preview" src="${compressedBase64}" style="width: 100%; height: 100%; object-fit: cover;">`;
-                    }
-                })
-                .catch(err => {
-                    console.error('세부 이미지 압축 실패:', err);
-                    alert('이미지 압축 및 로딩 중 오류가 발생했습니다.');
-                });
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const previewContainer = document.getElementById('course-detail-preview-container');
+                if (previewContainer) {
+                    previewContainer.innerHTML = `<img id="course-detail-preview" src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                }
+            };
+            reader.onerror = (err) => {
+                console.error('세부 이미지 로드 실패:', err);
+            };
+            reader.readAsDataURL(file);
         };
 
         function saveAllData(successMsg) {
