@@ -124,9 +124,12 @@
     <!-- Script Block -->
     <script>
         // 1. Authorization check
-        if (sessionStorage.getItem('isAdminMode') !== 'true') {
+        if (sessionStorage.getItem('isAdminMode') !== 'true' && localStorage.getItem('isAdminMode') !== 'true') {
             alert('관리자 로그인이 필요합니다. 메인 페이지로 이동합니다.');
             window.location.href = 'index.html';
+        } else {
+            sessionStorage.setItem('isAdminMode', 'true');
+            localStorage.setItem('isAdminMode', 'true');
         }
 
         // Global State variables
@@ -136,6 +139,106 @@
         let competenciesData = [];
         let popupConfig = {};
         let editingCourseId = null;
+
+        // Utility to clean large base64 strings before saving to localStorage (prevent QuotaExceededError)
+        function cleanDataForLocalStorage(data) {
+            if (!data) return data;
+            try {
+                const clone = JSON.parse(JSON.stringify(data));
+                const cleanObj = (obj) => {
+                    if (Array.isArray(obj)) {
+                        obj.forEach((item, idx) => {
+                            if (typeof item === 'object') {
+                                cleanObj(item);
+                            } else if (typeof item === 'string' && item.startsWith('data:image/')) {
+                                obj[idx] = 'images/project_management_banner.jpg';
+                            }
+                        });
+                    } else if (obj && typeof obj === 'object') {
+                        for (let key in obj) {
+                            if (typeof obj[key] === 'object') {
+                                cleanObj(obj[key]);
+                            } else if (typeof obj[key] === 'string' && obj[key].startsWith('data:image/')) {
+                                if (key === 'bannerUrl' || key === 'imageUrl') {
+                                    obj[key] = 'images/project_management_banner.jpg';
+                                } else {
+                                    obj[key] = '';
+                                }
+                            }
+                        }
+                    }
+                };
+                cleanObj(clone);
+                return clone;
+            } catch (e) {
+                console.warn('cleanDataForLocalStorage 실패:', e);
+                return data;
+            }
+        }
+
+        // Wrapper for localStorage.setItem to avoid QuotaExceededError
+        function safeSaveToLocalStorage(key, data) {
+            try {
+                if (typeof data === 'string') {
+                    localStorage.setItem(key, data);
+                    return;
+                }
+                const cleaned = cleanDataForLocalStorage(data);
+                localStorage.setItem(key, JSON.stringify(cleaned));
+            } catch (e) {
+                console.error(`localStorage 저장 실패 (키: ${key}):`, e);
+                if (e.name === 'QuotaExceededError' || e.code === 22) {
+                    console.warn('localStorage 한도 초과로 불필요한 백업 데이터를 정리합니다.');
+                    try {
+                        localStorage.removeItem('portfolioData');
+                        localStorage.removeItem('journeyData');
+                        localStorage.removeItem('competenciesData');
+                    } catch (err) {}
+                }
+            }
+        }
+
+        // Compress uploaded image using canvas to JPEG format, reducing file size and memory footprint
+        function compressImageToJpeg(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        const max_size = 1280;
+                        if (width > max_size || height > max_size) {
+                            if (width > height) {
+                                height = Math.round((height * max_size) / width);
+                                width = max_size;
+                            } else {
+                                width = Math.round((width * max_size) / height);
+                                height = max_size;
+                            }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        const ctx = canvas.getContext('2d');
+                        // Fill white background for JPEGs to prevent black background on PNG transparency
+                        ctx.fillStyle = '#ffffff';
+                        ctx.fillRect(0, 0, width, height);
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                        resolve(compressedBase64);
+                    };
+                    img.onerror = (err) => reject(err);
+                };
+                reader.onerror = (err) => reject(err);
+            });
+        }
 
         // 2. Theme Initialization
         const themeToggle = document.getElementById('theme-toggle');
@@ -179,12 +282,62 @@
         // Logout
         function handleLogout() {
             sessionStorage.removeItem('isAdminMode');
+            localStorage.removeItem('isAdminMode');
             alert('관리자 센터에서 로그아웃 되었습니다.');
             window.location.href = 'index.html';
         }
 
         // 4. Data Loading
         document.addEventListener('DOMContentLoaded', () => {
+            const hasUnsaved = localStorage.getItem('hasUnsavedChanges') === 'true';
+            
+            if (hasUnsaved) {
+                console.log('로컬에 저장된 미동기화 변경사항을 복원합니다.');
+                try {
+                    const localPortfolio = localStorage.getItem('portfolioData');
+                    const localJourney = localStorage.getItem('journeyData');
+                    const localCompetencies = localStorage.getItem('competenciesData');
+                    const localPopup = localStorage.getItem('popupConfig');
+                    const localCourses = localStorage.getItem('coursesData');
+                    
+                    if (localPortfolio && localJourney && localCompetencies && localCourses) {
+                        portfolioData = JSON.parse(localPortfolio) || [];
+                        journeyData = JSON.parse(localJourney) || [];
+                        competenciesData = JSON.parse(localCompetencies) || [];
+                        popupConfig = localPopup ? JSON.parse(localPopup) : {};
+                        coursesData = JSON.parse(localCourses) || [];
+                        
+                        // Ensure they are arrays to prevent mapping errors
+                        if (!Array.isArray(portfolioData)) portfolioData = [];
+                        if (!Array.isArray(journeyData)) journeyData = [];
+                        if (!Array.isArray(competenciesData)) competenciesData = [];
+                        if (!Array.isArray(coursesData)) coursesData = [];
+                        
+                        loadApplicantsAndRender();
+                        showUnsavedWarningBanner();
+                        return;
+                    }
+                } catch (e) {
+                    console.error('로컬스토리지 데이터 복구 실패 (서버에서 다시 로드):', e);
+                }
+            }
+            
+            loadFromServer();
+        });
+
+        function showUnsavedWarningBanner() {
+            if (document.getElementById('unsaved-warning-banner')) return;
+            const banner = document.createElement('div');
+            banner.id = 'unsaved-warning-banner';
+            banner.style.cssText = 'background: #e11d48; color: white; padding: 0.5rem 1rem; font-size: 0.85rem; font-weight: 600; text-align: center; position: fixed; bottom: 0; left: 0; width: 100%; z-index: 9999; display: flex; align-items: center; justify-content: center; gap: 1rem;';
+            banner.innerHTML = `
+                <span>⚠️ 현재 브라우저에 아직 서버로 동기화되지 않은 변경사항(신규 강좌 등)이 있습니다.</span>
+                <button onclick="updateServerGithub()" class="btn" style="background: white; color: #e11d48; border: none; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; cursor: pointer;">서버 업데이트 하기</button>
+            `;
+            document.body.appendChild(banner);
+        }
+
+        function loadFromServer() {
             fetch('data.json')
                 .then(res => {
                     if (!res.ok) throw new Error('서버 데이터 로드 실패');
@@ -201,7 +354,13 @@
                         coursesData = [{ id: "project-management", ...data.courseConfig }];
                     }
                     
-                    localStorage.setItem('coursesData', JSON.stringify(coursesData));
+                    safeSaveToLocalStorage('portfolioData', portfolioData);
+                    safeSaveToLocalStorage('journeyData', journeyData);
+                    safeSaveToLocalStorage('competenciesData', competenciesData);
+                    safeSaveToLocalStorage('popupConfig', popupConfig);
+                    safeSaveToLocalStorage('coursesData', coursesData);
+                    safeSaveToLocalStorage('hasUnsavedChanges', 'false');
+                    
                     loadApplicantsAndRender();
                 })
                 .catch(err => {
@@ -212,9 +371,41 @@
                     }
                     loadApplicantsAndRender();
                 });
-        });
+        }
+
+        function syncPopupConfigWithCoursesData() {
+            if (popupConfig && popupConfig.title) {
+                const courseId = popupConfig.linkProjectId || 'project-management';
+                let existingCourse = coursesData.find(c => c.id === courseId);
+                
+                const syncCourse = {
+                    id: courseId,
+                    tag: (existingCourse && existingCourse.tag) || 'IT & PM 실무 특강',
+                    title: popupConfig.title,
+                    bannerUrl: popupConfig.imageUrl || (existingCourse && existingCourse.bannerUrl) || 'images/project_management_banner.jpg',
+                    schedule: (existingCourse && existingCourse.schedule) || '매주 토요일 (4주 완성)',
+                    time: (existingCourse && existingCourse.time) || '10:00 - 13:00 (3시간)',
+                    instructor: (existingCourse && existingCourse.instructor) || '차은정 대표',
+                    description: popupConfig.content || (existingCourse && existingCourse.description) || '공지사항으로 등록된 강좌 상세 내용입니다.',
+                    curriculum: (existingCourse && existingCourse.curriculum) || [
+                        { week: 'Week 1', title: 'PM 기초 및 프로젝트 범위(Scope) 설정', desc: '프로젝트 라이프사이클의 이해 WBS(작업분할구조도) 실습.' },
+                        { week: 'Week 2', title: '프로젝트 일정 및 리스크 관리', desc: '의존성 분석을 통한 일정 네트워크 설계, 리스크 식별 및 정량/정성 평가 기법.' },
+                        { week: 'Week 3', title: '애자일 방법론 & 스크럼 실무', desc: '애자일 선언과 4대 가치 이해, 스크럼 프레임워크(스프린트 기획, 데일리 스크럼) 실습.' },
+                        { week: 'Week 4', title: '협업 툴 실습 (Jira & Confluence)', desc: 'Jira 백로그 작성 및 스프린트 구동, Confluence 문서 협업 실습.' }
+                    ]
+                };
+                
+                if (existingCourse) {
+                    coursesData = coursesData.map(c => c.id === courseId ? syncCourse : c);
+                } else {
+                    coursesData.push(syncCourse);
+                }
+                safeSaveToLocalStorage('coursesData', coursesData);
+            }
+        }
 
         function loadApplicantsAndRender() {
+            syncPopupConfigWithCoursesData();
             fetch('/api/applications')
                 .then(res => {
                     if (!res.ok) throw new Error('신청 목록 로드 실패');
@@ -458,11 +649,11 @@
             });
 
             // If it's the active popup, load popup details, else default course details
-            const isPopupActive = popupConfig.enabled && popupConfig.linkProjectId === c.id;
-            const popupTitle = isPopupActive ? (popupConfig.title || c.title) : c.title;
-            const popupContent = isPopupActive ? (popupConfig.content || c.description) : c.description;
-            const popupImg = isPopupActive ? (popupConfig.imageUrl || c.bannerUrl) : c.bannerUrl;
-            const popupLinkUrl = isPopupActive ? (popupConfig.linkUrl || `project-contents.html?id=${c.id}`) : `project-contents.html?id=${c.id}`;
+            const isPopupActive = popupConfig && popupConfig.enabled && popupConfig.linkProjectId === c.id;
+            const popupTitle = isPopupActive ? ((popupConfig && popupConfig.title) || c.title) : c.title;
+            const popupContent = isPopupActive ? ((popupConfig && popupConfig.content) || c.description) : c.description;
+            const popupImg = isPopupActive ? ((popupConfig && popupConfig.imageUrl) || c.bannerUrl) : c.bannerUrl;
+            const popupLinkUrl = isPopupActive ? ((popupConfig && popupConfig.linkUrl) || `project-contents.html?id=${c.id}`) : `project-contents.html?id=${c.id}`;
 
             dashboardContainer.innerHTML = `
                 <!-- Integrated Notice & Course Config Form -->
@@ -479,9 +670,9 @@
                     
                     <form id="integrated-config-form" onsubmit="saveIntegratedConfig(event)" style="display: flex; flex-direction: column; gap: 1.5rem;">
                         
-                        <!-- Enabled -->
-                        <div style="display: flex; align-items: center; gap: 0.5rem; background: var(--bg-tertiary); padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); width: fit-content;">
-                            <input type="checkbox" id="popup-config-enabled" ${isPopupActive ? 'checked' : ''} style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--color-career-end);">
+                        <!-- Enabled (Hidden to disable popup functionality) -->
+                        <div style="display: none !important; align-items: center; gap: 0.5rem; background: var(--bg-tertiary); padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); width: fit-content;">
+                            <input type="checkbox" id="popup-config-enabled" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--color-career-end);">
                             <label for="popup-config-enabled" style="font-weight: 600; font-size: 0.95rem; color: var(--text-primary); cursor: pointer;">홈페이지 접속 시 이 강좌 팝업창 띄우기</label>
                         </div>
                         
@@ -494,7 +685,7 @@
                         <!-- Content -->
                         <div>
                             <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">팝업 내용 / 팝업 요약글</label>
-                            <textarea id="popup-config-content" rows="4" placeholder="팝업창에 노출할 공지 내용을 입력하세요." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-family: inherit; resize: vertical;" required>${popupContent || ''}</textarea>
+                            <textarea id="popup-config-content" rows="4" placeholder="팝업창에 노출할 공지 내용을 입력하세요." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-family: inherit; resize: vertical;">${popupContent || ''}</textarea>
                         </div>
                         
                         <!-- Image -->
@@ -517,7 +708,27 @@
                         <!-- Link URL -->
                         <div>
                             <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">'자세히 보기' 링크</label>
-                            <input type="text" id="popup-config-link-url" value="${popupLinkUrl || ''}" placeholder="예: project-contents.html?id=${c.id}" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
+                            <input type="text" id="popup-config-link-url" value="${popupLinkUrl || ''}" placeholder="예: project-contents.html?id=${c.id}" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+                        </div>
+
+                        <!-- Tag, Schedule, Time, Instructor -->
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: 10px; margin-bottom: 1rem;">
+                            <div>
+                                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">강좌 태그 / 구분</label>
+                                <input type="text" id="course-tag" value="${c.tag || ''}" placeholder="예: IT & PM 실무 특강" style="width: 100%; padding: 0.65rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">담당 강사</label>
+                                <input type="text" id="course-instructor" value="${c.instructor || ''}" placeholder="예: 차은정 대표" style="width: 100%; padding: 0.65rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">강의 일정</label>
+                                <input type="text" id="course-schedule" value="${c.schedule || ''}" placeholder="예: 매주 토요일 (4주 완성)" style="width: 100%; padding: 0.65rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">강의 시간</label>
+                                <input type="text" id="course-time" value="${c.time || ''}" placeholder="예: 10:00 - 13:00 (3시간)" style="width: 100%; padding: 0.65rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+                            </div>
                         </div>
 
                         <!-- 강좌 세부내용 Group -->
@@ -566,76 +777,92 @@
 
         window.saveIntegratedConfig = function(event) {
             if (event) event.preventDefault();
-            
-            const previewImg = document.getElementById('course-banner-preview');
-            const bannerUrl = (previewImg && (previewImg.src.startsWith('data:') || previewImg.src.startsWith('images/') || previewImg.src.startsWith('http'))) ? previewImg.src : 'images/project_management_banner.jpg';
-            
-            const detailPreviewImg = document.getElementById('course-detail-preview');
-            const detailImageUrl = (detailPreviewImg && (detailPreviewImg.src.startsWith('data:') || detailPreviewImg.src.startsWith('images/') || detailPreviewImg.src.startsWith('http'))) ? detailPreviewImg.src : '';
+            try {
+                const titleInput = document.getElementById('popup-config-title');
+                const contentInput = document.getElementById('popup-config-content');
+                const linkUrlInput = document.getElementById('popup-config-link-url');
+                const detailTextInput = document.getElementById('course-detail-text');
 
-            // 1. Create/Update Course
-            const id = editingCourseId || ('course-' + new Date().getTime());
-            
-            const existingCourse = coursesData.find(c => c.id === id) || {};
-            const syncCourse = {
-                id: id,
-                tag: existingCourse.tag || 'IT & PM 실무 특강',
-                title: document.getElementById('popup-config-title').value,
-                bannerUrl: bannerUrl,
-                detailImageUrl: detailImageUrl,
-                schedule: existingCourse.schedule || '매주 토요일 (4주 완성)',
-                time: existingCourse.time || '10:00 - 13:00 (3시간)',
-                instructor: existingCourse.instructor || '차은정 대표',
-                description: document.getElementById('course-detail-text').value,
-                curriculum: existingCourse.curriculum || [
-                    { week: 'Week 1', title: 'PM 기초 및 프로젝트 범위(Scope) 설정', desc: '프로젝트 라이프사이클의 이해 WBS(작업분할구조도) 실습.' },
-                    { week: 'Week 2', title: '프로젝트 일정 및 리스크 관리', desc: '의존성 분석을 통한 일정 네트워크 설계, 리스크 식별 및 정량/정성 평가 기법.' },
-                    { week: 'Week 3', title: '애자일 방법론 & 스크럼 실무', desc: '애자일 선언과 4대 가치 이해, 스크럼 프레임워크(스프린트 기획, 데일리 스크럼) 실습.' },
-                    { week: 'Week 4', title: '협업 툴 실습 (Jira & Confluence)', desc: 'Jira 백로그 작성 및 스프린트 구동, Confluence 문서 협업 실습.' }
-                ]
-            };
+                if (!titleInput || !titleInput.value.trim()) {
+                    alert('강좌명/팝업 제목을 입력해 주세요.');
+                    return;
+                }
+                if (!detailTextInput || !detailTextInput.value.trim()) {
+                    alert('강좌 세부내용 텍스트를 입력해 주세요.');
+                    return;
+                }
 
-            if (editingCourseId) {
-                coursesData = coursesData.map(c => c.id === editingCourseId ? syncCourse : c);
-            } else {
-                coursesData.push(syncCourse);
-            }
+                const previewImg = document.getElementById('course-banner-preview');
+                const bannerUrl = (previewImg && (previewImg.src.startsWith('data:') || previewImg.src.startsWith('images/') || previewImg.src.startsWith('http'))) ? previewImg.src : 'images/project_management_banner.jpg';
+                
+                const detailPreviewImg = document.getElementById('course-detail-preview');
+                const detailImageUrl = (detailPreviewImg && (detailPreviewImg.src.startsWith('data:') || detailPreviewImg.src.startsWith('images/') || detailPreviewImg.src.startsWith('http'))) ? detailPreviewImg.src : '';
 
-            // 2. Update popupConfig if enabled
-            const isPopupEnabled = document.getElementById('popup-config-enabled').checked;
-            if (isPopupEnabled) {
-                popupConfig = {
-                    enabled: true,
-                    title: syncCourse.title,
-                    content: document.getElementById('popup-config-content').value,
-                    imageUrl: bannerUrl,
-                    linkUrl: document.getElementById('popup-config-link-url').value,
-                    linkProjectId: id
+                const tagInput = document.getElementById('course-tag');
+                const instructorInput = document.getElementById('course-instructor');
+                const scheduleInput = document.getElementById('course-schedule');
+                const timeInput = document.getElementById('course-time');
+
+                // 1. Create/Update Course
+                const id = editingCourseId || ('course-' + new Date().getTime());
+                
+                const existingCourse = coursesData.find(c => c.id === id) || {};
+                const syncCourse = {
+                    id: id,
+                    tag: tagInput ? tagInput.value.trim() : (existingCourse.tag || 'IT & PM 실무 특강'),
+                    title: titleInput.value.trim(),
+                    bannerUrl: bannerUrl,
+                    detailImageUrl: detailImageUrl,
+                    schedule: scheduleInput ? scheduleInput.value.trim() : (existingCourse.schedule || '매주 토요일 (4주 완성)'),
+                    time: timeInput ? timeInput.value.trim() : (existingCourse.time || '10:00 - 13:00 (3시간)'),
+                    instructor: instructorInput ? instructorInput.value.trim() : (existingCourse.instructor || '차은정 대표'),
+                    description: detailTextInput.value.trim(),
+                    curriculum: existingCourse.curriculum || [
+                        { week: 'Week 1', title: 'PM 기초 및 프로젝트 범위(Scope) 설정', desc: '프로젝트 라이프사이클의 이해 WBS(작업분할구조도) 실습.' },
+                        { week: 'Week 2', title: '프로젝트 일정 및 리스크 관리', desc: '의존성 분석을 통한 일정 네트워크 설계, 리스크 식별 및 정량/정성 평가 기법.' },
+                        { week: 'Week 3', title: '애자일 방법론 & 스크럼 실무', desc: '애자일 선언과 4대 가치 이해, 스크럼 프레임워크(스프린트 기획, 데일리 스크럼) 실습.' },
+                        { week: 'Week 4', title: '협업 툴 실습 (Jira & Confluence)', desc: 'Jira 백로그 작성 및 스프린트 구동, Confluence 문서 협업 실습.' }
+                    ]
                 };
-            } else {
-                if (popupConfig.linkProjectId === id) {
+
+                // 2. Update popupConfig if enabled (Disabled by request)
+                const isPopupEnabled = false;
+                if (popupConfig) {
                     popupConfig.enabled = false;
                 }
+
+                if (editingCourseId) {
+                    coursesData = coursesData.map(c => c.id === editingCourseId ? syncCourse : c);
+                } else {
+                    coursesData.push(syncCourse);
+                }
+                
+                safeSaveToLocalStorage('popupConfig', popupConfig);
+                safeSaveToLocalStorage('coursesData', coursesData);
+                safeSaveToLocalStorage('hasUnsavedChanges', 'true');
+                
+                saveAllData('강좌 설정이 성공적으로 저장되었습니다.');
+            } catch (err) {
+                console.error('saveIntegratedConfig 오류:', err);
+                alert('강좌 저장 처리 중 브라우저 스크립트 에러 발생:\n' + err.message);
             }
-            
-            localStorage.setItem('popupConfig', JSON.stringify(popupConfig));
-            localStorage.setItem('coursesData', JSON.stringify(coursesData));
-            
-            saveAllData('강좌 설정이 성공적으로 저장되었습니다.');
         };
 
         window.deleteCourse = function(courseId) {
-            if (!confirm('정말로 이 강좌를 삭제하시겠습니까?')) return;
+            if (coursesData.length <= 1) {
+                alert('최소 1개 이상의 강좌가 유지되어야 하므로 이 강좌를 삭제할 수 없습니다.');
+                return;
+            }
+            if (!confirm('정말로 이 강좌를 삭제하시겠습니까? (강좌의 모든 내용이 완전히 삭제됩니다.)')) return;
             
             coursesData = coursesData.filter(c => c.id !== courseId);
-            if (popupConfig.linkProjectId === courseId) {
+            if (popupConfig && popupConfig.linkProjectId === courseId) {
                 popupConfig.enabled = false;
                 popupConfig.linkProjectId = '';
+                safeSaveToLocalStorage('popupConfig', popupConfig);
             }
             
-            localStorage.setItem('coursesData', JSON.stringify(coursesData));
-            localStorage.setItem('popupConfig', JSON.stringify(popupConfig));
-            
+            safeSaveToLocalStorage('coursesData', coursesData);
             saveAllData('강좌가 성공적으로 삭제되었습니다.');
         };
 
@@ -643,28 +870,34 @@
             const file = event.target.files[0];
             if (!file) return;
             
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const previewContainer = document.getElementById('course-banner-preview-container');
-                if (previewContainer) {
-                    previewContainer.innerHTML = `<img id="course-banner-preview" src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
-                }
-            };
-            reader.readAsDataURL(file);
+            compressImageToJpeg(file)
+                .then(compressedBase64 => {
+                    const previewContainer = document.getElementById('course-banner-preview-container');
+                    if (previewContainer) {
+                        previewContainer.innerHTML = `<img id="course-banner-preview" src="${compressedBase64}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                    }
+                })
+                .catch(err => {
+                    console.error('배너 이미지 압축 실패:', err);
+                    alert('이미지 압축 및 로딩 중 오류가 발생했습니다.');
+                });
         };
 
         window.handleCourseDetailFileChange = function(event) {
             const file = event.target.files[0];
             if (!file) return;
             
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const previewContainer = document.getElementById('course-detail-preview-container');
-                if (previewContainer) {
-                    previewContainer.innerHTML = `<img id="course-detail-preview" src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
-                }
-            };
-            reader.readAsDataURL(file);
+            compressImageToJpeg(file)
+                .then(compressedBase64 => {
+                    const previewContainer = document.getElementById('course-detail-preview-container');
+                    if (previewContainer) {
+                        previewContainer.innerHTML = `<img id="course-detail-preview" src="${compressedBase64}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                    }
+                })
+                .catch(err => {
+                    console.error('세부 이미지 압축 실패:', err);
+                    alert('이미지 압축 및 로딩 중 오류가 발생했습니다.');
+                });
         };
 
         function saveAllData(successMsg) {
@@ -682,54 +915,42 @@
                 body: JSON.stringify(payload)
             })
             .then(res => {
-                if (!res.ok) throw new Error('서버 저장 실패');
+                if (!res.ok) {
+                    return res.text().then(text => {
+                        let errMsg = '서버 저장 실패';
+                        try {
+                            const errJson = JSON.parse(text);
+                            errMsg = errJson.error || errMsg;
+                        } catch (e) {
+                            errMsg = text || errMsg;
+                        }
+                        throw new Error(errMsg + ' (상태 코드: ' + res.status + ')');
+                    });
+                }
                 return res.json();
             })
             .then(result => {
                 alert(successMsg || '강좌 데이터가 성공적으로 저장되었습니다.');
+                safeSaveToLocalStorage('hasUnsavedChanges', 'false');
+                const banner = document.getElementById('unsaved-warning-banner');
+                if (banner) banner.remove();
+                
                 if (result.coursesData) {
                     coursesData = result.coursesData;
-                    localStorage.setItem('coursesData', JSON.stringify(coursesData));
+                    safeSaveToLocalStorage('coursesData', coursesData);
+                }
+                if (result.popupConfig) {
+                    popupConfig = result.popupConfig;
+                    safeSaveToLocalStorage('popupConfig', popupConfig);
                 }
                 loadApplicantsAndRender();
             })
             .catch(err => {
                 console.error(err);
-                alert('데이터 저장 실패 (로컬 백업 저장 완료)');
+                alert('데이터 저장 실패 (로컬 백업 저장 완료):\n' + err.message);
                 loadApplicantsAndRender();
             });
         }
-
-        window.deleteCourse = function(courseId) {
-            if (coursesData.length <= 1) {
-                alert('최소 1개 이상의 강좌가 유지되어야 하므로 이 강좌를 삭제할 수 없습니다.');
-                return;
-            }
-            if (!confirm('이 강좌를 삭제하시겠습니까? (강좌의 모든 내용이 완전히 삭제됩니다.)')) return;
-            
-            coursesData = coursesData.filter(c => c.id !== courseId);
-            localStorage.setItem('coursesData', JSON.stringify(coursesData));
-            saveAllData();
-        };
-
-        window.handleCourseBannerFileChange = function(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            if (file.size > 5 * 1024 * 1024) {
-                alert('이미지 크기는 최대 5MB를 초과할 수 없습니다.');
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const previewContainer = document.getElementById('course-banner-preview-container');
-                if (previewContainer) {
-                    previewContainer.innerHTML = `<img id="course-banner-preview" src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
-                }
-            };
-            reader.readAsDataURL(file);
-        };
 
         window.deleteApplication = function(index) {
             if (!confirm('이 수강 신청 내역을 완전히 삭제하시겠습니까?')) return;
@@ -752,7 +973,7 @@
                     let localApps = JSON.parse(localStorage.getItem('courseApplications') || '[]');
                     if (index >= 0 && index < localApps.length) {
                         localApps.splice(index, 1);
-                        localStorage.setItem('courseApplications', JSON.stringify(localApps));
+                        safeSaveToLocalStorage('courseApplications', localApps);
                     }
                 } catch (e) {
                     console.error(e);
@@ -788,78 +1009,7 @@
 
                         
 
-        window.savePopupConfigInline = function(event) {
-            if (event) event.preventDefault();
-            
-            const previewImg = document.getElementById('popup-config-img-preview');
-            popupConfig = {
-                enabled: document.getElementById('popup-config-enabled').checked,
-                title: document.getElementById('popup-config-title').value,
-                content: document.getElementById('popup-config-content').value,
-                imageUrl: (previewImg && previewImg.src.startsWith('data:') || previewImg && previewImg.src.startsWith('images/')) ? previewImg.src : '',
-                linkUrl: '',
-                linkProjectId: 'project-management'
-            };
-            
-            // 팝업 설정 내용을 기반으로 하나의 운영 강좌 생성 (기존 목록은 덮어씌워 삭제됨)
-            const syncCourse = {
-                id: 'project-management',
-                tag: 'IT & PM 실무 특강',
-                title: popupConfig.title || '프로젝트 관리(Project Management) 실무 마스터 과정',
-                bannerUrl: popupConfig.imageUrl || 'images/project_management_banner.jpg',
-                schedule: '매주 토요일 (4주 완성)',
-                time: '10:00 - 13:00 (3시간)',
-                instructor: '차은정 대표',
-                description: popupConfig.content || '공지사항으로 등록된 강좌 상세 내용입니다.',
-                curriculum: [
-                    { week: 'Week 1', title: 'PM 기초 및 프로젝트 범위(Scope) 설정', desc: '프로젝트 라이프사이클의 이해, 프로젝트 헌장 작성, WBS(작업분할구조도) 실습.' },
-                    { week: 'Week 2', title: '프로젝트 일정 및 리스크 관리', desc: '의존성 분석을 통한 일정 네트워크 설계, 리스크 식별 및 정량/정성 평가 기법.' },
-                    { week: 'Week 3', title: '애자일 방법론 & 스크럼 실무', desc: '애자일 선언과 4대 가치 이해, 스크럼 프레임워크(스프린트 기획, 데일리 스크럼) 실습.' },
-                    { week: 'Week 4', title: '협업 툴 실습 (Jira & Confluence)', desc: 'Jira 백로그 작성 및 스프린트 구동, Confluence 문서 협업 실습.' }
-                ]
-            };
-            
-            coursesData = [syncCourse];
-            
-            localStorage.setItem('popupConfig', JSON.stringify(popupConfig));
-            localStorage.setItem('coursesData', JSON.stringify(coursesData));
-            
-            saveAllData('팝업창 설정이 성공적으로 저장되었으며, 운영 강좌 목록이 이 공지 내용으로 갱신되었습니다.');
-        };
 
-        window.handlePopupFileChangeInline = function(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            if (file.size > 5 * 1024 * 1024) {
-                alert('이미지 크기는 최대 5MB를 초과할 수 없습니다.');
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const previewContainer = document.getElementById('popup-config-img-preview-container');
-                const removeBtn = document.getElementById('btn-popup-image-remove');
-                if (previewContainer) {
-                    previewContainer.innerHTML = `<img id="popup-config-img-preview" src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
-                }
-                if (removeBtn) {
-                    removeBtn.style.display = 'block';
-                }
-            };
-            reader.readAsDataURL(file);
-        };
-
-        window.removePopupImageInline = function() {
-            const previewContainer = document.getElementById('popup-config-img-preview-container');
-            const removeBtn = document.getElementById('btn-popup-image-remove');
-            if (previewContainer) {
-                previewContainer.innerHTML = '<span style="font-size: 0.75rem; color: var(--text-muted);">이미지 없음</span>';
-            }
-            if (removeBtn) {
-                removeBtn.style.display = 'none';
-            }
-        };
 
         window.openGithubConfigModal = function() {
             let config = JSON.parse(localStorage.getItem('githubConfig')) || {
@@ -983,14 +1133,15 @@
                         .then(res => {
                             if (!res.ok) throw new Error('GitHub 팝업 이미지 업로드 실패');
                             popupConfig.imageUrl = `images/popup-image.jpg`;
-                            localStorage.setItem('popupConfig', JSON.stringify(popupConfig));
+                            safeSaveToLocalStorage('popupConfig', popupConfig);
                         });
                     syncPromises.push(popupImgPromise);
                 }
             }
             
-            // 2. 강좌 배너 동기화
+            // 2. 강좌 배너 및 세부내용 이미지 동기화
             coursesData.forEach(c => {
+                // 2-1. 배너 이미지 동기화
                 if (c.bannerUrl && c.bannerUrl.startsWith('data:image/')) {
                     const matches = c.bannerUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
                     if (matches && matches.length === 3) {
@@ -1016,9 +1167,41 @@
                             .then(res => {
                                 if (!res.ok) throw new Error('GitHub 강좌 이미지 업로드 실패');
                                 c.bannerUrl = `images/course-banner-${c.id}.jpg`;
-                                localStorage.setItem('coursesData', JSON.stringify(coursesData));
+                                safeSaveToLocalStorage('coursesData', coursesData);
                             });
                         syncPromises.push(courseImgPromise);
+                    }
+                }
+
+                // 2-2. 세부내용 이미지 동기화
+                if (c.detailImageUrl && c.detailImageUrl.startsWith('data:image/')) {
+                    const matches = c.detailImageUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+                    if (matches && matches.length === 3) {
+                        const base64Data = matches[2];
+                        const githubImagePath = `${parentPath}images/course-detail-${c.id}.jpg`;
+                        const imageApiUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${githubImagePath}`;
+                        
+                        const courseDetailImgPromise = fetch(`${imageApiUrl}?ref=${config.branch}`, { headers })
+                            .then(res => {
+                                if (res.status === 404) return { sha: null };
+                                return res.json();
+                            })
+                            .then(fileMeta => {
+                                const sha = fileMeta.sha;
+                                const commitPayload = {
+                                    message: `upload course detail image: course-detail-${c.id}.jpg`,
+                                    content: base64Data,
+                                    branch: config.branch
+                                };
+                                if (sha) commitPayload.sha = sha;
+                                return fetch(imageApiUrl, { method: 'PUT', headers, body: JSON.stringify(commitPayload) });
+                            })
+                            .then(res => {
+                                if (!res.ok) throw new Error('GitHub 강좌 세부 이미지 업로드 실패');
+                                c.detailImageUrl = `images/course-detail-${c.id}.jpg`;
+                                safeSaveToLocalStorage('coursesData', coursesData);
+                            });
+                        syncPromises.push(courseDetailImgPromise);
                     }
                 }
             });
@@ -1060,6 +1243,10 @@
                 })
                 .then(res => {
                     if (!res.ok) throw new Error('GitHub data.json 커밋 실패');
+                    localStorage.setItem('hasUnsavedChanges', 'false');
+                    const banner = document.getElementById('unsaved-warning-banner');
+                    if (banner) banner.remove();
+                    
                     alert('성공적으로 GitHub 저장소에 데이터와 배너 이미지를 업로드하여 서버를 업데이트했습니다!');
                 })
                 .catch(err => {
@@ -1116,6 +1303,7 @@
             if (confirm('모든 데이터를 초기값으로 재설정하시겠습니까?\n(로컬 브라우저 세션 정보가 비워지며 원래의 기본 템플릿 정보로 초기화됩니다.)')) {
                 localStorage.clear();
                 sessionStorage.setItem('isAdminMode', 'true');
+                localStorage.setItem('isAdminMode', 'true');
                 alert('데이터 초기화 완료. 페이지를 새로고침합니다.');
                 window.location.reload();
             }

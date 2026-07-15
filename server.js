@@ -13,7 +13,7 @@ app.use(express.static(__dirname));
 
 // API to save updated data back to data.json
 app.post('/api/save', (req, res) => {
-    let { portfolioData, journeyData, competenciesData, popupConfig, courseConfig } = req.body;
+    let { portfolioData, journeyData, competenciesData, popupConfig, courseConfig, coursesData } = req.body;
     
     if (!portfolioData || !journeyData || !competenciesData) {
         return res.status(400).json({ error: '필수 데이터 항목이 누락되었습니다.' });
@@ -91,15 +91,17 @@ app.post('/api/save', (req, res) => {
         }
     }
     
-    // 다중 강좌 배너 이미지 저장 및 디코딩
+    // 다중 강좌 배너 및 세부내용 이미지 저장 및 디코딩
     let updatedCoursesData = coursesData ? coursesData.map(c => {
         let updatedCourse = { ...c };
+        const dirPath = path.join(__dirname, 'images');
+        if (!fs.existsSync(dirPath)) {
+            fs.mkdirSync(dirPath, { recursive: true });
+        }
+
+        // 1. 배너 이미지 처리
         if (updatedCourse.bannerUrl && updatedCourse.bannerUrl.startsWith('data:image/')) {
             try {
-                const dirPath = path.join(__dirname, 'images');
-                if (!fs.existsSync(dirPath)) {
-                    fs.mkdirSync(dirPath, { recursive: true });
-                }
                 const matches = updatedCourse.bannerUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
                 if (matches && matches.length === 3) {
                     const base64Data = matches[2];
@@ -114,6 +116,25 @@ app.post('/api/save', (req, res) => {
                 console.error('강좌 배너 이미지 파일 저장 오류:', err);
             }
         }
+
+        // 2. 세부내용 이미지 처리
+        if (updatedCourse.detailImageUrl && updatedCourse.detailImageUrl.startsWith('data:image/')) {
+            try {
+                const matches = updatedCourse.detailImageUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+                if (matches && matches.length === 3) {
+                    const base64Data = matches[2];
+                    const buffer = Buffer.from(base64Data, 'base64');
+                    const filename = `course-detail-${c.id}.jpg`;
+                    const filePath = path.join(dirPath, filename);
+                    fs.writeFileSync(filePath, buffer);
+                    console.log(`[${new Date().toLocaleTimeString()}] 강좌 세부 이미지 저장 완료: ${filePath}`);
+                    updatedCourse.detailImageUrl = `images/${filename}`;
+                }
+            } catch (err) {
+                console.error('강좌 세부 이미지 파일 저장 오류:', err);
+            }
+        }
+
         return updatedCourse;
     }) : [];
     

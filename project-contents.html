@@ -264,6 +264,34 @@
     </style>
 </head>
 <body class="dark-mode">
+    <script>
+        // Apply theme immediately on load to prevent flash of wrong theme
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.remove('dark-mode');
+                document.body.classList.add('light-mode');
+            } else if (savedTheme === 'dark') {
+                document.body.classList.remove('light-mode');
+                document.body.classList.add('dark-mode');
+            } else {
+                const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+                if (prefersLight) {
+                    document.body.classList.remove('dark-mode');
+                    document.body.classList.add('light-mode');
+                }
+            }
+        })();
+    </script>
+
+    <!-- Admin Mode Banner -->
+    <div id="admin-banner" style="display: none; position: fixed; top: 0; left: 0; width: 100%; background: linear-gradient(90deg, var(--color-career-start), var(--color-career-end)); color: white; text-align: center; padding: 0.5rem 1rem; font-size: 0.9rem; font-weight: 600; z-index: 9999; box-shadow: 0 4px 10px rgba(0,0,0,0.25); align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; box-sizing: border-box;">
+        <span>🛠️ 관리자 모드 활성화 중 (상세 강좌 내용 확인)</span>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+            <button onclick="window.location.href='project-management-admin.html'" class="btn btn-outline" style="border-color: rgba(255,255,255,0.4); color: white; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem; background: rgba(255,255,255,0.1); cursor: pointer;"><i class="fa-solid fa-sliders"></i>관리자 콘솔</button>
+            <button onclick="window.location.href='index.html'" class="btn btn-outline" style="border-color: rgba(255,255,255,0.4); color: white; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem; background: rgba(255,255,255,0.1); cursor: pointer;"><i class="fa-solid fa-house"></i>홈페이지 관리</button>
+        </div>
+    </div>
     
     <!-- background decorative elements -->
     <div class="bg-blur-orbs">
@@ -290,7 +318,7 @@
     <main class="course-layout">
         <div class="course-container">
             
-            <a href="index.html" class="back-btn">
+            <a href="index.html" class="back-btn" id="back-to-home-link">
                 <i class="fa-solid fa-arrow-left"></i> <span>포트폴리오 홈으로 가기</span>
             </a>
 
@@ -487,6 +515,26 @@
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const courseId = urlParams.get('id');
+            
+            // Check admin mode
+            const isAdmin = (sessionStorage.getItem('isAdminMode') === 'true') || (localStorage.getItem('isAdminMode') === 'true');
+            if (isAdmin) {
+                document.body.classList.add('admin-active');
+                const banner = document.getElementById('admin-banner');
+                if (banner) {
+                    banner.style.display = 'flex';
+                }
+                
+                // Update back button dynamically for admins
+                const backLink = document.getElementById('back-to-home-link');
+                if (backLink) {
+                    backLink.href = 'project-management-admin.html';
+                    const backText = backLink.querySelector('span');
+                    if (backText) {
+                        backText.textContent = '강좌관리 페이지로 이동';
+                    }
+                }
+            }
             
             fetch('data.json')
                 .then(res => {

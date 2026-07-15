@@ -296,6 +296,106 @@ let popupConfig = { enabled: false, title: '', content: '', imageUrl: '', linkUr
 let coursesData = [];
 let courseConfig = {};
 
+// Utility to clean large base64 strings before saving to localStorage (prevent QuotaExceededError)
+function cleanDataForLocalStorage(data) {
+    if (!data) return data;
+    try {
+        const clone = JSON.parse(JSON.stringify(data));
+        const cleanObj = (obj) => {
+            if (Array.isArray(obj)) {
+                obj.forEach((item, idx) => {
+                    if (typeof item === 'object') {
+                        cleanObj(item);
+                    } else if (typeof item === 'string' && item.startsWith('data:image/')) {
+                        obj[idx] = 'images/project_management_banner.jpg';
+                    }
+                });
+            } else if (obj && typeof obj === 'object') {
+                for (let key in obj) {
+                    if (typeof obj[key] === 'object') {
+                        cleanObj(obj[key]);
+                    } else if (typeof obj[key] === 'string' && obj[key].startsWith('data:image/')) {
+                        if (key === 'bannerUrl' || key === 'imageUrl') {
+                            obj[key] = 'images/project_management_banner.jpg';
+                        } else {
+                            obj[key] = '';
+                        }
+                    }
+                }
+            }
+        };
+        cleanObj(clone);
+        return clone;
+    } catch (e) {
+        console.warn('cleanDataForLocalStorage 실패:', e);
+        return data;
+    }
+}
+
+// Wrapper for localStorage.setItem to avoid QuotaExceededError
+function safeSaveToLocalStorage(key, data) {
+    try {
+        if (typeof data === 'string') {
+            localStorage.setItem(key, data);
+            return;
+        }
+        const cleaned = cleanDataForLocalStorage(data);
+        localStorage.setItem(key, JSON.stringify(cleaned));
+    } catch (e) {
+        console.error(`localStorage 저장 실패 (키: ${key}):`, e);
+        if (e.name === 'QuotaExceededError' || e.code === 22) {
+            console.warn('localStorage 한도 초과로 불필요한 백업 데이터를 정리합니다.');
+            try {
+                localStorage.removeItem('portfolioData');
+                localStorage.removeItem('journeyData');
+                localStorage.removeItem('competenciesData');
+            } catch (err) {}
+        }
+    }
+}
+
+// Compress uploaded image using canvas to JPEG format, reducing file size and memory footprint
+function compressImageToJpeg(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (e) => {
+            const img = new Image();
+            img.src = e.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+                
+                const max_size = 1280;
+                if (width > max_size || height > max_size) {
+                    if (width > height) {
+                        height = Math.round((height * max_size) / width);
+                        width = max_size;
+                    } else {
+                        width = Math.round((width * max_size) / height);
+                        height = max_size;
+                    }
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                
+                const ctx = canvas.getContext('2d');
+                // Fill white background for JPEGs to prevent black background on PNG transparency
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, width, height);
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                resolve(compressedBase64);
+            };
+            img.onerror = (err) => reject(err);
+        };
+        reader.onerror = (err) => reject(err);
+    });
+}
+
 // ==========================================================================
 // Initialization & DOM Event Binding
 // ==========================================================================
@@ -305,9 +405,41 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function loadDataAndInit() {
-    // 캐시 클리어: 오래된 로컬스토리지 팝업 및 강좌 캐시 제거
+    // 기존 팝업 설정 정보 삭제 및 비활성화 초기화
     localStorage.removeItem('popupConfig');
-    localStorage.removeItem('coursesData');
+    popupConfig = { enabled: false, title: '', content: '', imageUrl: '', linkUrl: '', linkProjectId: '' };
+
+    const hasUnsaved = localStorage.getItem('hasUnsavedChanges') === 'true';
+    
+    if (hasUnsaved) {
+        console.log('로컬에 저장된 미동기화 변경사항을 복원합니다.');
+        const localPortfolio = localStorage.getItem('portfolioData');
+        const localJourney = localStorage.getItem('journeyData');
+        const localCompetencies = localStorage.getItem('competenciesData');
+        const localPopup = localStorage.getItem('popupConfig');
+        const localCourses = localStorage.getItem('coursesData');
+        
+        if (localPortfolio && localJourney && localCompetencies) {
+            try {
+                portfolioData = JSON.parse(localPortfolio);
+                journeyData = JSON.parse(localJourney);
+                competenciesData = JSON.parse(localCompetencies);
+                if (localPopup) {
+                    popupConfig = JSON.parse(localPopup);
+                }
+                if (localCourses) {
+                    coursesData = JSON.parse(localCourses);
+                    courseConfig = coursesData[0];
+                }
+                console.log('로컬 스토리지로부터 백업 데이터를 복원했습니다.');
+                initApp();
+                showUnsavedWarningBanner();
+                return;
+            } catch (e) {
+                console.error('로컬 스토리지 백업 파싱 오류:', e);
+            }
+        }
+    }
     
     // 1. 서버 data.json 로드를 최우선으로 시도
     fetch('data.json')
@@ -320,7 +452,7 @@ function loadDataAndInit() {
             portfolioData = data.portfolioData;
             journeyData = data.journeyData;
             competenciesData = data.competenciesData;
-            popupConfig = data.popupConfig || { enabled: false, title: '', content: '', imageUrl: '', linkUrl: '', linkProjectId: '' };
+            popupConfig = { enabled: false, title: '', content: '', imageUrl: '', linkUrl: '', linkProjectId: '' };
             if (data.coursesData && Array.isArray(data.coursesData) && data.coursesData.length > 0) {
                 coursesData = data.coursesData;
             } else if (data.courseConfig) {
@@ -331,11 +463,12 @@ function loadDataAndInit() {
             
             // 로컬 스토리지 데이터 동기화
             try {
-                localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
-                localStorage.setItem('journeyData', JSON.stringify(journeyData));
-                localStorage.setItem('competenciesData', JSON.stringify(competenciesData));
-                localStorage.setItem('popupConfig', JSON.stringify(popupConfig));
-                localStorage.setItem('coursesData', JSON.stringify(coursesData));
+                safeSaveToLocalStorage('portfolioData', portfolioData);
+                safeSaveToLocalStorage('journeyData', journeyData);
+                safeSaveToLocalStorage('competenciesData', competenciesData);
+                safeSaveToLocalStorage('popupConfig', popupConfig);
+                safeSaveToLocalStorage('coursesData', coursesData);
+                safeSaveToLocalStorage('hasUnsavedChanges', 'false');
             } catch (e) {
                 console.error('로컬 스토리지 동기화 실패:', e);
             }
@@ -357,9 +490,7 @@ function loadDataAndInit() {
                     portfolioData = JSON.parse(localPortfolio);
                     journeyData = JSON.parse(localJourney);
                     competenciesData = JSON.parse(localCompetencies);
-                    if (localPopup) {
-                        popupConfig = JSON.parse(localPopup);
-                    }
+                    popupConfig = { enabled: false, title: '', content: '', imageUrl: '', linkUrl: '', linkProjectId: '' };
                     if (localCourses) {
                         coursesData = JSON.parse(localCourses);
                         courseConfig = coursesData[0];
@@ -382,17 +513,30 @@ function loadDataAndInit() {
             courseConfig = coursesData[0];
             
             try {
-                localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
-                localStorage.setItem('journeyData', JSON.stringify(journeyData));
-                localStorage.setItem('competenciesData', JSON.stringify(competenciesData));
-                localStorage.setItem('popupConfig', JSON.stringify(popupConfig));
-                localStorage.setItem('coursesData', JSON.stringify(coursesData));
+                safeSaveToLocalStorage('portfolioData', portfolioData);
+                safeSaveToLocalStorage('journeyData', journeyData);
+                safeSaveToLocalStorage('competenciesData', competenciesData);
+                safeSaveToLocalStorage('popupConfig', popupConfig);
+                safeSaveToLocalStorage('coursesData', coursesData);
+                safeSaveToLocalStorage('hasUnsavedChanges', 'false');
             } catch (e) {
                 console.error('로컬 스토리지 초기화 실패:', e);
             }
             
             initApp();
         });
+}
+
+function showUnsavedWarningBanner() {
+    if (document.getElementById('unsaved-warning-banner')) return;
+    const banner = document.createElement('div');
+    banner.id = 'unsaved-warning-banner';
+    banner.style.cssText = 'background: #e11d48; color: white; padding: 0.5rem 1rem; font-size: 0.85rem; font-weight: 600; text-align: center; position: fixed; bottom: 0; left: 0; width: 100%; z-index: 9999; display: flex; align-items: center; justify-content: center; gap: 1rem;';
+    banner.innerHTML = `
+        <span>⚠️ 현재 브라우저에 아직 서버로 동기화되지 않은 변경사항(신규 강좌 등)이 있습니다.</span>
+        <button onclick="updateServerGithub()" class="btn" style="background: white; color: #e11d48; border: none; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; cursor: pointer;">서버 업데이트 하기</button>
+    `;
+    document.body.appendChild(banner);
 }
 
 function initApp() {
@@ -418,11 +562,12 @@ function initApp() {
 function saveAllData() {
     // 1. 로컬 저장
     try {
-        localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
-        localStorage.setItem('journeyData', JSON.stringify(journeyData));
-        localStorage.setItem('competenciesData', JSON.stringify(competenciesData));
-        localStorage.setItem('popupConfig', JSON.stringify(popupConfig));
-        localStorage.setItem('coursesData', JSON.stringify(coursesData));
+        safeSaveToLocalStorage('portfolioData', portfolioData);
+        safeSaveToLocalStorage('journeyData', journeyData);
+        safeSaveToLocalStorage('competenciesData', competenciesData);
+        safeSaveToLocalStorage('popupConfig', popupConfig);
+        safeSaveToLocalStorage('coursesData', coursesData);
+        safeSaveToLocalStorage('hasUnsavedChanges', 'true');
     } catch (e) {
         console.error('로컬 스토리지 저장 오류:', e);
         if (e.name === 'QuotaExceededError') {
@@ -452,31 +597,25 @@ function saveAllData() {
     })
     .then(result => {
         console.log('데이터가 서버에 동기화되어 저장되었습니다:', result.message);
+        safeSaveToLocalStorage('hasUnsavedChanges', 'false'); // saved successfully!
+        
+        // Remove warning banner if it exists
+        const banner = document.getElementById('unsaved-warning-banner');
+        if (banner) banner.remove();
+
         if (result.portfolioData) {
             portfolioData = result.portfolioData;
-            try {
-                localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
-            } catch (e) {
-                console.error('로컬 스토리지 포트폴리오 업데이트 오류:', e);
-            }
+            safeSaveToLocalStorage('portfolioData', portfolioData);
             renderPortfolioGrid(currentPortfolioFilter, currentPortfolioPage); // 새로운 이미지 상대경로를 카드에 즉시 반영
         }
         if (result.popupConfig) {
             popupConfig = result.popupConfig;
-            try {
-                localStorage.setItem('popupConfig', JSON.stringify(popupConfig));
-            } catch (e) {
-                console.error('로컬 스토리지 팝업설정 업데이트 오류:', e);
-            }
+            safeSaveToLocalStorage('popupConfig', popupConfig);
         }
         if (result.coursesData) {
             coursesData = result.coursesData;
             courseConfig = coursesData[0];
-            try {
-                localStorage.setItem('coursesData', JSON.stringify(coursesData));
-            } catch (e) {
-                console.error('로컬 스토리지 강좌설정 업데이트 오류:', e);
-            }
+            safeSaveToLocalStorage('coursesData', coursesData);
         }
     })
     .catch(err => {
@@ -1502,9 +1641,11 @@ function setupAdminMode() {
     // Only show timeline actions in admin mode
     if (adminJourneyActions) adminJourneyActions.style.display = 'none';
     
-    const savedAdmin = sessionStorage.getItem('isAdminMode') === 'true';
+    const savedAdmin = (sessionStorage.getItem('isAdminMode') === 'true') || (localStorage.getItem('isAdminMode') === 'true');
     if (savedAdmin) {
         isAdminMode = true;
+        sessionStorage.setItem('isAdminMode', 'true');
+        localStorage.setItem('isAdminMode', 'true');
         if (adminToggle) {
             adminToggle.classList.add('active');
             adminToggle.innerHTML = '<i class="fa-solid fa-lock-open"></i>';
@@ -1528,6 +1669,7 @@ function setupAdminMode() {
                 // Log out directly
                 isAdminMode = false;
                 sessionStorage.removeItem('isAdminMode');
+                localStorage.removeItem('isAdminMode');
                 
                 adminToggle.classList.remove('active');
                 adminToggle.innerHTML = '<i class="fa-solid fa-lock"></i>';
@@ -1813,6 +1955,7 @@ function verifyAuthCode() {
     if (enteredCode === generatedAuthCode) {
         isAdminMode = true;
         sessionStorage.setItem('isAdminMode', 'true');
+        localStorage.setItem('isAdminMode', 'true');
         
         const adminToggle = document.getElementById('admin-toggle');
         const adminBanner = document.getElementById('admin-banner');
@@ -2765,14 +2908,15 @@ window.updateServerGithub = function() {
                     .then(res => {
                         if (!res.ok) throw new Error(`GitHub 팝업 이미지 업로드 실패 (코드: ${res.status})`);
                         popupConfig.imageUrl = `images/popup-image.jpg`;
-                        localStorage.setItem('popupConfig', JSON.stringify(popupConfig));
+                        safeSaveToLocalStorage('popupConfig', popupConfig);
                     });
                 syncPromises.push(popupImgPromise);
             }
         }
         
-        // 다중 강좌 배너 이미지 동기화 추가
+        // 다중 강좌 배너 및 세부내용 이미지 동기화 추가
         coursesData.forEach(c => {
+            // 1. 배너 이미지 동기화
             if (c.bannerUrl && c.bannerUrl.startsWith('data:image/')) {
                 const matches = c.bannerUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
                 if (matches && matches.length === 3) {
@@ -2804,18 +2948,56 @@ window.updateServerGithub = function() {
                         .then(res => {
                             if (!res.ok) throw new Error(`GitHub 강좌 배너 이미지 업로드 실패 (코드: ${res.status})`);
                             c.bannerUrl = `images/course-banner-${c.id}.jpg`;
-                            localStorage.setItem('coursesData', JSON.stringify(coursesData));
+                            safeSaveToLocalStorage('coursesData', coursesData);
                         });
                     syncPromises.push(courseImgPromise);
+                }
+            }
+            
+            // 2. 세부내용 이미지 동기화
+            if (c.detailImageUrl && c.detailImageUrl.startsWith('data:image/')) {
+                const matches = c.detailImageUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+                if (matches && matches.length === 3) {
+                    const base64Data = matches[2];
+                    const githubImagePath = `${parentPath}images/course-detail-${c.id}.jpg`;
+                    const imageApiUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${githubImagePath}`;
+                    
+                    const courseDetailImgPromise = fetch(`${imageApiUrl}?ref=${config.branch}`, { headers })
+                        .then(res => {
+                            if (res.status === 404) return { sha: null };
+                            if (!res.ok) throw new Error(`강좌 세부 이미지 SHA 조회 실패 (코드: ${res.status})`);
+                            return res.json();
+                        })
+                        .then(fileMeta => {
+                            const sha = fileMeta.sha;
+                            const commitPayload = {
+                                message: `upload course detail image: course-detail-${c.id}.jpg`,
+                                content: base64Data,
+                                branch: config.branch
+                            };
+                            if (sha) commitPayload.sha = sha;
+                            
+                            return fetch(imageApiUrl, {
+                                method: 'PUT',
+                                headers,
+                                body: JSON.stringify(commitPayload)
+                            });
+                        })
+                        .then(res => {
+                            if (!res.ok) throw new Error(`GitHub 강좌 세부 이미지 업로드 실패 (코드: ${res.status})`);
+                            c.detailImageUrl = `images/course-detail-${c.id}.jpg`;
+                            safeSaveToLocalStorage('coursesData', coursesData);
+                        });
+                    syncPromises.push(courseDetailImgPromise);
                 }
             }
         });
         
         return Promise.all(syncPromises).then(() => {
             // 변경된 상대경로들을 로컬 스토리지에 최종 반영하고 목록 다시 렌더링
-            localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
-            localStorage.setItem('popupConfig', JSON.stringify(popupConfig));
-            localStorage.setItem('coursesData', JSON.stringify(coursesData));
+            safeSaveToLocalStorage('portfolioData', portfolioData);
+            safeSaveToLocalStorage('popupConfig', popupConfig);
+            safeSaveToLocalStorage('coursesData', coursesData);
             renderPortfolioGrid(currentPortfolioFilter, currentPortfolioPage);
         });
     };
@@ -2843,7 +3025,8 @@ window.updateServerGithub = function() {
                 journeyData,
                 competenciesData,
                 popupConfig,
-                courseConfig
+                courseConfig: coursesData[0] || null,
+                coursesData
             };
             const jsonStr = JSON.stringify(dataPayload, null, 2);
             // Safe UTF-8 Base64 encoding
@@ -2871,6 +3054,12 @@ window.updateServerGithub = function() {
             return res.json();
         })
         .then(commitResult => {
+            safeSaveToLocalStorage('hasUnsavedChanges', 'false'); // saved successfully!
+            
+            // Remove warning banner if it exists
+            const banner = document.getElementById('unsaved-warning-banner');
+            if (banner) banner.remove();
+            
             alert('성공적으로 GitHub 저장소에 데이터와 신규 이미지를 업로드했습니다!\nGitHub Pages가 빌드된 후(보통 1~2분 소요) 다른 기기에서도 업데이트가 실시간 반영됩니다.');
         })
         .catch(err => {
@@ -2918,6 +3107,7 @@ window.downloadUploadedDataJson = function() {
 // ==========================================================================
 
 function checkAndShowPopup() {
+    return; // 팝업창 기능 완전히 비활성화
     if (!popupConfig || !popupConfig.enabled) return;
     
     // Check local storage for "today hide" timestamp
@@ -3015,142 +3205,7 @@ window.closePopupModal = function() {
     document.body.style.overflow = '';
 };
 
-window.openPopupConfigModal = function() {
-    if (!isAdminMode) {
-        alert('관리자 권한이 필요합니다.');
-        return;
-    }
-    
-    const config = popupConfig || { enabled: false, title: '', content: '', imageUrl: '', linkUrl: '', linkProjectId: '' };
-    
-    // 포트폴리오 강의/프로젝트 목록으로 셀렉트 옵션 동적 생성
-    let projectOptionsHtml = '<option value="">-- 상세페이지 연결할 강의/프로젝트 선택 --</option>';
-    portfolioData.forEach(p => {
-        const catName = p.category === 'career' ? '취업진로' : (p.category === 'media' ? '영상콘텐츠' : 'IT 미래기술');
-        projectOptionsHtml += `<option value="${p.id}" ${config.linkProjectId === p.id ? 'selected' : ''}>[${catName}] ${p.title}</option>`;
-    });
-    
-    const formHtml = `
-        <form id="popup-config-form" style="display: flex; flex-direction: column; gap: 1.2rem;">
-            <!-- Enabled -->
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <input type="checkbox" id="popup-config-enabled" ${config.enabled ? 'checked' : ''} style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--color-career-end);">
-                <label for="popup-config-enabled" style="font-weight: 600; font-size: 0.95rem; color: var(--text-primary); cursor: pointer;">홈페이지 접속 시 팝업창 띄우기</label>
-            </div>
-            
-            <!-- Title -->
-            <div>
-                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">팝업 제목</label>
-                <input type="text" id="popup-config-title" value="${config.title || ''}" placeholder="팝업창 제목을 입력하세요." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
-            </div>
-            
-            <!-- Content -->
-            <div>
-                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">팝업 내용</label>
-                <textarea id="popup-config-content" rows="4" placeholder="팝업창에 노출할 내용을 입력하세요." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-family: inherit; resize: vertical;" required>${config.content || ''}</textarea>
-            </div>
-            
-            <!-- Image File Selection -->
-            <div>
-                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">팝업 이미지</label>
-                <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 0.5rem;">
-                    <div id="popup-config-img-preview-container" style="width: 80px; height: 80px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;">
-                        ${config.imageUrl ? `<img id="popup-config-img-preview" src="${config.imageUrl}" style="width: 100%; height: 100%; object-fit: cover;">` : '<span style="font-size: 0.75rem; color: var(--text-muted);">이미지 없음</span>'}
-                    </div>
-                    <div style="flex: 1;">
-                        <input type="file" id="popup-config-file" accept="image/*" style="display: none;" onchange="handlePopupFileChange(event)">
-                        <button type="button" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem;" onclick="document.getElementById('popup-config-file').click()">
-                            <i class="fa-solid fa-image"></i> 이미지 변경
-                        </button>
-                        <button type="button" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem; color: #f43f5e; border-color: rgba(244, 63, 94, 0.2); background: rgba(244, 63, 94, 0.05); margin-left: 0.5rem; display: ${config.imageUrl ? 'inline-block' : 'none'};" id="btn-popup-image-remove" onclick="removePopupImage()">삭제</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Link URL (접수하러 가기) -->
-            <div>
-                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">접수하러 가기 링크 (URL)</label>
-                <input type="url" id="popup-config-link" value="${config.linkUrl || ''}" placeholder="예: https://example.com (공백 시 '접수하러 가기' 버튼이 노출되지 않습니다)" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
-            </div>
-            
-            <!-- Link Project (자세히 보기) -->
-            <div>
-                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">자세히 보기 연결할 강의/프로젝트 상세페이지</label>
-                <select id="popup-config-link-project" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); cursor: pointer;">
-                    ${projectOptionsHtml}
-                </select>
-            </div>
-            
-            <!-- Action buttons -->
-            <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
-                <button type="button" onclick="closeAdminModal()" class="btn btn-outline" style="padding: 0.6rem 1.5rem; font-size: 0.95rem;">취소</button>
-                <button type="submit" class="btn btn-primary" style="padding: 0.6rem 2rem; font-size: 0.95rem; background: linear-gradient(135deg, var(--color-career-start), var(--color-career-end)); border: none; color: white;">저장</button>
-            </div>
-        </form>
-    `;
-    
-    openAdminModal('팝업창 설정', formHtml);
-    
-    // Bind form submit
-    const form = document.getElementById('popup-config-form');
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        const previewImg = document.getElementById('popup-config-img-preview');
-        
-        popupConfig = {
-            enabled: document.getElementById('popup-config-enabled').checked,
-            title: document.getElementById('popup-config-title').value,
-            content: document.getElementById('popup-config-content').value,
-            imageUrl: previewImg ? previewImg.src : '',
-            linkUrl: document.getElementById('popup-config-link').value,
-            linkProjectId: document.getElementById('popup-config-link-project').value
-        };
-        
-        // Save to local storage
-        localStorage.setItem('popupConfig', JSON.stringify(popupConfig));
-        
-        // Save to server
-        saveAllData();
-        
-        closeAdminModal();
-        alert('팝업창 설정이 성공적으로 저장되었습니다.');
-    });
-};
 
-window.handlePopupFileChange = function(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    
-    if (file.size > 5 * 1024 * 1024) {
-        alert('이미지 크기는 최대 5MB를 초과할 수 없습니다.');
-        return;
-    }
-    
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const previewContainer = document.getElementById('popup-config-img-preview-container');
-        const removeBtn = document.getElementById('btn-popup-image-remove');
-        if (previewContainer) {
-            previewContainer.innerHTML = `<img id="popup-config-img-preview" src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
-        }
-        if (removeBtn) {
-            removeBtn.style.display = 'inline-block';
-        }
-    };
-    reader.readAsDataURL(file);
-};
-
-window.removePopupImage = function() {
-    const previewContainer = document.getElementById('popup-config-img-preview-container');
-    const removeBtn = document.getElementById('btn-popup-image-remove');
-    if (previewContainer) {
-        previewContainer.innerHTML = '<span style="font-size: 0.75rem; color: var(--text-muted);">이미지 없음</span>';
-    }
-    if (removeBtn) {
-        removeBtn.style.display = 'none';
-    }
-};
 
 window.openProjectMgmtDashboard = function(e) {
     if (e) e.preventDefault();
@@ -3500,7 +3555,7 @@ window.saveCourse = function(e, courseId) {
     courseConfig = coursesData[0];
     
     // Save locally
-    localStorage.setItem('coursesData', JSON.stringify(coursesData));
+    safeSaveToLocalStorage('coursesData', coursesData);
     
     // Save to server
     saveAllData();
@@ -3520,7 +3575,7 @@ window.deleteCourse = function(courseId) {
     courseConfig = coursesData[0];
     
     // Save locally
-    localStorage.setItem('coursesData', JSON.stringify(coursesData));
+    safeSaveToLocalStorage('coursesData', coursesData);
     
     // Save to server
     saveAllData();
@@ -3533,19 +3588,17 @@ window.handleCourseBannerFileChange = function(event) {
     const file = event.target.files[0];
     if (!file) return;
     
-    if (file.size > 5 * 1024 * 1024) {
-        alert('이미지 크기는 최대 5MB를 초과할 수 없습니다.');
-        return;
-    }
-    
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const previewContainer = document.getElementById('course-banner-preview-container');
-        if (previewContainer) {
-            previewContainer.innerHTML = `<img id="course-banner-preview" src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
-        }
-    };
-    reader.readAsDataURL(file);
+    compressImageToJpeg(file)
+        .then(compressedBase64 => {
+            const previewContainer = document.getElementById('course-banner-preview-container');
+            if (previewContainer) {
+                previewContainer.innerHTML = `<img id="course-banner-preview" src="${compressedBase64}" style="width: 100%; height: 100%; object-fit: cover;">`;
+            }
+        })
+        .catch(err => {
+            console.error('배너 이미지 압축 실패:', err);
+            alert('이미지 압축 및 로딩 중 오류가 발생했습니다.');
+        });
 };
 
 window.deleteApplication = function(index) {
@@ -3569,7 +3622,7 @@ window.deleteApplication = function(index) {
             let localApps = JSON.parse(localStorage.getItem('courseApplications') || '[]');
             if (index >= 0 && index < localApps.length) {
                 localApps.splice(index, 1);
-                localStorage.setItem('courseApplications', JSON.stringify(localApps));
+                safeSaveToLocalStorage('courseApplications', localApps);
             }
         } catch (e) {
             console.error(e);
