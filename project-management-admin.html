@@ -161,6 +161,8 @@
                             } else if (typeof obj[key] === 'string' && obj[key].startsWith('data:image/')) {
                                 if (key === 'bannerUrl' || key === 'imageUrl') {
                                     obj[key] = 'images/project_management_banner.jpg';
+                                } else if (key === 'detailImageUrl') {
+                                    obj[key] = 'images/course-detail-' + (obj.id || 'project-management') + '.jpg';
                                 } else {
                                     obj[key] = '';
                                 }
@@ -383,6 +385,7 @@
                     tag: (existingCourse && existingCourse.tag) || 'IT & PM 실무 특강',
                     title: popupConfig.title,
                     bannerUrl: popupConfig.imageUrl || (existingCourse && existingCourse.bannerUrl) || 'images/project_management_banner.jpg',
+                    detailImageUrl: (existingCourse && existingCourse.detailImageUrl) || '',
                     schedule: (existingCourse && existingCourse.schedule) || '매주 토요일 (4주 완성)',
                     time: (existingCourse && existingCourse.time) || '10:00 - 13:00 (3시간)',
                     instructor: (existingCourse && existingCourse.instructor) || '차은정 대표',

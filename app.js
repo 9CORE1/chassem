@@ -317,6 +317,8 @@ function cleanDataForLocalStorage(data) {
                     } else if (typeof obj[key] === 'string' && obj[key].startsWith('data:image/')) {
                         if (key === 'bannerUrl' || key === 'imageUrl') {
                             obj[key] = 'images/project_management_banner.jpg';
+                        } else if (key === 'detailImageUrl') {
+                            obj[key] = 'images/course-detail-' + (obj.id || 'project-management') + '.jpg';
                         } else {
                             obj[key] = '';
                         }
