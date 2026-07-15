@@ -389,6 +389,7 @@
                     schedule: (existingCourse && existingCourse.schedule) || '매주 토요일 (4주 완성)',
                     time: (existingCourse && existingCourse.time) || '10:00 - 13:00 (3시간)',
                     instructor: (existingCourse && existingCourse.instructor) || '차은정 대표',
+                    target: (existingCourse && existingCourse.target) || '',
                     description: (existingCourse && existingCourse.description) || '',
                     curriculum: (existingCourse && existingCourse.curriculum) || [
                         { week: 'Week 1', title: 'PM 기초 및 프로젝트 범위(Scope) 설정', desc: '프로젝트 라이프사이클의 이해 WBS(작업분할구조도) 실습.' },
@@ -626,6 +627,7 @@
                 schedule: '매주 토요일 (4주 완성)',
                 time: '10:00 - 13:00 (3시간)',
                 instructor: '차은정 대표',
+                target: '기획자, PM 지망생, 실무 기획 능력을 기르고 싶으신 분',
                 description: '',
                 curriculum: [
                     { week: 'Week 1', title: 'PM 기초 및 프로젝트 범위(Scope) 설정', desc: '프로젝트 라이프사이클의 이해 WBS(작업분할구조도) 실습.' },
@@ -642,6 +644,7 @@
                 schedule: '매주 토요일 (4주 완성)',
                 time: '10:00 - 13:00 (3시간)',
                 instructor: '차은정 대표',
+                target: '기획자, PM 지망생, 실무 기획 능력을 기르고 싶으신 분',
                 description: '',
                 curriculum: [
                     { week: 'Week 1', title: 'PM 기초 및 프로젝트 범위(Scope) 설정', desc: '프로젝트 라이프사이클의 이해 WBS(작업분할구조도) 실습.' },
@@ -732,6 +735,10 @@
                                 <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">강의 시간</label>
                                 <input type="text" id="course-time" value="${c.time || ''}" placeholder="예: 10:00 - 13:00 (3시간)" style="width: 100%; padding: 0.65rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
                             </div>
+                            <div style="grid-column: span 2;">
+                                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">교육 대상</label>
+                                <input type="text" id="course-target" value="${c.target || ''}" placeholder="예: 기획자, PM 지망생, 실무 기획 능력을 기르고 싶으신 분" style="width: 100%; padding: 0.65rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+                            </div>
                         </div>
 
                         <!-- 강좌 세부내용 Group -->
@@ -815,6 +822,7 @@
                 const instructorInput = document.getElementById('course-instructor');
                 const scheduleInput = document.getElementById('course-schedule');
                 const timeInput = document.getElementById('course-time');
+                const targetInput = document.getElementById('course-target');
 
                 // 1. Create/Update Course
                 const id = editingCourseId || ('course-' + new Date().getTime());
@@ -829,6 +837,7 @@
                     schedule: scheduleInput ? scheduleInput.value.trim() : (existingCourse.schedule || '매주 토요일 (4주 완성)'),
                     time: timeInput ? timeInput.value.trim() : (existingCourse.time || '10:00 - 13:00 (3시간)'),
                     instructor: instructorInput ? instructorInput.value.trim() : (existingCourse.instructor || '차은정 대표'),
+                    target: targetInput ? targetInput.value.trim() : (existingCourse.target || '기획자, PM 지망생, 실무 기획 능력을 기르고 싶으신 분'),
                     description: detailTextInput.value.trim(),
                     curriculum: existingCourse.curriculum || [
                         { week: 'Week 1', title: 'PM 기초 및 프로젝트 범위(Scope) 설정', desc: '프로젝트 라이프사이클의 이해 WBS(작업분할구조도) 실습.' },
