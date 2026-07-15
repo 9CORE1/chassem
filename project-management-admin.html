@@ -338,7 +338,7 @@
         }
 
         function loadFromServer() {
-            fetch('data.json')
+            fetch('data.json?t=' + Date.now())
                 .then(res => {
                     if (!res.ok) throw new Error('서버 데이터 로드 실패');
                     return res.json();
@@ -672,7 +672,7 @@
                         
                         <!-- Enabled -->
                         <div style="display: flex; align-items: center; gap: 0.5rem; background: var(--bg-tertiary); padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); width: fit-content;">
-                            <input type="checkbox" id="popup-config-enabled" ${isPopupActive ? 'checked' : ''} onchange="handlePopupEnabledChange(this.checked)" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--color-career-end);">
+                            <input type="checkbox" id="popup-config-enabled" ${isPopupActive ? 'checked' : ''} style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--color-career-end);">
                             <label for="popup-config-enabled" style="font-weight: 600; font-size: 0.95rem; color: var(--text-primary); cursor: pointer;">홈페이지 접속 시 이 강좌 팝업창 띄우기</label>
                         </div>
                         
@@ -859,46 +859,6 @@
             } catch (err) {
                 console.error('saveIntegratedConfig 오류:', err);
                 alert('강좌 저장 처리 중 브라우저 스크립트 에러 발생:\n' + err.message);
-            }
-        };
-
-        window.handlePopupEnabledChange = function(checked) {
-            try {
-                const titleInput = document.getElementById('popup-config-title');
-                const contentInput = document.getElementById('popup-config-content');
-                const linkUrlInput = document.getElementById('popup-config-link-url');
-                
-                const id = editingCourseId || 'project-management';
-                
-                if (checked) {
-                    const titleVal = titleInput ? titleInput.value.trim() : '';
-                    const contentVal = contentInput ? contentInput.value.trim() : '';
-                    const linkUrlVal = linkUrlInput ? linkUrlInput.value.trim() : '';
-                    const previewImg = document.getElementById('course-banner-preview');
-                    const bannerUrl = (previewImg && (previewImg.src.startsWith('data:') || previewImg.src.startsWith('images/') || previewImg.src.startsWith('http'))) ? previewImg.src : 'images/project_management_banner.jpg';
-                    
-                    popupConfig = {
-                        enabled: true,
-                        title: titleVal || '공지사항',
-                        content: contentVal || '강좌 공지사항입니다.',
-                        imageUrl: bannerUrl,
-                        linkUrl: linkUrlVal || `project-contents.html?id=${id}`,
-                        linkProjectId: id
-                    };
-                } else {
-                    if (popupConfig) {
-                        popupConfig.enabled = false;
-                    } else {
-                        popupConfig = { enabled: false };
-                    }
-                }
-                
-                safeSaveToLocalStorage('popupConfig', popupConfig);
-                safeSaveToLocalStorage('hasUnsavedChanges', 'true');
-                
-                saveAllData('silent');
-            } catch (err) {
-                console.error('handlePopupEnabledChange 오류:', err);
             }
         };
 

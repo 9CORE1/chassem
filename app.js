@@ -438,7 +438,7 @@ function loadDataAndInit() {
     }
     
     // 1. 서버 data.json 로드를 최우선으로 시도
-    fetch('data.json')
+    fetch('data.json?t=' + Date.now())
         .then(res => {
             if (!res.ok) throw new Error('서버 데이터 로드 실패');
             return res.json();
