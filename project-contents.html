@@ -101,6 +101,13 @@
 
         .course-header-details .info-card-grid {
             margin-bottom: 0;
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        @media (max-width: 768px) {
+            .course-header-details .info-card-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 1200px) {
