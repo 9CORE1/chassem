@@ -458,7 +458,7 @@
                     </div>
 
                     <!-- 3. 커리큘럼 -->
-                    <div class="course-content-block">
+                    <div class="course-content-block" id="curriculum-container">
                         <h2><i class="fa-solid fa-list-check"></i> 커리큘럼</h2>
                         <div class="curriculum-list" id="curriculum-list" style="margin-bottom: 2.5rem;">
                             <div class="curriculum-item">
@@ -749,8 +749,9 @@
                 }
             }
             
+            const curriculumContainer = document.getElementById('curriculum-container');
+            const curriculumList = document.getElementById('curriculum-list');
             if (config.curriculum && config.curriculum.length > 0) {
-                const curriculumList = document.getElementById('curriculum-list');
                 if (curriculumList) {
                     let html = '';
                     config.curriculum.forEach(c => {
@@ -763,7 +764,10 @@
                         `;
                     });
                     curriculumList.innerHTML = html;
+                    if (curriculumContainer) curriculumContainer.style.display = 'block';
                 }
+            } else if (config.curriculum && config.curriculum.length === 0) {
+                if (curriculumContainer) curriculumContainer.style.display = 'none';
             }
         }
     </script>

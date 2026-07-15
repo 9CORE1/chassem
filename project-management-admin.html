@@ -654,6 +654,26 @@
                 ]
             });
 
+            // Generate curriculum rows HTML
+            let curriculumRowsHtml = '';
+            const curriculumData = c.curriculum || [];
+            curriculumData.forEach((item) => {
+                curriculumRowsHtml += `
+                    <div class="curriculum-editor-row" style="display: flex; gap: 0.75rem; align-items: flex-start; background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 8px;">
+                        <div style="width: 100px; flex-shrink: 0;">
+                            <input type="text" class="curr-week-input" value="${item.week || ''}" placeholder="예: WEEK 1" style="width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-size: 0.85rem;">
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+                            <input type="text" class="curr-title-input" value="${item.title || ''}" placeholder="주제 및 제목을 입력하세요." style="width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-size: 0.85rem;">
+                            <textarea class="curr-desc-input" rows="2" placeholder="상세 강의 내용을 입력하세요." style="width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-family: inherit; font-size: 0.85rem; resize: vertical;">${item.desc || ''}</textarea>
+                        </div>
+                        <button type="button" onclick="deleteCurriculumRow(this)" style="background: none; border: none; color: #ef4444; padding: 0.5rem; cursor: pointer; font-size: 1.1rem; align-self: center;" title="삭제">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                `;
+            });
+
             // If it's the active popup, load popup details, else default course details
             const isPopupActive = popupConfig && popupConfig.enabled && popupConfig.linkProjectId === c.id;
             const popupTitle = isPopupActive ? ((popupConfig && popupConfig.title) || c.title) : c.title;
@@ -696,7 +716,7 @@
                         
                         <!-- Image -->
                         <div>
-                            <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">팝업 이미지 / 대표 배너 (16:9 비율 권장)</label>
+                            <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">팝업 이미지 / 대표 배너 (1:1 비율 권장)</label>
                             <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
                                 <div id="course-banner-preview-container" style="width: 160px; height: 90px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-tertiary); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;">
                                     ${popupImg ? `<img id="course-banner-preview" src="${popupImg}" style="width: 100%; height: 100%; object-fit: cover;">` : '<span style="font-size: 0.75rem; color: var(--text-muted);">이미지 없음</span>'}
@@ -769,6 +789,25 @@
                                 <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">세부내용 텍스트</label>
                                 <textarea id="course-detail-text" rows="4" placeholder="강좌 세부소개 내용을 입력하세요." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-family: inherit; resize: vertical;" required>${c.description || ''}</textarea>
                             </div>
+                            
+                            <!-- 커리큘럼 편집 영역 -->
+                            <div style="border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 0.5rem;">
+                                <label style="display: block; margin-bottom: 0.8rem; font-weight: 700; font-size: 0.95rem; color: var(--color-career-end); display: flex; align-items: center; gap: 0.4rem;">
+                                    <i class="fa-solid fa-graduation-cap"></i> 커리큘럼 설정
+                                </label>
+                                
+                                <div id="curriculum-editor-list" style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem;">
+                                    ${curriculumRowsHtml || `
+                                        <div style="text-align: center; padding: 1.5rem; color: var(--text-muted); font-size: 0.85rem; background: var(--bg-tertiary); border: 1px dashed var(--border-color); border-radius: 8px;" id="no-curriculum-notice">
+                                            등록된 커리큘럼이 없습니다. 아래 버튼을 눌러 주차를 추가해 주세요.
+                                        </div>
+                                    `}
+                                </div>
+                                
+                                <button type="button" class="btn btn-outline" onclick="addCurriculumRow()" style="padding: 0.5rem 1rem; font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem; border-color: var(--color-career-end); color: var(--color-career-end); background: rgba(225,0,255,0.02); cursor: pointer; font-weight: 600; border-radius: 6px;">
+                                    <i class="fa-solid fa-plus"></i> 커리큘럼 주차 추가
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Submit/Cancel Buttons -->
@@ -824,6 +863,26 @@
                 const timeInput = document.getElementById('course-time');
                 const targetInput = document.getElementById('course-target');
 
+                // curriculum 데이터 추출
+                const curriculumList = document.getElementById('curriculum-editor-list');
+                const curriculum = [];
+                if (curriculumList) {
+                    const rows = curriculumList.getElementsByClassName('curriculum-editor-row');
+                    for (let row of rows) {
+                        const weekVal = row.querySelector('.curr-week-input').value.trim();
+                        const titleVal = row.querySelector('.curr-title-input').value.trim();
+                        const descVal = row.querySelector('.curr-desc-input').value.trim();
+                        
+                        if (weekVal || titleVal || descVal) {
+                            curriculum.push({
+                                week: weekVal || '주차 미정',
+                                title: titleVal || '제목 미정',
+                                desc: descVal || ''
+                            });
+                        }
+                    }
+                }
+
                 // 1. Create/Update Course
                 const id = editingCourseId || ('course-' + new Date().getTime());
                 
@@ -839,12 +898,7 @@
                     instructor: instructorInput ? instructorInput.value.trim() : (existingCourse.instructor || '차은정 대표'),
                     target: targetInput ? targetInput.value.trim() : (existingCourse.target || '기획자, PM 지망생, 실무 기획 능력을 기르고 싶으신 분'),
                     description: detailTextInput.value.trim(),
-                    curriculum: existingCourse.curriculum || [
-                        { week: 'Week 1', title: 'PM 기초 및 프로젝트 범위(Scope) 설정', desc: '프로젝트 라이프사이클의 이해 WBS(작업분할구조도) 실습.' },
-                        { week: 'Week 2', title: '프로젝트 일정 및 리스크 관리', desc: '의존성 분석을 통한 일정 네트워크 설계, 리스크 식별 및 정량/정성 평가 기법.' },
-                        { week: 'Week 3', title: '애자일 방법론 & 스크럼 실무', desc: '애자일 선언과 4대 가치 이해, 스크럼 프레임워크(스프린트 기획, 데일리 스크럼) 실습.' },
-                        { week: 'Week 4', title: '협업 툴 실습 (Jira & Confluence)', desc: 'Jira 백로그 작성 및 스프린트 구동, Confluence 문서 협업 실습.' }
-                    ]
+                    curriculum: curriculum
                 };
 
                 // 2. Update popupConfig if enabled
@@ -932,6 +986,54 @@
                 .catch(err => {
                     console.error('세부 이미지 압축 실패:', err);
                 });
+        };
+
+        window.addCurriculumRow = function() {
+            const list = document.getElementById('curriculum-editor-list');
+            if (!list) return;
+            
+            // Remove notice if it exists
+            const notice = document.getElementById('no-curriculum-notice');
+            if (notice) notice.remove();
+            
+            // Determine next week label automatically
+            const existingRows = list.getElementsByClassName('curriculum-editor-row');
+            const nextIdx = existingRows.length + 1;
+            const nextWeekLabel = `WEEK ${nextIdx}`;
+            
+            const newRow = document.createElement('div');
+            newRow.className = 'curriculum-editor-row';
+            newRow.style.cssText = 'display: flex; gap: 0.75rem; align-items: flex-start; background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 8px;';
+            newRow.innerHTML = `
+                <div style="width: 100px; flex-shrink: 0;">
+                    <input type="text" class="curr-week-input" value="${nextWeekLabel}" placeholder="예: WEEK 1" style="width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-size: 0.85rem;">
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+                    <input type="text" class="curr-title-input" value="" placeholder="주제 및 제목을 입력하세요." style="width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-size: 0.85rem;">
+                    <textarea class="curr-desc-input" rows="2" placeholder="상세 강의 내용을 입력하세요." style="width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-family: inherit; font-size: 0.85rem; resize: vertical;"></textarea>
+                </div>
+                <button type="button" onclick="deleteCurriculumRow(this)" style="background: none; border: none; color: #ef4444; padding: 0.5rem; cursor: pointer; font-size: 1.1rem; align-self: center;" title="삭제">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            `;
+            list.appendChild(newRow);
+        };
+        
+        window.deleteCurriculumRow = function(btn) {
+            const row = btn.closest('.curriculum-editor-row');
+            if (row) {
+                const list = document.getElementById('curriculum-editor-list');
+                row.remove();
+                
+                // If list is empty, show notice
+                if (list && list.getElementsByClassName('curriculum-editor-row').length === 0) {
+                    list.innerHTML = `
+                        <div style="text-align: center; padding: 1.5rem; color: var(--text-muted); font-size: 0.85rem; background: var(--bg-tertiary); border: 1px dashed var(--border-color); border-radius: 8px;" id="no-curriculum-notice">
+                            등록된 커리큘럼이 없습니다. 아래 버튼을 눌러 주차를 추가해 주세요.
+                        </div>
+                    `;
+                }
+            }
         };
 
         function saveAllData(successMsg) {
