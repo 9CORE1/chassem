@@ -711,10 +711,10 @@
     }
   ],
   "popupConfig": {
-    "enabled": true,
+    "enabled": false,
     "title": "프로젝트 관리(Project Management) 실무 마스터 과정",
     "content": "성공적인 프로젝트 수행을 위해 필수적인 일정 관리, 자원 배분, 리스크 완화 전략뿐만 아니라 현업에서 널리 활용되고 있는 애자일(Agile) 및 스크럼(Scrum) 방법론, 그리고 글로벌 협업 도구인 Jira 실습까지 올인원으로 아우르는 실무형 PM 양성 과정입니다. 기업의 디지털 전환(DX) 프로젝트를 기획하거나 팀의 작업 생산성을 비약적으로 높이고 싶은 실무자에게 즉각적인 솔루션을 제공합니다.",
-    "imageUrl": "https://chassem.ai.kr/images/popup-image.jpg",
+    "imageUrl": "images/popup-image.jpg",
     "linkUrl": "project-contents.html?id=project-management",
     "linkProjectId": "project-management"
   },
@@ -722,7 +722,7 @@
     "id": "project-management",
     "tag": "IT & PM 실무 특강",
     "title": "프로젝트 관리(Project Management) 실무 마스터 과정",
-    "bannerUrl": "https://chassem.ai.kr/images/popup-image.jpg",
+    "bannerUrl": "images/popup-image.jpg",
     "schedule": "매주 토요일 (4주 완성)",
     "time": "10:00 - 13:00 (3시간)",
     "instructor": "차은정 대표",
@@ -755,7 +755,7 @@
       "id": "project-management",
       "tag": "IT & PM 실무 특강",
       "title": "프로젝트 관리(Project Management) 실무 마스터 과정",
-      "bannerUrl": "https://chassem.ai.kr/images/popup-image.jpg",
+      "bannerUrl": "images/popup-image.jpg",
       "schedule": "매주 토요일 (4주 완성)",
       "time": "10:00 - 13:00 (3시간)",
       "instructor": "차은정 대표",
