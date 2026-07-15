@@ -712,8 +712,8 @@
   ],
   "popupConfig": {
     "enabled": true,
-    "title": "프로젝트 관리(Project Management) 실무 마스터 과정",
-    "content": "성공적인 프로젝트 수행을 위해 필수적인 일정 관리, 자원 배분, 리스크 완화 전략뿐만 아니라 현업에서 널리 활용되고 있는 애자일(Agile) 및 스크럼(Scrum) 방법론, 그리고 글로벌 협업 도구인 Jira 실습까지 올인원으로 아우르는 실무형 PM 양성 과정입니다. 기업의 디지털 전환(DX) 프로젝트를 기획하거나 팀의 작업 생산성을 비약적으로 높이고 싶은 실무자에게 즉각적인 솔루션을 제공합니다.",
+    "title": "[접수중] Antigravity & GitHub를 활용한 개인 포트폴리오 웹페이지 제작 및 배포",
+    "content": "교육 시간: 총 2일, 6시간\n교육 구성: 공통 과제 실습 3시간 + 개인 과제 실습 및 코칭 3시간\n교육 대상: 웹개발 입문자, 비전공자, 강사, 컨설턴트, 프리랜서, 1인 창업자, 개인 포트폴리오가 필요한 분\n교육 장소: [온라인 또는 오프라인 장소 입력]\n교육 일정: [교육 날짜 및 시간 입력]\n모집 인원: [모집 인원 입력]\n참가비: [참가비 입력]",
     "imageUrl": "https://chassem.ai.kr/images/popup-image.jpg",
     "linkUrl": "project-contents.html?id=project-management",
     "linkProjectId": "project-management"
@@ -721,12 +721,12 @@
   "courseConfig": {
     "id": "project-management",
     "tag": "IT & PM 실무 특강",
-    "title": "프로젝트 관리(Project Management) 실무 마스터 과정",
+    "title": "[접수중] Antigravity & GitHub를 활용한 개인 포트폴리오 웹페이지 제작 및 배포",
     "bannerUrl": "https://chassem.ai.kr/images/popup-image.jpg",
     "schedule": "매주 토요일 (4주 완성)",
     "time": "10:00 - 13:00 (3시간)",
     "instructor": "차은정 대표",
-    "description": "성공적인 프로젝트 수행을 위해 필수적인 일정 관리, 자원 배분, 리스크 완화 전략뿐만 아니라 현업에서 널리 활용되고 있는 애자일(Agile) 및 스크럼(Scrum) 방법론, 그리고 글로벌 협업 도구인 Jira 실습까지 올인원으로 아우르는 실무형 PM 양성 과정입니다. 기업의 디지털 전환(DX) 프로젝트를 기획하거나 팀의 작업 생산성을 비약적으로 높이고 싶은 실무자에게 즉각적인 솔루션을 제공합니다.",
+    "description": "교육 시간: 총 2일, 6시간\n교육 구성: 공통 과제 실습 3시간 + 개인 과제 실습 및 코칭 3시간\n교육 대상: 웹개발 입문자, 비전공자, 강사, 컨설턴트, 프리랜서, 1인 창업자, 개인 포트폴리오가 필요한 분\n교육 장소: [온라인 또는 오프라인 장소 입력]\n교육 일정: [교육 날짜 및 시간 입력]\n모집 인원: [모집 인원 입력]\n참가비: [참가비 입력]",
     "curriculum": [
       {
         "week": "Week 1",
@@ -754,12 +754,12 @@
     {
       "id": "project-management",
       "tag": "IT & PM 실무 특강",
-      "title": "프로젝트 관리(Project Management) 실무 마스터 과정",
+      "title": "[접수중] Antigravity & GitHub를 활용한 개인 포트폴리오 웹페이지 제작 및 배포",
       "bannerUrl": "https://chassem.ai.kr/images/popup-image.jpg",
       "schedule": "매주 토요일 (4주 완성)",
       "time": "10:00 - 13:00 (3시간)",
       "instructor": "차은정 대표",
-      "description": "성공적인 프로젝트 수행을 위해 필수적인 일정 관리, 자원 배분, 리스크 완화 전략뿐만 아니라 현업에서 널리 활용되고 있는 애자일(Agile) 및 스크럼(Scrum) 방법론, 그리고 글로벌 협업 도구인 Jira 실습까지 올인원으로 아우르는 실무형 PM 양성 과정입니다. 기업의 디지털 전환(DX) 프로젝트를 기획하거나 팀의 작업 생산성을 비약적으로 높이고 싶은 실무자에게 즉각적인 솔루션을 제공합니다.",
+      "description": "교육 시간: 총 2일, 6시간\n교육 구성: 공통 과제 실습 3시간 + 개인 과제 실습 및 코칭 3시간\n교육 대상: 웹개발 입문자, 비전공자, 강사, 컨설턴트, 프리랜서, 1인 창업자, 개인 포트폴리오가 필요한 분\n교육 장소: [온라인 또는 오프라인 장소 입력]\n교육 일정: [교육 날짜 및 시간 입력]\n모집 인원: [모집 인원 입력]\n참가비: [참가비 입력]",
       "curriculum": [
         {
           "week": "Week 1",
