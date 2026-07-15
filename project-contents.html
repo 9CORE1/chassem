@@ -397,47 +397,37 @@
                         <h1 id="course-title">프로젝트 관리(Project Management) 실무 마스터 과정</h1>
                     </div>
                     
-                    <!-- Course Meta Info Stack (vertical list of unified rows) -->
-                    <div class="course-meta-stack" style="display: flex; flex-direction: column; gap: 0.75rem;">
-                        
-                        <!-- 1. 강좌 일정 -->
-                        <div class="meta-row-card" style="display: flex; align-items: center; gap: 0.75rem; background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 0.8rem 1.2rem; border-radius: 16px;">
-                            <i class="fa-solid fa-calendar-days" style="color: var(--color-it-end); font-size: 1.1rem; flex-shrink: 0; width: 20px; text-align: center;"></i>
-                            <div style="font-size: 0.9rem; line-height: 1.5; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                                <span style="color: var(--text-muted); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; min-width: 70px;">강좌 일정</span>
-                                <span style="color: var(--border-color); font-size: 0.85rem;">|</span>
-                                <span id="course-schedule" style="color: var(--text-primary); font-weight: 600;">매주 토요일 (4주 완성)</span>
+                    <div class="info-card-grid">
+                        <div class="info-card">
+                            <i class="fa-solid fa-calendar-days"></i>
+                            <div class="info-card-text">
+                                <span>강좌 일정</span>
+                                <p id="course-schedule">매주 토요일 (4주 완성)</p>
                             </div>
                         </div>
-
-                        <!-- 2. 강의 시간 -->
-                        <div class="meta-row-card" style="display: flex; align-items: center; gap: 0.75rem; background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 0.8rem 1.2rem; border-radius: 16px;">
-                            <i class="fa-solid fa-clock" style="color: var(--color-it-end); font-size: 1.1rem; flex-shrink: 0; width: 20px; text-align: center;"></i>
-                            <div style="font-size: 0.9rem; line-height: 1.5; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                                <span style="color: var(--text-muted); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; min-width: 70px;">강의 시간</span>
-                                <span style="color: var(--border-color); font-size: 0.85rem;">|</span>
-                                <span id="course-time" style="color: var(--text-primary); font-weight: 600;">10:00 - 13:00 (3시간)</span>
+                        <div class="info-card">
+                            <i class="fa-solid fa-clock"></i>
+                            <div class="info-card-text">
+                                <span>강의 시간</span>
+                                <p id="course-time">10:00 - 13:00 (3시간)</p>
                             </div>
                         </div>
-
-                        <!-- 3. 담당 강사 -->
-                        <div class="meta-row-card" style="display: flex; align-items: center; gap: 0.75rem; background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 0.8rem 1.2rem; border-radius: 16px;">
-                            <i class="fa-solid fa-user-tie" style="color: var(--color-it-end); font-size: 1.1rem; flex-shrink: 0; width: 20px; text-align: center;"></i>
-                            <div style="font-size: 0.9rem; line-height: 1.5; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                                <span style="color: var(--text-muted); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; min-width: 70px;">담당 강사</span>
-                                <span style="color: var(--border-color); font-size: 0.85rem;">|</span>
-                                <span id="course-instructor" style="color: var(--text-primary); font-weight: 600;">차은정 대표</span>
+                        <div class="info-card">
+                            <i class="fa-solid fa-user-tie"></i>
+                            <div class="info-card-text">
+                                <span>담당 강사</span>
+                                <p id="course-instructor">차은정 대표</p>
                             </div>
                         </div>
-
-                        <!-- 4. 교육 대상 -->
-                        <div id="course-target-container" style="display: none; align-items: center; gap: 0.75rem; background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 0.8rem 1.2rem; border-radius: 16px;">
-                            <i class="fa-solid fa-users" style="color: var(--color-it-end); font-size: 1.1rem; flex-shrink: 0; width: 20px; text-align: center;"></i>
-                            <div style="font-size: 0.9rem; line-height: 1.5; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                                <span style="color: var(--text-muted); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; min-width: 70px;">교육 대상</span>
-                                <span style="color: var(--border-color); font-size: 0.85rem;">|</span>
-                                <span id="course-target" style="color: var(--text-primary); font-weight: 600;">기획자, PM 지망생 등</span>
-                            </div>
+                    </div>
+                    
+                    <!-- Education Target Block -->
+                    <div id="course-target-container" style="display: none; align-items: center; gap: 0.75rem; background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 0.8rem 1.2rem; border-radius: 16px; margin-top: -0.85rem;">
+                        <i class="fa-solid fa-users" style="color: var(--color-it-end); font-size: 1.1rem; flex-shrink: 0;"></i>
+                        <div style="font-size: 0.9rem; line-height: 1.5; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                            <span style="color: var(--text-muted); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;">교육 대상</span>
+                            <span style="color: var(--border-color); font-size: 0.85rem;">|</span>
+                            <span id="course-target" style="color: var(--text-primary); font-weight: 600;">기획자, PM 지망생 등</span>
                         </div>
                     </div>
                 </div>
