@@ -389,7 +389,7 @@
                     schedule: (existingCourse && existingCourse.schedule) || '매주 토요일 (4주 완성)',
                     time: (existingCourse && existingCourse.time) || '10:00 - 13:00 (3시간)',
                     instructor: (existingCourse && existingCourse.instructor) || '차은정 대표',
-                    description: (existingCourse && existingCourse.description) || popupConfig.content || '공지사항으로 등록된 강좌 상세 내용입니다.',
+                    description: (existingCourse && existingCourse.description) || '',
                     curriculum: (existingCourse && existingCourse.curriculum) || [
                         { week: 'Week 1', title: 'PM 기초 및 프로젝트 범위(Scope) 설정', desc: '프로젝트 라이프사이클의 이해 WBS(작업분할구조도) 실습.' },
                         { week: 'Week 2', title: '프로젝트 일정 및 리스크 관리', desc: '의존성 분석을 통한 일정 네트워크 설계, 리스크 식별 및 정량/정성 평가 기법.' },
@@ -841,7 +841,7 @@
                 // 2. Update popupConfig if enabled
                 const isPopupEnabled = document.getElementById('popup-config-enabled').checked;
                 if (isPopupEnabled) {
-                    const contentVal = (contentInput && contentInput.value.trim()) || syncCourse.description || '강좌 공지사항입니다.';
+                    const contentVal = (contentInput && contentInput.value.trim()) || '강좌 공지사항입니다.';
                     const linkUrlVal = (linkUrlInput && linkUrlInput.value.trim()) || `project-contents.html?id=${id}`;
                     
                     popupConfig = {

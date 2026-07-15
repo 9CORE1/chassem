@@ -51,20 +51,62 @@
             }
         }
 
-        .course-banner {
-            width: 100%;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        .course-header-card {
+            display: grid;
+            grid-template-columns: 4fr 8fr;
+            gap: 2.5rem;
+            margin-bottom: 2.5rem;
+            background: var(--bg-secondary);
             border: 1px solid var(--border-color);
-            margin-bottom: 2rem;
-            aspect-ratio: 16 / 9;
+            padding: 2.5rem;
+            border-radius: 24px;
+            align-items: center;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
         }
 
-        .course-banner img {
+        @media (max-width: 992px) {
+            .course-header-card {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                padding: 1.5rem;
+            }
+            .course-header-banner {
+                max-width: 320px;
+                margin: 0 auto;
+            }
+        }
+
+        .course-header-banner {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .course-header-banner img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        .course-header-details {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            height: 100%;
+            justify-content: space-between;
+        }
+
+        .course-header-details .info-card-grid {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 1200px) {
+            .course-title-section h1 {
+                font-size: 2rem;
+            }
         }
 
         .course-title-section {
@@ -322,23 +364,19 @@
                 <i class="fa-solid fa-arrow-left"></i> <span>포트폴리오 홈으로 가기</span>
             </a>
 
-            <div class="course-title-section">
-                <span class="course-tag" id="course-tag">IT & PM 실무 특강</span>
-                <h1 id="course-title">프로젝트 관리(Project Management) 실무 마스터 과정</h1>
-            </div>
-
-            <!-- Course Banner Image -->
-            <div class="course-banner">
-                <img id="course-banner-img" src="images/project_management_banner.jpg" alt="프로젝트 관리 강좌 배너">
-            </div>
-
-            <!-- Course Grid Layout -->
-            <div class="course-grid">
-                
-                <!-- Left: Course Details -->
-                <div class="course-left">
+            <!-- Course Header Card (1:1 Banner & Meta Details) -->
+            <div class="course-header-card">
+                <!-- Left: 1:1 Aspect Ratio Banner -->
+                <div class="course-header-banner">
+                    <img id="course-banner-img" src="images/project_management_banner.jpg" alt="프로젝트 관리 강좌 배너">
+                </div>
+                <!-- Right: Title, Tag, and Course Schedule/Time/Instructor -->
+                <div class="course-header-details">
+                    <div class="course-title-section" style="margin-bottom: 0;">
+                        <span class="course-tag" id="course-tag">IT & PM 실무 특강</span>
+                        <h1 id="course-title">프로젝트 관리(Project Management) 실무 마스터 과정</h1>
+                    </div>
                     
-                    <!-- Quick Info -->
                     <div class="info-card-grid">
                         <div class="info-card">
                             <i class="fa-solid fa-calendar-days"></i>
@@ -362,6 +400,14 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Course Grid Layout -->
+            <div class="course-grid">
+                
+                <!-- Left: Course Details -->
+                <div class="course-left">
 
                     <!-- Course Description -->
                     <div class="course-content-block">
