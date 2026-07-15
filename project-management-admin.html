@@ -672,7 +672,7 @@
                         
                         <!-- Enabled -->
                         <div style="display: flex; align-items: center; gap: 0.5rem; background: var(--bg-tertiary); padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); width: fit-content;">
-                            <input type="checkbox" id="popup-config-enabled" ${isPopupActive ? 'checked' : ''} style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--color-career-end);">
+                            <input type="checkbox" id="popup-config-enabled" ${isPopupActive ? 'checked' : ''} onchange="handlePopupEnabledChange(this.checked)" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--color-career-end);">
                             <label for="popup-config-enabled" style="font-weight: 600; font-size: 0.95rem; color: var(--text-primary); cursor: pointer;">홈페이지 접속 시 이 강좌 팝업창 띄우기</label>
                         </div>
                         
@@ -862,6 +862,46 @@
             }
         };
 
+        window.handlePopupEnabledChange = function(checked) {
+            try {
+                const titleInput = document.getElementById('popup-config-title');
+                const contentInput = document.getElementById('popup-config-content');
+                const linkUrlInput = document.getElementById('popup-config-link-url');
+                
+                const id = editingCourseId || 'project-management';
+                
+                if (checked) {
+                    const titleVal = titleInput ? titleInput.value.trim() : '';
+                    const contentVal = contentInput ? contentInput.value.trim() : '';
+                    const linkUrlVal = linkUrlInput ? linkUrlInput.value.trim() : '';
+                    const previewImg = document.getElementById('course-banner-preview');
+                    const bannerUrl = (previewImg && (previewImg.src.startsWith('data:') || previewImg.src.startsWith('images/') || previewImg.src.startsWith('http'))) ? previewImg.src : 'images/project_management_banner.jpg';
+                    
+                    popupConfig = {
+                        enabled: true,
+                        title: titleVal || '공지사항',
+                        content: contentVal || '강좌 공지사항입니다.',
+                        imageUrl: bannerUrl,
+                        linkUrl: linkUrlVal || `project-contents.html?id=${id}`,
+                        linkProjectId: id
+                    };
+                } else {
+                    if (popupConfig) {
+                        popupConfig.enabled = false;
+                    } else {
+                        popupConfig = { enabled: false };
+                    }
+                }
+                
+                safeSaveToLocalStorage('popupConfig', popupConfig);
+                safeSaveToLocalStorage('hasUnsavedChanges', 'true');
+                
+                saveAllData('silent');
+            } catch (err) {
+                console.error('handlePopupEnabledChange 오류:', err);
+            }
+        };
+
         window.deleteCourse = function(courseId) {
             if (coursesData.length <= 1) {
                 alert('최소 1개 이상의 강좌가 유지되어야 하므로 이 강좌를 삭제할 수 없습니다.');
@@ -944,7 +984,9 @@
                 return res.json();
             })
             .then(result => {
-                alert(successMsg || '강좌 데이터가 성공적으로 저장되었습니다.');
+                if (successMsg !== 'silent') {
+                    alert(successMsg || '강좌 데이터가 성공적으로 저장되었습니다.');
+                }
                 safeSaveToLocalStorage('hasUnsavedChanges', 'false');
                 const banner = document.getElementById('unsaved-warning-banner');
                 if (banner) banner.remove();
@@ -961,7 +1003,9 @@
             })
             .catch(err => {
                 console.warn('서버 저장 실패 (오프라인 혹은 정적 호스팅 환경일 수 있습니다):', err);
-                alert('강좌 데이터가 로컬 브라우저에 임시 저장되었습니다.\n\n⚠️ 중요: 변경 내용을 최종 반영하려면 상단 배너의 "서버 업데이트" 단추를 클릭해 주세요!');
+                if (successMsg !== 'silent') {
+                    alert('강좌 데이터가 로컬 브라우저에 임시 저장되었습니다.\n\n⚠️ 중요: 변경 내용을 최종 반영하려면 상단 배너의 "서버 업데이트" 단추를 클릭해 주세요!');
+                }
                 safeSaveToLocalStorage('hasUnsavedChanges', 'true');
                 showUnsavedWarningBanner();
                 loadApplicantsAndRender();
