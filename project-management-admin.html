@@ -784,10 +784,10 @@
                                 </div>
                             </div>
                             
-                            <!-- 세부내용 텍스트 -->
+                            <!-- 기타 사항 텍스트 -->
                             <div>
-                                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">세부내용 텍스트</label>
-                                <textarea id="course-detail-text" rows="4" placeholder="강좌 세부소개 내용을 입력하세요." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-family: inherit; resize: vertical;" required>${c.description || ''}</textarea>
+                                <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">기타 사항 텍스트</label>
+                                <textarea id="course-detail-text" rows="4" placeholder="기타 안내 사항을 입력하세요." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-family: inherit; resize: vertical;" required>${c.description || ''}</textarea>
                             </div>
                             
                             <!-- 커리큘럼 편집 영역 -->
@@ -837,7 +837,7 @@
                     return;
                 }
                 if (!detailTextInput || !detailTextInput.value.trim()) {
-                    alert('강좌 세부내용 텍스트를 입력해 주세요.');
+                    alert('강좌 기타 사항 텍스트를 입력해 주세요.');
                     return;
                 }
 
