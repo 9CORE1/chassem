@@ -536,6 +536,14 @@
                 }
             }
             
+            // 미동기화 로컬 변경사항이 있다면 우선 복원
+            const hasUnsaved = localStorage.getItem('hasUnsavedChanges') === 'true';
+            if (hasUnsaved) {
+                console.log('로컬에 저장된 미동기화 변경사항을 복원하여 렌더링합니다.');
+                loadFromLocal(courseId);
+                return;
+            }
+            
             fetch('data.json?t=' + Date.now())
                 .then(res => {
                     if (!res.ok) throw new Error('서버 데이터 로드 실패');
