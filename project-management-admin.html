@@ -803,14 +803,16 @@
                     bannerUrl = await compressImageToJpeg(bannerFileInput.files[0]);
                 } else {
                     const previewImg = document.getElementById('course-banner-preview');
-                    bannerUrl = (previewImg && (previewImg.src.startsWith('data:') || previewImg.src.startsWith('images/') || previewImg.src.startsWith('http'))) ? previewImg.src : 'images/project_management_banner.jpg';
+                    const srcAttr = previewImg ? previewImg.getAttribute('src') : null;
+                    bannerUrl = (srcAttr && (srcAttr.startsWith('data:') || srcAttr.startsWith('images/') || srcAttr.startsWith('http'))) ? srcAttr : 'images/project_management_banner.jpg';
                 }
 
                 if (detailFileInput && detailFileInput.files && detailFileInput.files[0]) {
                     detailImageUrl = await compressImageToJpeg(detailFileInput.files[0]);
                 } else {
                     const detailPreviewImg = document.getElementById('course-detail-preview');
-                    detailImageUrl = (detailPreviewImg && (detailPreviewImg.src.startsWith('data:') || detailPreviewImg.src.startsWith('images/') || detailPreviewImg.src.startsWith('http'))) ? detailPreviewImg.src : '';
+                    const srcAttr = detailPreviewImg ? detailPreviewImg.getAttribute('src') : null;
+                    detailImageUrl = (srcAttr && (srcAttr.startsWith('data:') || srcAttr.startsWith('images/') || srcAttr.startsWith('http'))) ? srcAttr : '';
                 }
 
                 const tagInput = document.getElementById('course-tag');
