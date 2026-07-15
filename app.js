@@ -2904,7 +2904,11 @@ window.updateServerGithub = function() {
                         });
                     })
                     .then(res => {
-                        if (!res.ok) throw new Error(`GitHub 팝업 이미지 업로드 실패 (코드: ${res.status})`);
+                        if (!res.ok) {
+                            return res.text().then(text => {
+                                throw new Error(`GitHub 팝업 이미지 업로드 실패 (코드: ${res.status}, 사유: ${text})`);
+                            });
+                        }
                         popupConfig.imageUrl = `images/popup-image.jpg`;
                         safeSaveToLocalStorage('popupConfig', popupConfig);
                     });
