@@ -405,10 +405,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function loadDataAndInit() {
-    // 기존 팝업 설정 정보 삭제 및 비활성화 초기화
-    localStorage.removeItem('popupConfig');
-    popupConfig = { enabled: false, title: '', content: '', imageUrl: '', linkUrl: '', linkProjectId: '' };
-
     const hasUnsaved = localStorage.getItem('hasUnsavedChanges') === 'true';
     
     if (hasUnsaved) {
@@ -452,7 +448,7 @@ function loadDataAndInit() {
             portfolioData = data.portfolioData;
             journeyData = data.journeyData;
             competenciesData = data.competenciesData;
-            popupConfig = { enabled: false, title: '', content: '', imageUrl: '', linkUrl: '', linkProjectId: '' };
+            popupConfig = data.popupConfig || { enabled: false, title: '', content: '', imageUrl: '', linkUrl: '', linkProjectId: '' };
             if (data.coursesData && Array.isArray(data.coursesData) && data.coursesData.length > 0) {
                 coursesData = data.coursesData;
             } else if (data.courseConfig) {
@@ -490,7 +486,9 @@ function loadDataAndInit() {
                     portfolioData = JSON.parse(localPortfolio);
                     journeyData = JSON.parse(localJourney);
                     competenciesData = JSON.parse(localCompetencies);
-                    popupConfig = { enabled: false, title: '', content: '', imageUrl: '', linkUrl: '', linkProjectId: '' };
+                    if (localPopup) {
+                        popupConfig = JSON.parse(localPopup);
+                    }
                     if (localCourses) {
                         coursesData = JSON.parse(localCourses);
                         courseConfig = coursesData[0];
@@ -3107,7 +3105,6 @@ window.downloadUploadedDataJson = function() {
 // ==========================================================================
 
 function checkAndShowPopup() {
-    return; // 팝업창 기능 완전히 비활성화
     if (!popupConfig || !popupConfig.enabled) return;
     
     // Check local storage for "today hide" timestamp
