@@ -101,22 +101,13 @@
 
         .course-header-details .info-card-grid {
             margin-bottom: 0;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
         }
 
         .course-header-details .info-card {
             padding: 0.8rem 1rem;
             gap: 0.75rem;
             max-width: 220px;
-        }
-
-        @media (max-width: 1100px) {
-            .course-header-details .info-card-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .course-header-details .info-card {
-                max-width: 100%;
-            }
         }
 
         .course-header-details .info-card-text p {
@@ -429,12 +420,15 @@
                                 <p id="course-instructor">차은정 대표</p>
                             </div>
                         </div>
-                        <div class="info-card" id="course-target-card" style="display: none;">
-                            <i class="fa-solid fa-users"></i>
-                            <div class="info-card-text">
-                                <span>교육 대상</span>
-                                <p id="course-target">기획자, PM 지망생 등</p>
-                            </div>
+                    </div>
+                    
+                    <!-- Education Target Block -->
+                    <div id="course-target-container" style="display: none; align-items: center; gap: 0.75rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); padding: 0.8rem 1.2rem; border-radius: 12px; margin-top: -0.25rem;">
+                        <i class="fa-solid fa-users" style="color: var(--color-it-end); font-size: 1.1rem; flex-shrink: 0;"></i>
+                        <div style="font-size: 0.9rem; line-height: 1.5; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                            <span style="color: var(--text-muted); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;">교육 대상</span>
+                            <span style="color: var(--border-color); font-size: 0.85rem;">|</span>
+                            <span id="course-target" style="color: var(--text-primary); font-weight: 600;">기획자, PM 지망생 등</span>
                         </div>
                     </div>
                 </div>
@@ -716,14 +710,14 @@
             if (config.instructor) document.getElementById('course-instructor').textContent = config.instructor;
             if (config.target) {
                 const targetText = document.getElementById('course-target');
-                const targetCard = document.getElementById('course-target-card');
-                if (targetText && targetCard) {
+                const targetContainer = document.getElementById('course-target-container');
+                if (targetText && targetContainer) {
                     targetText.textContent = config.target;
-                    targetCard.style.display = 'flex';
+                    targetContainer.style.display = 'flex';
                 }
             } else {
-                const targetCard = document.getElementById('course-target-card');
-                if (targetCard) targetCard.style.display = 'none';
+                const targetContainer = document.getElementById('course-target-container');
+                if (targetContainer) targetContainer.style.display = 'none';
             }
             if (config.description) document.getElementById('course-description').textContent = config.description;
 
