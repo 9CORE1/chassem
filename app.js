@@ -4,7 +4,8 @@
 const EMAILJS_CONFIG = {
     publicKey: 'aXXhO0m1M7H5nSE-P',         // EmailJS Public Key (e.g. 'your_public_key')
     serviceId: 'service_d002zti',         // EmailJS Service ID (e.g. 'service_xxxxxxx')
-    templateId: 'template_kayxrhq',        // EmailJS Template ID (e.g. 'template_xxxxxxx')
+    templateId: 'template_kayxrhq',        // EmailJS Template ID (관리자 인증 메일용)
+    contactTemplateId: 'your_contact_template_id', // EmailJS Template ID (제출 완료 안내 메일용 - 수정 필요)
     allowedEmails: ['teacha99@gmail.com', 'jjung9935@naver.com'] // Authorized admin emails
 };
 
@@ -1577,14 +1578,43 @@ function setupContactForm() {
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<span>메시지 전송 중...</span> <i class="fa-solid fa-spinner fa-spin"></i>';
 
+        // EmailJS 발송 헬퍼 함수
+        const sendEmailJS = () => {
+            const isConfigured = EMAILJS_CONFIG.publicKey && EMAILJS_CONFIG.serviceId && EMAILJS_CONFIG.contactTemplateId;
+            if (isConfigured && EMAILJS_CONFIG.contactTemplateId !== 'your_contact_template_id') {
+                const templateParams = {
+                    to_email: email,
+                    to_name: name,
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    subject: subject,
+                    message: message
+                };
+                return emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.contactTemplateId, templateParams)
+                    .then(() => {
+                        console.log('EmailJS 문의 접수 메일 발송 완료');
+                    })
+                    .catch((error) => {
+                        console.error('EmailJS 문의 접수 메일 발송 실패:', error);
+                    });
+            } else {
+                console.log('[EmailJS 시뮬레이션] 문의 접수 메일 발송 완료!');
+                console.log(`수신자: ${email}, 이름: ${name}, 제목: ${subject}`);
+                return Promise.resolve();
+            }
+        };
+
         // If Google Apps Script URL is not set, fallback to Mockup
         if (!APPS_SCRIPT_URL) {
             console.log('Google Apps Script URL이 설정되지 않아 모의(Mock) 전송을 실행합니다.');
             setTimeout(() => {
                 alert(`감사합니다, ${name}님! 메시지가 성공적으로 전달되었습니다.\n(작성하신 이메일: ${email} 또는 연락처: ${phone || '없음'}로 빠른 시일 내에 연락드리겠습니다.)`);
-                form.reset();
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<span>메시지 전송하기</span> <i class="fa-solid fa-paper-plane"></i>';
+                sendEmailJS().finally(() => {
+                    form.reset();
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<span>메시지 전송하기</span> <i class="fa-solid fa-paper-plane"></i>';
+                });
             }, 1500);
             return;
         }
@@ -1604,6 +1634,9 @@ function setupContactForm() {
         })
             .then(() => {
                 alert(`감사합니다, ${name}님! 문의 내용이 Google 스프레드시트에 성공적으로 기록되었습니다.`);
+                return sendEmailJS();
+            })
+            .then(() => {
                 form.reset();
             })
             .catch(error => {
