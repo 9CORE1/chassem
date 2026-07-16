@@ -563,7 +563,7 @@
                         </div>
 
                         <!-- Success Animation -->
-                        <div id="success-container" class="success-animation">
+                        <div id="success-container" class="success-animation" style="display: none;">
                             <i class="fa-solid fa-circle-check"></i>
                             <h3>수강 신청 완료!</h3>
                             <p style="margin-top: 0.5rem; color: var(--text-secondary); line-height: 1.6;">
@@ -587,13 +587,30 @@
         <p>&copy; 2026 Cha Eun-jung. All rights reserved.</p>
     </footer>
 
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
     <!-- Form Script -->
     <script>
+        // ==========================================================================
+        // EmailJS 설정 정보 (수강 신청서 접수 완료 알림 메일 발송용)
+        // ==========================================================================
+        const EMAILJS_CONFIG = {
+            publicKey: 'aXXhO0m1M7H5nSE-P',
+            serviceId: 'service_d002zti',
+            contactTemplateId: 'template_r1e9i3d'
+        };
+
+        // EmailJS 초기화
+        if (EMAILJS_CONFIG.publicKey) {
+            emailjs.init(EMAILJS_CONFIG.publicKey);
+        }
+
         // ==========================================================================
         // 수강 신청서 전용 Google Apps Script Web App URL 설정
         // (별도 구성하신 수강신청용 Apps Script 웹앱 배포 URL을 아래에 입력하시면 됩니다.)
         // ==========================================================================
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxW34SwoGNyqM6NaNXrfzTu17UlsV-mfjLPqle7-0-fItTpmPtxuylLGJ07-k332524kA/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw34SwoGNyqM6NaNXrfzTu17UlsV-mfjLPqle7-0-fItTpmPtxuylLGJ07-k332524kA/exec';
 
         document.getElementById('apply-form').addEventListener('submit', function (e) {
             e.preventDefault();
@@ -637,9 +654,78 @@
                 });
             };
 
+            // EmailJS 발송 헬퍼 함수
+            const sendEmailJS = () => {
+                const isConfigured = EMAILJS_CONFIG.publicKey && EMAILJS_CONFIG.serviceId && EMAILJS_CONFIG.contactTemplateId;
+                if (isConfigured) {
+                    const templateParams = {
+                        to_email: email,
+                        to_name: name,
+                        name: name,
+                        email: email,
+                        phone: phone,
+                        subject: course,
+                        message: message
+                    };
+                    return emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.contactTemplateId, templateParams)
+                        .then(() => {
+                            console.log('EmailJS 수강 신청 완료 메일 전송 성공');
+                        })
+                        .catch((error) => {
+                            console.error('EmailJS 수강 신청 완료 메일 전송 실패:', error);
+                        });
+                }
+                return Promise.resolve();
+            };
+
             // 1. 서버 저장 시도 (Node.js 실행 환경)
             fetch('/api/apply', {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error('서버 저장 실패');
+                    return res.json();
+                })
+                .then(() => {
+                    return sendToAppsScript();
+                })
+                .then(() => {
+                    return sendEmailJS();
+                })
+                .then(() => {
+                    showSuccess();
+                })
+                .catch(err => {
+                    console.warn('서버 저장 실패, 구글 시트 전송 및 로컬 백업을 수행합니다:', err);
+
+                    // 2. 구글 시트 직접 전송 시도
+                    sendToAppsScript()
+                        .then(() => {
+                            return sendEmailJS();
+                        })
+                        .then(() => {
+                            // 정적 호스팅 환경일 경우 브라우저에 임시 누적 저장
+                            try {
+                                let localApps = JSON.parse(localStorage.getItem('courseApplications') || '[]');
+                                localApps.push(payload);
+                                localStorage.setItem('courseApplications', JSON.stringify(localApps));
+                            } catch (e) {
+                                console.error('로컬스토리지 백업 실패:', e);
+                            }
+                            showSuccess();
+                        })
+                        .catch(e => {
+                            console.error('구글 시트 전송 실패:', e);
+                            alert('신청서 제출에 실패했습니다. 다시 시도해 주세요.');
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = '수강 신청서 제출하기 <i class="fa-solid fa-paper-plane" style="margin-left: 0.4rem;"></i>';
+                        });
+                });
+        });ST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
