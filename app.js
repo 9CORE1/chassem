@@ -5,7 +5,7 @@ const EMAILJS_CONFIG = {
     publicKey: 'aXXhO0m1M7H5nSE-P',         // EmailJS Public Key (e.g. 'your_public_key')
     serviceId: 'service_d002zti',         // EmailJS Service ID (e.g. 'service_xxxxxxx')
     templateId: 'template_kayxrhq',        // EmailJS Template ID (관리자 인증 메일용)
-    contactTemplateId: 'your_contact_template_id', // EmailJS Template ID (제출 완료 안내 메일용 - 수정 필요)
+    contactTemplateId: 'template_r1e9i3d', // EmailJS Template ID (제출 완료 안내 메일용 - 수정 필요)
     allowedEmails: ['teacha99@gmail.com', 'jjung9935@naver.com'] // Authorized admin emails
 };
 
