@@ -622,9 +622,8 @@
             params.append('name', name);
             params.append('phone', phone);
             params.append('email', email);
-            params.append('subject', `[수강 신청] ${course}`);
+            params.append('subject', course); // raw 강좌명을 subject 키로 전달
             params.append('message', message);
-            params.append('course', course);
 
             const sendToAppsScript = () => {
                 if (!APPS_SCRIPT_URL) {
