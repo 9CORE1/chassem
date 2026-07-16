@@ -4,7 +4,7 @@
 const EMAILJS_CONFIG = {
     publicKey: 'aXXhO0m1M7H5nSE-P',         // EmailJS Public Key (e.g. 'your_public_key')
     serviceId: 'service_d002zti',         // EmailJS Service ID (e.g. 'service_xxxxxxx')
-    templateId: 'template_r1e9i3d',        // EmailJS Template ID (e.g. 'template_xxxxxxx')
+    templateId: 'template_kayxrhq',        // EmailJS Template ID (e.g. 'template_xxxxxxx')
     allowedEmails: ['teacha99@gmail.com', 'jjung9935@naver.com'] // Authorized admin emails
 };
 
@@ -329,28 +329,28 @@ function initApp() {
 function renderPortfolioGrid(filter = 'all') {
     const grid = document.getElementById('portfolio-grid');
     if (!grid) return;
-    
+
     grid.innerHTML = '';
-    
-    const filteredData = filter === 'all' 
-        ? portfolioData 
+
+    const filteredData = filter === 'all'
+        ? portfolioData
         : portfolioData.filter(item => item.category === filter);
-        
+
     filteredData.forEach(item => {
         const card = document.createElement('article');
         card.className = 'portfolio-card glass-panel reveal-on-scroll active';
         card.style.position = 'relative';
         card.setAttribute('data-id', item.id);
         card.style.setProperty('--card-accent', item.accentColor);
-        
+
         let catName = '기타';
         let catClass = '';
         if (item.category === 'career') { catName = '취업진로'; catClass = 'text-career'; }
         else if (item.category === 'media') { catName = '영상콘텐츠'; catClass = 'text-media'; }
         else if (item.category === 'it') { catName = 'IT 미래기술'; catClass = 'text-it'; }
-        
+
         card.style.setProperty('--card-accent-color', `var(--color-${item.category}-end)`);
-        
+
         let adminBtns = '';
         if (isAdminMode) {
             adminBtns = `
@@ -360,7 +360,7 @@ function renderPortfolioGrid(filter = 'all') {
                 </div>
             `;
         }
-        
+
         card.innerHTML = `
             ${adminBtns}
             <div class="portfolio-card-content">
@@ -380,11 +380,11 @@ function renderPortfolioGrid(filter = 'all') {
                 </div>
             </div>
         `;
-        
+
         card.addEventListener('click', () => {
             openDetailsModal(item.id);
         });
-        
+
         grid.appendChild(card);
     });
 }
@@ -396,13 +396,13 @@ function renderPortfolioGrid(filter = 'all') {
 function renderTimeline(filter = 'career') {
     const container = document.getElementById('timeline-container');
     if (!container) return;
-    
+
     container.innerHTML = '';
-    
+
     const filteredData = filter === 'all'
         ? journeyData
         : journeyData.filter(item => item.category === filter);
-        
+
     // Sort timeline items chronologically (descending), newest first.
     const sortedData = [...filteredData].sort((a, b) => {
         const getSortableValue = (periodStr) => {
@@ -414,17 +414,17 @@ function renderTimeline(filter = 'career') {
         };
         return getSortableValue(b.period) - getSortableValue(a.period);
     });
-    
+
     sortedData.forEach((item, index) => {
         const itemEl = document.createElement('div');
         // Alternating sides: left or right
         const side = index % 2 === 0 ? 'left' : 'right';
         itemEl.className = `timeline-item ${side}`;
-        
+
         let catName = '';
         let categoryClass = '';
         let accentColor = '';
-        
+
         if (item.category === 'education') {
             catName = '학력사항';
             categoryClass = 'it';
@@ -438,10 +438,10 @@ function renderTimeline(filter = 'career') {
             categoryClass = 'media';
             accentColor = 'var(--color-media-end)';
         }
-        
+
         itemEl.style.setProperty('--dot-accent', accentColor);
         itemEl.style.setProperty('--timeline-accent', accentColor);
-        
+
         let adminBtns = '';
         if (isAdminMode) {
             adminBtns = `
@@ -451,7 +451,7 @@ function renderTimeline(filter = 'career') {
                 </div>
             `;
         }
-        
+
         itemEl.innerHTML = `
             <div class="timeline-dot"></div>
             <div class="timeline-content-wrapper">
@@ -464,7 +464,7 @@ function renderTimeline(filter = 'career') {
                 </div>
             </div>
         `;
-        
+
         container.appendChild(itemEl);
     });
 }
@@ -484,17 +484,17 @@ function setupFilters() {
         btn.addEventListener('click', (e) => {
             // Remove active class from all
             filters.forEach(f => f.classList.remove('active'));
-            
+
             // Add active to clicked
             btn.classList.add('active');
-            
+
             const filterValue = btn.getAttribute('data-filter');
-            
+
             // Re-render grid with transition
             const grid = document.getElementById('portfolio-grid');
             grid.style.opacity = '0';
             grid.style.transform = 'translateY(10px)';
-            
+
             setTimeout(() => {
                 renderPortfolioGrid(filterValue);
                 grid.style.opacity = '1';
@@ -504,26 +504,26 @@ function setupFilters() {
             }, 300);
         });
     });
-    
+
     // Journey (Timeline) filters
     const jFilters = document.querySelectorAll('#journey-filters .filter-btn');
     jFilters.forEach(btn => {
         btn.addEventListener('click', (e) => {
             // Remove active class from all
             jFilters.forEach(f => f.classList.remove('active'));
-            
+
             // Add active to clicked
             btn.classList.add('active');
-            
+
             const filterValue = btn.getAttribute('data-filter');
-            
+
             // Re-render timeline with transition
             const container = document.getElementById('timeline-container');
             if (container) {
                 container.style.opacity = '0';
                 container.style.transform = 'translateY(10px)';
                 container.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-                
+
                 setTimeout(() => {
                     renderTimeline(filterValue);
                     container.style.opacity = '1';
@@ -542,14 +542,14 @@ function setupFilters() {
 function setupModal() {
     const modal = document.getElementById('details-modal');
     if (!modal) return;
-    
+
     // Close on overlay click
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             closeModal();
         }
     });
-    
+
     // Close on escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && modal.classList.contains('active')) {
@@ -562,21 +562,21 @@ function openDetailsModal(id) {
     const modal = document.getElementById('details-modal');
     const container = document.getElementById('modal-content-container');
     if (!modal || !container) return;
-    
+
     const item = portfolioData.find(d => d.id === id);
     if (!item) return;
-    
+
     let catName = '기타';
     if (item.category === 'career') catName = '취업진로';
     else if (item.category === 'media') catName = '영상콘텐츠';
     else if (item.category === 'it') catName = 'IT 미래기술';
-    
+
     // Setup modal specific CSS values dynamically
     container.style.setProperty('--modal-accent', item.accentColor);
     container.style.setProperty('--modal-accent-color', `var(--color-${item.category}-end)`);
     container.style.setProperty('--modal-accent-alpha', item.accentBg);
     container.style.setProperty('--modal-accent-border', item.accentBorder);
-    
+
     container.innerHTML = `
         <button class="modal-close-btn" id="modal-close-btn" aria-label="닫기">
             <i class="fa-solid fa-xmark"></i>
@@ -616,10 +616,10 @@ function openDetailsModal(id) {
             </div>
         </div>
     `;
-    
+
     // Bind close button event
     container.querySelector('#modal-close-btn').addEventListener('click', closeModal);
-    
+
     // Open modal
     modal.classList.add('active');
     modal.setAttribute('aria-hidden', 'false');
@@ -629,7 +629,7 @@ function openDetailsModal(id) {
 function closeModal() {
     const modal = document.getElementById('details-modal');
     if (!modal) return;
-    
+
     modal.classList.remove('active');
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = ''; // Unlock scroll
@@ -642,17 +642,17 @@ function closeModal() {
 function setupThemeToggle() {
     const toggleBtn = document.getElementById('theme-toggle');
     if (!toggleBtn) return;
-    
+
     // Check local storage setting or system preferences
     const savedTheme = localStorage.getItem('theme');
     const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-    
+
     if (savedTheme === 'light' || (!savedTheme && prefersLight)) {
         enableLightMode();
     } else {
         enableDarkMode();
     }
-    
+
     toggleBtn.addEventListener('click', () => {
         if (document.body.classList.contains('light-mode')) {
             enableDarkMode();
@@ -660,14 +660,14 @@ function setupThemeToggle() {
             enableLightMode();
         }
     });
-    
+
     function enableLightMode() {
         document.body.classList.remove('dark-mode');
         document.body.classList.add('light-mode');
         toggleBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
         localStorage.setItem('theme', 'light');
     }
-    
+
     function enableDarkMode() {
         document.body.classList.remove('light-mode');
         document.body.classList.add('dark-mode');
@@ -684,13 +684,13 @@ function setupMobileMenu() {
     const btn = document.getElementById('mobile-menu-btn');
     const nav = document.getElementById('nav-menu');
     if (!btn || !nav) return;
-    
+
     btn.addEventListener('click', (e) => {
         e.stopPropagation();
         btn.classList.toggle('active');
         nav.classList.toggle('active');
     });
-    
+
     // Close menu when link clicked
     const links = nav.querySelectorAll('.nav-link');
     links.forEach(link => {
@@ -699,7 +699,7 @@ function setupMobileMenu() {
             nav.classList.remove('active');
         });
     });
-    
+
     // Close menu when clicking outside
     document.addEventListener('click', (e) => {
         if (nav.classList.contains('active') && !nav.contains(e.target) && e.target !== btn) {
@@ -723,7 +723,7 @@ function setupScrollEffects() {
             header.classList.remove('scrolled');
         }
     });
-    
+
     // Intersection Observer for scroll animation reveals
     const reveals = document.querySelectorAll('.reveal-on-scroll');
     const revealObserver = new IntersectionObserver((entries, observer) => {
@@ -737,13 +737,13 @@ function setupScrollEffects() {
         threshold: 0.15,
         rootMargin: '0px 0px -50px 0px'
     });
-    
+
     reveals.forEach(el => revealObserver.observe(el));
-    
+
     // Highlight active link on scroll
     const sections = document.querySelectorAll('section');
     const navLinks = document.querySelectorAll('.nav-link');
-    
+
     window.addEventListener('scroll', () => {
         let currentSection = '';
         sections.forEach(section => {
@@ -752,7 +752,7 @@ function setupScrollEffects() {
                 currentSection = section.getAttribute('id');
             }
         });
-        
+
         navLinks.forEach(link => {
             link.classList.remove('active');
             if (link.getAttribute('href') === `#${currentSection}`) {
@@ -825,21 +825,21 @@ function setupFloatingNavigator() {
 function setupContactForm() {
     const form = document.getElementById('contact-form');
     if (!form) return;
-    
+
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        
+
         const name = document.getElementById('form-name').value;
         const email = document.getElementById('form-email').value;
         const subject = document.getElementById('form-subject').value;
         const message = document.getElementById('form-message').value;
-        
+
         const submitBtn = document.getElementById('btn-submit');
-        
+
         // Visual indicator for sending state
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<span>메시지 전송 중...</span> <i class="fa-solid fa-spinner fa-spin"></i>';
-        
+
         // Mock API Request Delay
         setTimeout(() => {
             alert(`감사합니다, ${name}님! 메시지가 성공적으로 전달되었습니다.\n(작성하신 이메일: ${email}로 빠른 시일 내에 연락드리겠습니다.)`);
@@ -870,7 +870,7 @@ function setupAdminMode() {
     const adminBanner = document.getElementById('admin-banner');
     const adminPortfolioActions = document.getElementById('admin-portfolio-actions');
     const adminJourneyActions = document.getElementById('admin-journey-actions');
-    
+
     const savedAdmin = sessionStorage.getItem('isAdminMode') === 'true';
     if (savedAdmin) {
         isAdminMode = true;
@@ -882,27 +882,27 @@ function setupAdminMode() {
         if (adminPortfolioActions) adminPortfolioActions.style.display = 'block';
         if (adminJourneyActions) adminJourneyActions.style.display = 'block';
         document.body.classList.add('admin-active');
-        
+
         // Re-render to show admin actions on page load
         renderCompetencies();
         renderPortfolioGrid();
         renderTimeline(getActiveJourneyFilter());
     }
-    
+
     if (adminToggle) {
         adminToggle.addEventListener('click', () => {
             if (isAdminMode) {
                 // Log out directly
                 isAdminMode = false;
                 sessionStorage.removeItem('isAdminMode');
-                
+
                 adminToggle.classList.remove('active');
                 adminToggle.innerHTML = '<i class="fa-solid fa-lock"></i>';
                 if (adminBanner) adminBanner.style.display = 'none';
                 if (adminPortfolioActions) adminPortfolioActions.style.display = 'none';
                 if (adminJourneyActions) adminJourneyActions.style.display = 'none';
                 document.body.classList.remove('admin-active');
-                
+
                 renderCompetencies();
                 renderPortfolioGrid();
                 renderTimeline(getActiveJourneyFilter());
@@ -912,7 +912,7 @@ function setupAdminMode() {
             }
         });
     }
-    
+
     const closeAdminBtn = document.getElementById('btn-close-admin-modal');
     if (closeAdminBtn) {
         closeAdminBtn.addEventListener('click', closeAdminModal);
@@ -923,22 +923,22 @@ function setupAdminMode() {
     if (closeAuthBtn) {
         closeAuthBtn.addEventListener('click', closeAuthModal);
     }
-    
+
     const sendCodeBtn = document.getElementById('btn-send-code');
     if (sendCodeBtn) {
         sendCodeBtn.addEventListener('click', sendVerificationCode);
     }
-    
+
     const resendCodeBtn = document.getElementById('btn-resend-code');
     if (resendCodeBtn) {
         resendCodeBtn.addEventListener('click', sendVerificationCode);
     }
-    
+
     const verifyCodeBtn = document.getElementById('btn-verify-code');
     if (verifyCodeBtn) {
         verifyCodeBtn.addEventListener('click', verifyAuthCode);
     }
-    
+
     const emailInput = document.getElementById('auth-email-input');
     if (emailInput) {
         emailInput.addEventListener('keydown', (e) => {
@@ -947,7 +947,7 @@ function setupAdminMode() {
             }
         });
     }
-    
+
     const codeInput = document.getElementById('auth-code-input');
     if (codeInput) {
         codeInput.addEventListener('keydown', (e) => {
@@ -956,7 +956,7 @@ function setupAdminMode() {
             }
         });
     }
-    
+
     const authOverlay = document.getElementById('admin-auth-modal');
     if (authOverlay) {
         authOverlay.addEventListener('click', (e) => {
@@ -975,9 +975,9 @@ function openAuthModal() {
     const emailErrorMsg = document.getElementById('auth-email-error-msg');
     const emailInput = document.getElementById('auth-email-input');
     const input = document.getElementById('auth-code-input');
-    
+
     if (!modal) return;
-    
+
     stepSend.style.display = 'block';
     stepVerify.style.display = 'none';
     if (errorMsg) errorMsg.style.display = 'none';
@@ -987,16 +987,16 @@ function openAuthModal() {
         emailInput.disabled = false;
     }
     if (input) input.value = '';
-    
+
     if (authTimerInterval) {
         clearInterval(authTimerInterval);
         authTimerInterval = null;
     }
-    
+
     modal.classList.add('active');
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
-    
+
     if (emailInput) {
         setTimeout(() => emailInput.focus(), 100);
     }
@@ -1005,11 +1005,11 @@ function openAuthModal() {
 function closeAuthModal() {
     const modal = document.getElementById('admin-auth-modal');
     if (!modal) return;
-    
+
     modal.classList.remove('active');
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
-    
+
     if (authTimerInterval) {
         clearInterval(authTimerInterval);
         authTimerInterval = null;
@@ -1020,12 +1020,12 @@ function sendVerificationCode() {
     const emailInput = document.getElementById('auth-email-input');
     const emailErrorMsg = document.getElementById('auth-email-error-msg');
     if (!emailInput) return;
-    
+
     const enteredEmail = emailInput.value.trim().toLowerCase();
-    
+
     // Check if email is in allowed list
     const isAllowed = EMAILJS_CONFIG.allowedEmails.some(email => email.trim().toLowerCase() === enteredEmail);
-    
+
     if (!isAllowed) {
         if (emailErrorMsg) {
             emailErrorMsg.style.display = 'block';
@@ -1038,14 +1038,14 @@ function sendVerificationCode() {
             emailErrorMsg.style.display = 'none';
         }
     }
-    
+
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     generatedAuthCode = code;
     authCodeExpiry = Date.now() + 3 * 60 * 1000; // 3 minutes expiration
-    
+
     const sendBtn = document.getElementById('btn-send-code');
     const resendBtn = document.getElementById('btn-resend-code');
-    
+
     if (sendBtn) {
         sendBtn.disabled = true;
         sendBtn.innerHTML = '발송 중... <i class="fa-solid fa-spinner fa-spin"></i>';
@@ -1053,17 +1053,17 @@ function sendVerificationCode() {
     if (resendBtn) {
         resendBtn.disabled = true;
     }
-    
+
     emailInput.disabled = true; // Lock the email input during verification
-    
+
     const templateParams = {
         to_email: enteredEmail,
         to_name: '관리자',
-        code: code
+        auth_code: code
     };
-    
+
     const isConfigured = EMAILJS_CONFIG.publicKey && EMAILJS_CONFIG.serviceId && EMAILJS_CONFIG.templateId;
-    
+
     if (isConfigured) {
         emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateId, templateParams)
             .then(() => {
@@ -1092,7 +1092,7 @@ function showVerificationStep() {
     const sendBtn = document.getElementById('btn-send-code');
     const resendBtn = document.getElementById('btn-resend-code');
     const input = document.getElementById('auth-code-input');
-    
+
     if (sendBtn) {
         sendBtn.disabled = false;
         sendBtn.innerHTML = '인증번호 발송';
@@ -1100,17 +1100,17 @@ function showVerificationStep() {
     if (resendBtn) {
         resendBtn.disabled = false;
     }
-    
+
     if (stepSend && stepVerify) {
         stepSend.style.display = 'none';
         stepVerify.style.display = 'block';
     }
-    
+
     if (input) {
         input.value = '';
         input.focus();
     }
-    
+
     startAuthTimer();
 }
 
@@ -1119,29 +1119,29 @@ function startAuthTimer() {
     if (authTimerInterval) {
         clearInterval(authTimerInterval);
     }
-    
+
     function updateTimer() {
         const remaining = Math.max(0, authCodeExpiry - Date.now());
         const seconds = Math.floor(remaining / 1000);
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
-        
+
         if (timerSpan) {
             timerSpan.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }
-        
+
         if (remaining <= 0) {
             clearInterval(authTimerInterval);
             authTimerInterval = null;
             alert('인증번호 유효시간이 만료되었습니다. 다시 요청해 주세요.');
             generatedAuthCode = '';
-            
+
             const stepSend = document.getElementById('auth-step-send');
             const stepVerify = document.getElementById('auth-step-verify');
             if (stepSend && stepVerify) {
                 stepSend.style.display = 'block';
                 stepVerify.style.display = 'none';
-                
+
                 const emailInput = document.getElementById('auth-email-input');
                 if (emailInput) {
                     emailInput.disabled = false;
@@ -1150,7 +1150,7 @@ function startAuthTimer() {
             }
         }
     }
-    
+
     updateTimer();
     authTimerInterval = setInterval(updateTimer, 1000);
 }
@@ -1159,23 +1159,23 @@ function verifyAuthCode() {
     const input = document.getElementById('auth-code-input');
     const errorMsg = document.getElementById('auth-error-msg');
     if (!input) return;
-    
+
     const enteredCode = input.value.trim();
-    
+
     if (!generatedAuthCode || Date.now() > authCodeExpiry) {
         alert('인증 코드가 만료되었거나 생성되지 않았습니다. 인증번호를 다시 발송해 주세요.');
         return;
     }
-    
+
     if (enteredCode === generatedAuthCode) {
         isAdminMode = true;
         sessionStorage.setItem('isAdminMode', 'true');
-        
+
         const adminToggle = document.getElementById('admin-toggle');
         const adminBanner = document.getElementById('admin-banner');
         const adminPortfolioActions = document.getElementById('admin-portfolio-actions');
         const adminJourneyActions = document.getElementById('admin-journey-actions');
-        
+
         if (adminToggle) {
             adminToggle.classList.add('active');
             adminToggle.innerHTML = '<i class="fa-solid fa-lock-open"></i>';
@@ -1184,11 +1184,11 @@ function verifyAuthCode() {
         if (adminPortfolioActions) adminPortfolioActions.style.display = 'block';
         if (adminJourneyActions) adminJourneyActions.style.display = 'block';
         document.body.classList.add('admin-active');
-        
+
         renderCompetencies();
         renderPortfolioGrid();
         renderTimeline(getActiveJourneyFilter());
-        
+
         closeAuthModal();
         alert('관리자 인증이 성공했습니다. 관리자 편집 모드가 활성화됩니다.');
     } else {
@@ -1204,14 +1204,14 @@ function renderCompetencies() {
     const grid = document.getElementById('competencies-grid');
     if (!grid) return;
     grid.innerHTML = '';
-    
+
     competenciesData.forEach(comp => {
         const card = document.createElement('div');
         card.className = 'skill-category-card';
         card.style.position = 'relative';
-        
+
         let skillItems = comp.skills.map(skill => `<li>${skill}</li>`).join('');
-        
+
         let adminBtns = '';
         if (isAdminMode) {
             adminBtns = `
@@ -1220,7 +1220,7 @@ function renderCompetencies() {
                 </div>
             `;
         }
-        
+
         card.innerHTML = `
             ${adminBtns}
             <div class="skill-cat-header text-${comp.category}">
@@ -1239,7 +1239,7 @@ function openAdminModal(title, contentHtml) {
     const modal = document.getElementById('admin-modal');
     const modalTitle = document.getElementById('admin-modal-title');
     const modalBody = document.getElementById('admin-modal-body');
-    
+
     if (modal && modalTitle && modalBody) {
         modalTitle.textContent = title;
         modalBody.innerHTML = contentHtml;
@@ -1248,7 +1248,7 @@ function openAdminModal(title, contentHtml) {
     }
 }
 
-window.closeAdminModal = function() {
+window.closeAdminModal = function () {
     const modal = document.getElementById('admin-modal');
     if (modal) {
         modal.classList.remove('active');
@@ -1256,17 +1256,17 @@ window.closeAdminModal = function() {
     }
 };
 
-window.openEditCompModal = function(compId) {
+window.openEditCompModal = function (compId) {
     const comp = competenciesData.find(c => c.id === compId);
     if (!comp) return;
-    
+
     let skillsListHtml = comp.skills.map((skill, index) => `
         <div class="form-group" style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem; align-items: center;" id="skill-row-${index}">
             <input type="text" class="form-control skill-input" value="${skill}" style="flex: 1; padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
             <button type="button" onclick="document.getElementById('skill-row-${index}').remove()" style="background: none; border: none; color: #f43f5e; font-size: 1.2rem; cursor: pointer;" title="삭제"><i class="fa-solid fa-trash-can"></i></button>
         </div>
     `).join('');
-    
+
     const formHtml = `
         <form id="edit-comp-form" style="display: flex; flex-direction: column; gap: 1.5rem;">
             <div class="form-group">
@@ -1292,12 +1292,12 @@ window.openEditCompModal = function(compId) {
             </div>
         </form>
     `;
-    
+
     let skillIndex = comp.skills.length;
-    window.addSkillRow = function() {
+    window.addSkillRow = function () {
         const container = document.getElementById('skills-list-container');
         if (!container) return;
-        
+
         const row = document.createElement('div');
         row.id = `skill-row-${skillIndex}`;
         row.style = "display: flex; gap: 0.5rem; margin-bottom: 0.75rem; align-items: center;";
@@ -1308,43 +1308,43 @@ window.openEditCompModal = function(compId) {
         container.appendChild(row);
         skillIndex++;
     };
-    
+
     openAdminModal(`핵심 역량 편집 - ${comp.title}`, formHtml);
-    
+
     const form = document.getElementById('edit-comp-form');
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        
+
         const newTitle = document.getElementById('comp-title').value.trim();
         const newIcon = document.getElementById('comp-icon').value.trim();
-        
+
         const skillInputs = document.querySelectorAll('.skill-input');
         const newSkills = Array.from(skillInputs).map(input => input.value.trim()).filter(val => val !== '');
-        
+
         comp.title = newTitle;
         comp.icon = newIcon;
         comp.skills = newSkills;
-        
+
         localStorage.setItem('competenciesData', JSON.stringify(competenciesData));
         renderCompetencies();
         closeAdminModal();
     });
 };
 
-window.openEditProjectModal = function(projectId) {
+window.openEditProjectModal = function (projectId) {
     const project = portfolioData.find(p => p.id === projectId);
     if (!project) return;
-    
+
     renderProjectForm(project, `프로젝트 편집 - ${project.title}`);
 };
 
-window.openAddProjectModal = function() {
+window.openAddProjectModal = function () {
     renderProjectForm(null, '새 프로젝트 추가');
 };
 
 function renderProjectForm(project = null, modalTitleStr) {
     const isEdit = !!project;
-    
+
     const formHtml = `
         <form id="project-form" style="display: flex; flex-direction: column; gap: 1.2rem; max-height: 65vh; overflow-y: auto; padding-right: 0.5rem; scrollbar-width: thin;">
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
@@ -1404,37 +1404,37 @@ function renderProjectForm(project = null, modalTitleStr) {
             </div>
         </form>
     `;
-    
+
     openAdminModal(modalTitleStr, formHtml);
-    
+
     const form = document.getElementById('project-form');
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        
+
         const categoryVal = document.getElementById('proj-category').value;
         const titleVal = document.getElementById('proj-title').value.trim();
         const periodVal = document.getElementById('proj-period').value.trim();
         const summaryVal = document.getElementById('proj-summary').value.trim();
         const descriptionVal = document.getElementById('proj-description').value.trim();
         const roleVal = document.getElementById('proj-role').value.trim();
-        
+
         const highlightsVal = document.getElementById('proj-highlights').value.split('\n')
             .map(line => line.trim())
             .filter(line => line !== '');
-            
+
         const techStackVal = document.getElementById('proj-techstack').value.split(',')
             .map(item => item.trim())
             .filter(item => item !== '');
-            
+
         const iconVal = document.getElementById('proj-icon').value.trim();
-        
+
         const yearMatch = periodVal.match(/\d{4}/);
         const yearVal = yearMatch ? yearMatch[0] : new Date().getFullYear().toString();
-        
+
         let colorVal = 'var(--color-it-end)';
         let bgVal = 'rgba(225, 0, 255, 0.1)';
         let borderVal = 'rgba(225, 0, 255, 0.2)';
-        
+
         if (categoryVal === 'career') {
             colorVal = 'var(--color-career-end)';
             bgVal = 'rgba(79, 172, 254, 0.1)';
@@ -1444,7 +1444,7 @@ function renderProjectForm(project = null, modalTitleStr) {
             bgVal = 'rgba(248, 87, 166, 0.1)';
             borderVal = 'rgba(248, 87, 166, 0.2)';
         }
-        
+
         if (isEdit) {
             project.category = categoryVal;
             project.title = titleVal;
@@ -1478,15 +1478,15 @@ function renderProjectForm(project = null, modalTitleStr) {
             };
             portfolioData.push(newProj);
         }
-        
+
         localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
-        
+
         renderPortfolioGrid();
         closeAdminModal();
     });
 }
 
-window.deleteProject = function(projectId) {
+window.deleteProject = function (projectId) {
     if (confirm('이 프로젝트를 삭제하시겠습니까?')) {
         portfolioData = portfolioData.filter(p => p.id !== projectId);
         localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
@@ -1494,7 +1494,7 @@ window.deleteProject = function(projectId) {
     }
 };
 
-window.resetAllToDefault = function() {
+window.resetAllToDefault = function () {
     if (confirm('모든 데이터를 원래 템플릿의 초기값으로 초기화하시겠습니까? 작성하거나 수정한 데이터는 모두 소실됩니다.')) {
         localStorage.removeItem('competenciesData');
         localStorage.removeItem('portfolioData');
@@ -1503,20 +1503,20 @@ window.resetAllToDefault = function() {
     }
 };
 
-window.openEditJourneyModal = function(journeyId) {
+window.openEditJourneyModal = function (journeyId) {
     const item = journeyData.find(j => j.id === journeyId);
     if (!item) return;
-    
+
     renderJourneyForm(item, `타임라인 편집 - ${item.title}`);
 };
 
-window.openAddJourneyModal = function() {
+window.openAddJourneyModal = function () {
     renderJourneyForm(null, '새 타임라인 항목 추가');
 };
 
 function renderJourneyForm(journeyItem = null, modalTitleStr) {
     const isEdit = !!journeyItem;
-    
+
     const formHtml = `
         <form id="journey-form" style="display: flex; flex-direction: column; gap: 1.2rem;">
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
@@ -1556,19 +1556,19 @@ function renderJourneyForm(journeyItem = null, modalTitleStr) {
             </div>
         </form>
     `;
-    
+
     openAdminModal(modalTitleStr, formHtml);
-    
+
     const form = document.getElementById('journey-form');
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        
+
         const categoryVal = document.getElementById('journ-category').value;
         const periodVal = document.getElementById('journ-period').value.trim();
         const titleVal = document.getElementById('journ-title').value.trim();
         const institutionVal = document.getElementById('journ-institution').value.trim();
         const descriptionVal = document.getElementById('journ-description').value.trim();
-        
+
         if (isEdit) {
             journeyItem.category = categoryVal;
             journeyItem.period = periodVal;
@@ -1586,14 +1586,14 @@ function renderJourneyForm(journeyItem = null, modalTitleStr) {
             };
             journeyData.push(newItem);
         }
-        
+
         localStorage.setItem('journeyData', JSON.stringify(journeyData));
         renderTimeline(getActiveJourneyFilter());
         closeAdminModal();
     });
 }
 
-window.deleteJourneyItem = function(journeyId) {
+window.deleteJourneyItem = function (journeyId) {
     if (confirm('이 타임라인 항목을 삭제하시겠습니까?')) {
         journeyData = journeyData.filter(j => j.id !== journeyId);
         localStorage.setItem('journeyData', JSON.stringify(journeyData));

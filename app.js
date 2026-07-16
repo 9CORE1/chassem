@@ -4,7 +4,7 @@
 const EMAILJS_CONFIG = {
     publicKey: 'aXXhO0m1M7H5nSE-P',         // EmailJS Public Key (e.g. 'your_public_key')
     serviceId: 'service_d002zti',         // EmailJS Service ID (e.g. 'service_xxxxxxx')
-    templateId: 'template_r1e9i3d',        // EmailJS Template ID (e.g. 'template_xxxxxxx')
+    templateId: 'template_kayxrhq',        // EmailJS Template ID (e.g. 'template_xxxxxxx')
     allowedEmails: ['teacha99@gmail.com', 'jjung9935@naver.com'] // Authorized admin emails
 };
 
@@ -351,7 +351,7 @@ function safeSaveToLocalStorage(key, data) {
                 localStorage.removeItem('portfolioData');
                 localStorage.removeItem('journeyData');
                 localStorage.removeItem('competenciesData');
-            } catch (err) {}
+            } catch (err) { }
         }
     }
 }
@@ -368,7 +368,7 @@ function compressImageToJpeg(file) {
                 const canvas = document.createElement('canvas');
                 let width = img.width;
                 let height = img.height;
-                
+
                 const max_size = 1280;
                 if (width > max_size || height > max_size) {
                     if (width > height) {
@@ -379,16 +379,16 @@ function compressImageToJpeg(file) {
                         height = max_size;
                     }
                 }
-                
+
                 canvas.width = width;
                 canvas.height = height;
-                
+
                 const ctx = canvas.getContext('2d');
                 // Fill white background for JPEGs to prevent black background on PNG transparency
                 ctx.fillStyle = '#ffffff';
                 ctx.fillRect(0, 0, width, height);
                 ctx.drawImage(img, 0, 0, width, height);
-                
+
                 const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
                 resolve(compressedBase64);
             };
@@ -408,7 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function loadDataAndInit() {
     const hasUnsaved = localStorage.getItem('hasUnsavedChanges') === 'true';
-    
+
     if (hasUnsaved) {
         console.log('로컬에 저장된 미동기화 변경사항을 복원합니다.');
         const localPortfolio = localStorage.getItem('portfolioData');
@@ -416,7 +416,7 @@ function loadDataAndInit() {
         const localCompetencies = localStorage.getItem('competenciesData');
         const localPopup = localStorage.getItem('popupConfig');
         const localCourses = localStorage.getItem('coursesData');
-        
+
         if (localPortfolio && localJourney && localCompetencies) {
             try {
                 portfolioData = JSON.parse(localPortfolio);
@@ -438,7 +438,7 @@ function loadDataAndInit() {
             }
         }
     }
-    
+
     // 1. 서버 data.json 로드를 최우선으로 시도
     fetch('data.json?t=' + Date.now())
         .then(res => {
@@ -458,7 +458,7 @@ function loadDataAndInit() {
                 coursesData = [{ id: "project-management", ...data.courseConfig }];
             }
             courseConfig = coursesData[0];
-            
+
             // 로컬 스토리지 데이터 동기화
             try {
                 safeSaveToLocalStorage('portfolioData', portfolioData);
@@ -470,19 +470,19 @@ function loadDataAndInit() {
             } catch (e) {
                 console.error('로컬 스토리지 동기화 실패:', e);
             }
-            
+
             initApp();
         })
         .catch(err => {
             console.warn('서버 데이터 로드 실패, 로컬 스토리지 백업을 확인합니다:', err);
-            
+
             // 2. 서버 로드 실패 시 로컬 스토리지 백업 확인
             const localPortfolio = localStorage.getItem('portfolioData');
             const localJourney = localStorage.getItem('journeyData');
             const localCompetencies = localStorage.getItem('competenciesData');
             const localPopup = localStorage.getItem('popupConfig');
             const localCourses = localStorage.getItem('coursesData');
-            
+
             if (localPortfolio && localJourney && localCompetencies) {
                 try {
                     portfolioData = JSON.parse(localPortfolio);
@@ -502,7 +502,7 @@ function loadDataAndInit() {
                     console.error('로컬 스토리지 백업 파싱 오류:', e);
                 }
             }
-            
+
             // 3. 로컬 스토리지도 비어있거나 오류 시 기본 템플릿 데이터 사용
             console.log('기본 템플릿 데이터를 로드합니다.');
             portfolioData = defaultPortfolioData;
@@ -511,7 +511,7 @@ function loadDataAndInit() {
             popupConfig = { enabled: false, title: '', content: '', imageUrl: '', linkUrl: '', linkProjectId: '' };
             // coursesData is already declared with default values above
             courseConfig = coursesData[0];
-            
+
             try {
                 safeSaveToLocalStorage('portfolioData', portfolioData);
                 safeSaveToLocalStorage('journeyData', journeyData);
@@ -522,7 +522,7 @@ function loadDataAndInit() {
             } catch (e) {
                 console.error('로컬 스토리지 초기화 실패:', e);
             }
-            
+
             initApp();
         });
 }
@@ -553,7 +553,7 @@ function initApp() {
     setupFloatingNavigator();
     setupContactForm();
     setupAdminMode();
-    
+
     // Check and show popup
     checkAndShowPopup();
 }
@@ -574,7 +574,7 @@ function saveAllData() {
             console.warn('로컬 스토리지 용량 초과로 브라우저에 임시 저장을 실패했습니다. 서버 저장 프로세스는 계속 진행됩니다.');
         }
     }
-    
+
     // 2. 서버로 저장 요청 (Express 실행 환경일 때)
     const payload = {
         portfolioData,
@@ -583,7 +583,7 @@ function saveAllData() {
         popupConfig,
         coursesData
     };
-    
+
     fetch('/api/save', {
         method: 'POST',
         headers: {
@@ -591,40 +591,40 @@ function saveAllData() {
         },
         body: JSON.stringify(payload)
     })
-    .then(res => {
-        if (!res.ok) throw new Error('서버 저장 실패');
-        return res.json();
-    })
-    .then(result => {
-        console.log('데이터가 서버에 동기화되어 저장되었습니다:', result.message);
-        safeSaveToLocalStorage('hasUnsavedChanges', 'false'); // saved successfully!
-        
-        // Remove warning banner if it exists
-        const banner = document.getElementById('unsaved-warning-banner');
-        if (banner) banner.remove();
+        .then(res => {
+            if (!res.ok) throw new Error('서버 저장 실패');
+            return res.json();
+        })
+        .then(result => {
+            console.log('데이터가 서버에 동기화되어 저장되었습니다:', result.message);
+            safeSaveToLocalStorage('hasUnsavedChanges', 'false'); // saved successfully!
 
-        if (result.portfolioData) {
-            portfolioData = result.portfolioData;
-            safeSaveToLocalStorage('portfolioData', portfolioData);
-            renderPortfolioGrid(currentPortfolioFilter, currentPortfolioPage); // 새로운 이미지 상대경로를 카드에 즉시 반영
-        }
-        if (result.popupConfig) {
-            popupConfig = result.popupConfig;
-            safeSaveToLocalStorage('popupConfig', popupConfig);
-        }
-        if (result.coursesData) {
-            coursesData = result.coursesData;
-            courseConfig = coursesData[0];
-            safeSaveToLocalStorage('coursesData', coursesData);
-        }
-    })
-    .catch(err => {
-        console.warn('서버 저장 실패 (오프라인 혹은 정적 호스팅 환경일 수 있습니다):', err);
-    });
+            // Remove warning banner if it exists
+            const banner = document.getElementById('unsaved-warning-banner');
+            if (banner) banner.remove();
+
+            if (result.portfolioData) {
+                portfolioData = result.portfolioData;
+                safeSaveToLocalStorage('portfolioData', portfolioData);
+                renderPortfolioGrid(currentPortfolioFilter, currentPortfolioPage); // 새로운 이미지 상대경로를 카드에 즉시 반영
+            }
+            if (result.popupConfig) {
+                popupConfig = result.popupConfig;
+                safeSaveToLocalStorage('popupConfig', popupConfig);
+            }
+            if (result.coursesData) {
+                coursesData = result.coursesData;
+                courseConfig = coursesData[0];
+                safeSaveToLocalStorage('coursesData', coursesData);
+            }
+        })
+        .catch(err => {
+            console.warn('서버 저장 실패 (오프라인 혹은 정적 호스팅 환경일 수 있습니다):', err);
+        });
 }
 
 // 헬퍼 함수: 정적 배포를 위한 데이터 백업 다운로드
-window.downloadDataJson = function() {
+window.downloadDataJson = function () {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({
         portfolioData,
         journeyData,
@@ -654,14 +654,14 @@ let currentPortfolioPage = 1;
 function getGridColumns() {
     const grid = document.getElementById('portfolio-grid');
     if (!grid) return 3;
-    
+
     const gridComputed = window.getComputedStyle(grid);
     const gridTemplateColumns = gridComputed.getPropertyValue('grid-template-columns');
     if (gridTemplateColumns && gridTemplateColumns !== 'none') {
         const cols = gridTemplateColumns.trim().split(/\s+/).length;
         if (cols && !isNaN(cols)) return cols;
     }
-    
+
     const width = window.innerWidth;
     if (width < 768) return 1;
     if (width < 1140) return 2;
@@ -681,16 +681,16 @@ function getPortfolioPageSize() {
 function renderPortfolioGrid(filter = 'all', page = 1) {
     currentPortfolioFilter = filter;
     currentPortfolioPage = page;
-    
+
     const grid = document.getElementById('portfolio-grid');
     if (!grid) return;
-    
+
     grid.innerHTML = '';
-    
-    const filteredData = filter === 'all' 
-        ? portfolioData 
+
+    const filteredData = filter === 'all'
+        ? portfolioData
         : portfolioData.filter(item => item.category === filter);
-        
+
     // Sort by period descending (newest first)
     const sortedData = [...filteredData].sort((a, b) => {
         const getSortableValue = (periodStr) => {
@@ -705,38 +705,38 @@ function renderPortfolioGrid(filter = 'all', page = 1) {
         };
         return getSortableValue(b.period) - getSortableValue(a.period);
     });
-        
+
     const pageSize = getPortfolioPageSize();
     const totalPages = Math.ceil(sortedData.length / pageSize) || 1;
-    
+
     if (currentPortfolioPage > totalPages) {
         currentPortfolioPage = totalPages;
     }
     if (currentPortfolioPage < 1) {
         currentPortfolioPage = 1;
     }
-    
+
     const startIdx = (currentPortfolioPage - 1) * pageSize;
     const endIdx = startIdx + pageSize;
     const pageData = sortedData.slice(startIdx, endIdx);
-    
+
     pageData.forEach(item => {
         const card = document.createElement('article');
         card.className = 'portfolio-card glass-panel reveal-on-scroll active';
         card.style.position = 'relative';
         card.setAttribute('data-id', item.id);
         card.style.setProperty('--card-accent', item.accentColor);
-        
+
         let catName = '기타';
         let catClass = '';
         if (item.category === 'career') { catName = '취업진로'; catClass = 'text-career'; }
         else if (item.category === 'media') { catName = '영상콘텐츠'; catClass = 'text-media'; }
         else if (item.category === 'it') { catName = 'IT 미래기술'; catClass = 'text-it'; }
-        
+
         card.style.setProperty('--card-accent-color', `var(--color-${item.category}-end)`);
         card.style.setProperty('--card-accent-alpha', item.accentBg || 'rgba(255, 255, 255, 0.05)');
         card.style.setProperty('--card-accent-border', item.accentBorder || 'var(--border-color)');
-        
+
         let adminBtns = '';
         if (isAdminMode) {
             adminBtns = `
@@ -746,7 +746,7 @@ function renderPortfolioGrid(filter = 'all', page = 1) {
                 </div>
             `;
         }
-        
+
         card.innerHTML = `
             ${adminBtns}
             <div class="portfolio-card-content">
@@ -767,30 +767,30 @@ function renderPortfolioGrid(filter = 'all', page = 1) {
                 </div>
             </div>
         `;
-        
+
         card.addEventListener('click', () => {
             openDetailsModal(item.id);
         });
-        
+
         grid.appendChild(card);
     });
-    
+
     renderPortfolioPagination(totalPages);
 }
 
 function renderPortfolioPagination(totalPages) {
     const paginationContainer = document.getElementById('portfolio-pagination');
     if (!paginationContainer) return;
-    
+
     paginationContainer.innerHTML = '';
-    
+
     if (totalPages <= 1) {
         paginationContainer.style.display = 'none';
         return;
     }
-    
+
     paginationContainer.style.display = 'flex';
-    
+
     // Previous page button
     const prevBtn = document.createElement('button');
     prevBtn.className = `page-btn prev-btn ${currentPortfolioPage === 1 ? 'disabled' : ''}`;
@@ -810,7 +810,7 @@ function renderPortfolioPagination(totalPages) {
         });
     }
     paginationContainer.appendChild(prevBtn);
-    
+
     // Page number buttons
     for (let i = 1; i <= totalPages; i++) {
         const pageBtn = document.createElement('button');
@@ -831,7 +831,7 @@ function renderPortfolioPagination(totalPages) {
         }
         paginationContainer.appendChild(pageBtn);
     }
-    
+
     // Next page button
     const nextBtn = document.createElement('button');
     nextBtn.className = `page-btn next-btn ${currentPortfolioPage === totalPages ? 'disabled' : ''}`;
@@ -872,13 +872,13 @@ window.addEventListener('resize', () => {
 function renderTimeline(filter = 'career') {
     const container = document.getElementById('timeline-container');
     if (!container) return;
-    
+
     container.innerHTML = '';
-    
+
     const filteredData = filter === 'all'
         ? journeyData
         : journeyData.filter(item => item.category === filter);
-        
+
     // Sort timeline items chronologically (descending), newest first.
     const sortedData = [...filteredData].sort((a, b) => {
         const getSortableValue = (periodStr) => {
@@ -890,17 +890,17 @@ function renderTimeline(filter = 'career') {
         };
         return getSortableValue(b.period) - getSortableValue(a.period);
     });
-    
+
     sortedData.forEach((item, index) => {
         const itemEl = document.createElement('div');
         // Alternating sides: left or right
         const side = index % 2 === 0 ? 'left' : 'right';
         itemEl.className = `timeline-item ${side}`;
-        
+
         let catName = '';
         let categoryClass = '';
         let accentColor = '';
-        
+
         if (item.category === 'education') {
             catName = '학력사항';
             categoryClass = 'it';
@@ -918,10 +918,10 @@ function renderTimeline(filter = 'career') {
             categoryClass = 'writing';
             accentColor = 'var(--color-writing-end)';
         }
-        
+
         itemEl.style.setProperty('--dot-accent', accentColor);
         itemEl.style.setProperty('--timeline-accent', accentColor);
-        
+
         let adminBtns = '';
         if (isAdminMode) {
             adminBtns = `
@@ -931,7 +931,7 @@ function renderTimeline(filter = 'career') {
                 </div>
             `;
         }
-        
+
         itemEl.innerHTML = `
             <div class="timeline-dot"></div>
             <div class="timeline-content-wrapper">
@@ -944,7 +944,7 @@ function renderTimeline(filter = 'career') {
                 </div>
             </div>
         `;
-        
+
         container.appendChild(itemEl);
     });
 }
@@ -964,17 +964,17 @@ function setupFilters() {
         btn.addEventListener('click', (e) => {
             // Remove active class from all
             filters.forEach(f => f.classList.remove('active'));
-            
+
             // Add active to clicked
             btn.classList.add('active');
-            
+
             const filterValue = btn.getAttribute('data-filter');
-            
+
             // Re-render grid with transition
             const grid = document.getElementById('portfolio-grid');
             grid.style.opacity = '0';
             grid.style.transform = 'translateY(10px)';
-            
+
             setTimeout(() => {
                 renderPortfolioGrid(filterValue, 1);
                 grid.style.opacity = '1';
@@ -984,26 +984,26 @@ function setupFilters() {
             }, 300);
         });
     });
-    
+
     // Journey (Timeline) filters
     const jFilters = document.querySelectorAll('#journey-filters .filter-btn');
     jFilters.forEach(btn => {
         btn.addEventListener('click', (e) => {
             // Remove active class from all
             jFilters.forEach(f => f.classList.remove('active'));
-            
+
             // Add active to clicked
             btn.classList.add('active');
-            
+
             const filterValue = btn.getAttribute('data-filter');
-            
+
             // Re-render timeline with transition
             const container = document.getElementById('timeline-container');
             if (container) {
                 container.style.opacity = '0';
                 container.style.transform = 'translateY(10px)';
                 container.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-                
+
                 setTimeout(() => {
                     renderTimeline(filterValue);
                     container.style.opacity = '1';
@@ -1019,12 +1019,12 @@ function setupViewToggle() {
     const btnGrid = document.getElementById('btn-view-grid');
     const btnList = document.getElementById('btn-view-list');
     const grid = document.getElementById('portfolio-grid');
-    
+
     if (!btnGrid || !btnList || !grid) return;
-    
+
     // Read saved view preference from localStorage (default: 'grid')
     const savedView = localStorage.getItem('portfolioViewMode') || 'grid';
-    
+
     // Apply initial view without animation
     if (savedView === 'list') {
         grid.classList.add('list-view');
@@ -1035,24 +1035,24 @@ function setupViewToggle() {
         btnGrid.classList.add('active');
         btnList.classList.remove('active');
     }
-    
+
     btnGrid.addEventListener('click', () => {
         if (localStorage.getItem('portfolioViewMode') !== 'grid') {
             transitionView('grid');
         }
     });
-    
+
     btnList.addEventListener('click', () => {
         if (localStorage.getItem('portfolioViewMode') !== 'list') {
             transitionView('list');
         }
     });
-    
+
     function transitionView(viewMode) {
         grid.style.opacity = '0';
         grid.style.transform = 'translateY(10px)';
         grid.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
-        
+
         setTimeout(() => {
             if (viewMode === 'list') {
                 grid.classList.add('list-view');
@@ -1064,9 +1064,9 @@ function setupViewToggle() {
                 btnList.classList.remove('active');
             }
             localStorage.setItem('portfolioViewMode', viewMode);
-            
+
             renderPortfolioGrid(currentPortfolioFilter, 1); // Reset to page 1 on view change
-            
+
             grid.style.opacity = '1';
             grid.style.transform = 'translateY(0)';
             setupScrollEffects();
@@ -1081,14 +1081,14 @@ function setupViewToggle() {
 function setupModal() {
     const modal = document.getElementById('details-modal');
     if (!modal) return;
-    
+
     // Close on overlay click
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             closeModal();
         }
     });
-    
+
     // Close on escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && modal.classList.contains('active')) {
@@ -1101,22 +1101,22 @@ function convertTimeToSeconds(timeStr) {
     if (timeStr === null || timeStr === undefined) return '';
     const str = String(timeStr).trim();
     if (!str) return '';
-    
+
     if (/^\d+$/.test(str)) {
         return parseInt(str, 10);
     }
-    
+
     if (str.includes(':')) {
         const parts = str.split(':').map(Number);
         if (parts.some(isNaN)) return '';
-        
+
         if (parts.length === 2) {
             return parts[0] * 60 + parts[1];
         } else if (parts.length === 3) {
             return parts[0] * 3600 + parts[1] * 60 + parts[2];
         }
     }
-    
+
     const num = parseInt(str, 10);
     return isNaN(num) ? '' : num;
 }
@@ -1125,7 +1125,7 @@ function getGoogleDriveEmbedUrl(url, start = null) {
     if (!url) return null;
     url = url.trim();
     let fileId = '';
-    
+
     if (/^[a-zA-Z0-9_-]{28,45}$/.test(url)) {
         fileId = url;
     } else {
@@ -1143,15 +1143,15 @@ function getGoogleDriveEmbedUrl(url, start = null) {
             console.error('구글 드라이브 URL 파싱 오류:', e);
         }
     }
-    
+
     if (!fileId) return null;
-    
+
     let embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
     const parsedStart = convertTimeToSeconds(start);
     if (parsedStart) {
         embedUrl += `?t=${parsedStart}`;
     }
-    
+
     return embedUrl;
 }
 
@@ -1159,7 +1159,7 @@ function getYouTubeEmbedUrl(url, start = null, end = null) {
     if (!url) return null;
     let videoId = '';
     url = url.trim();
-    
+
     // 1. 만약 입력값이 11자리 비디오 ID 자체인 경우 직접 할당
     if (url.length === 11 && !url.includes('/') && !url.includes('.')) {
         videoId = url;
@@ -1188,9 +1188,9 @@ function getYouTubeEmbedUrl(url, start = null, end = null) {
             console.error('유튜브 URL 파싱 오류:', e);
         }
     }
-    
+
     if (!videoId) return null;
-    
+
     // 일부 공개(unlisted) 영상의 안정적인 재생 및 모바일 기기 호환성을 위해 youtube.com 표준 도메인 사용
     let embedUrl = `https://www.youtube.com/embed/${videoId}`;
     const params = [
@@ -1201,7 +1201,7 @@ function getYouTubeEmbedUrl(url, start = null, end = null) {
         'modestbranding=1',   // 유튜브 로고 표시 최소화
         'iv_load_policy=3'    // 동영상 어노테이션(주석) 숨김
     ];
-    
+
     // 도메인 권한 및 보안 검증을 위해 origin 파라미터 전달
     if (window.location.origin && window.location.origin !== 'null') {
         params.push(`origin=${encodeURIComponent(window.location.origin)}`);
@@ -1222,24 +1222,24 @@ function openDetailsModal(id) {
     const modal = document.getElementById('details-modal');
     const container = document.getElementById('modal-content-container');
     if (!modal || !container) return;
-    
+
     const item = portfolioData.find(d => d.id === id);
     if (!item) return;
-    
+
     let catName = '기타';
     if (item.category === 'career') catName = '취업진로';
     else if (item.category === 'media') catName = '영상콘텐츠';
     else if (item.category === 'it') catName = 'IT 미래기술';
-    
+
     // Setup modal specific CSS values dynamically
     container.style.setProperty('--modal-accent', item.accentColor);
     container.style.setProperty('--modal-accent-color', `var(--color-${item.category}-end)`);
     container.style.setProperty('--modal-accent-alpha', item.accentBg);
     container.style.setProperty('--modal-accent-border', item.accentBorder);
-    
+
     let videoSection = '';
     let videoPlayersHtml = '';
-    
+
     if (item.youtubeUrl) {
         const embedUrl = getYouTubeEmbedUrl(item.youtubeUrl, item.youtubeStart, item.youtubeEnd);
         console.log(`[YouTube embed debugging] Original URL: ${item.youtubeUrl} -> Generated Embed URL: ${embedUrl}`);
@@ -1256,7 +1256,7 @@ function openDetailsModal(id) {
             `;
         }
     }
-    
+
     if (item.googleDriveUrl) {
         const embedUrl = getGoogleDriveEmbedUrl(item.googleDriveUrl, item.youtubeStart);
         console.log(`[Google Drive embed debugging] Original URL: ${item.googleDriveUrl} -> Generated Embed URL: ${embedUrl}`);
@@ -1274,7 +1274,7 @@ function openDetailsModal(id) {
             `;
         }
     }
-    
+
     if (videoPlayersHtml) {
         videoSection = `
             <div class="modal-section">
@@ -1283,7 +1283,7 @@ function openDetailsModal(id) {
             </div>
         `;
     }
-    
+
     let imageSection = '';
     if (item.imageUrl || item.imageUrl2) {
         let imagesHtml = '';
@@ -1313,7 +1313,7 @@ function openDetailsModal(id) {
             </div>
         `;
     }
-    
+
     container.innerHTML = `
         <button class="modal-close-btn" id="modal-close-btn" aria-label="닫기">
             <i class="fa-solid fa-xmark"></i>
@@ -1346,10 +1346,10 @@ function openDetailsModal(id) {
             ` : ''}
         </div>
     `;
-    
+
     // Bind close button event
     container.querySelector('#modal-close-btn').addEventListener('click', closeModal);
-    
+
     // Open modal
     modal.classList.add('active');
     modal.setAttribute('aria-hidden', 'false');
@@ -1359,11 +1359,11 @@ function openDetailsModal(id) {
 function closeModal() {
     const modal = document.getElementById('details-modal');
     if (!modal) return;
-    
+
     modal.classList.remove('active');
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = ''; // Unlock scroll
-    
+
     // 모달을 닫을 때 동영상 재생 정지(iframe 파괴)를 위해 내부 컨텐츠 초기화
     const container = document.getElementById('modal-content-container');
     if (container) {
@@ -1378,17 +1378,17 @@ function closeModal() {
 function setupThemeToggle() {
     const toggleBtn = document.getElementById('theme-toggle');
     if (!toggleBtn) return;
-    
+
     // Check local storage setting or system preferences
     const savedTheme = localStorage.getItem('theme');
     const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-    
+
     if (savedTheme === 'light' || (!savedTheme && prefersLight)) {
         enableLightMode();
     } else {
         enableDarkMode();
     }
-    
+
     toggleBtn.addEventListener('click', () => {
         if (document.body.classList.contains('light-mode')) {
             enableDarkMode();
@@ -1396,14 +1396,14 @@ function setupThemeToggle() {
             enableLightMode();
         }
     });
-    
+
     function enableLightMode() {
         document.body.classList.remove('dark-mode');
         document.body.classList.add('light-mode');
         toggleBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
         localStorage.setItem('theme', 'light');
     }
-    
+
     function enableDarkMode() {
         document.body.classList.remove('light-mode');
         document.body.classList.add('dark-mode');
@@ -1420,13 +1420,13 @@ function setupMobileMenu() {
     const btn = document.getElementById('mobile-menu-btn');
     const nav = document.getElementById('nav-menu');
     if (!btn || !nav) return;
-    
+
     btn.addEventListener('click', (e) => {
         e.stopPropagation();
         btn.classList.toggle('active');
         nav.classList.toggle('active');
     });
-    
+
     // Close menu when link clicked
     const links = nav.querySelectorAll('.nav-link');
     links.forEach(link => {
@@ -1435,7 +1435,7 @@ function setupMobileMenu() {
             nav.classList.remove('active');
         });
     });
-    
+
     // Close menu when clicking outside
     document.addEventListener('click', (e) => {
         if (nav.classList.contains('active') && !nav.contains(e.target) && e.target !== btn) {
@@ -1459,7 +1459,7 @@ function setupScrollEffects() {
             header.classList.remove('scrolled');
         }
     });
-    
+
     // Intersection Observer for scroll animation reveals
     const reveals = document.querySelectorAll('.reveal-on-scroll');
     const revealObserver = new IntersectionObserver((entries, observer) => {
@@ -1473,13 +1473,13 @@ function setupScrollEffects() {
         threshold: 0.15,
         rootMargin: '0px 0px -50px 0px'
     });
-    
+
     reveals.forEach(el => revealObserver.observe(el));
-    
+
     // Highlight active link on scroll
     const sections = document.querySelectorAll('section');
     const navLinks = document.querySelectorAll('.nav-link');
-    
+
     window.addEventListener('scroll', () => {
         let currentSection = '';
         sections.forEach(section => {
@@ -1488,7 +1488,7 @@ function setupScrollEffects() {
                 currentSection = section.getAttribute('id');
             }
         });
-        
+
         navLinks.forEach(link => {
             link.classList.remove('active');
             if (link.getAttribute('href') === `#${currentSection}`) {
@@ -1561,22 +1561,22 @@ function setupFloatingNavigator() {
 function setupContactForm() {
     const form = document.getElementById('contact-form');
     if (!form) return;
-    
+
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        
+
         const name = document.getElementById('form-name').value;
         const email = document.getElementById('form-email').value;
         const subject = document.getElementById('form-subject').value;
         const phone = document.getElementById('form-phone').value;
         const message = document.getElementById('form-message').value;
-        
+
         const submitBtn = document.getElementById('btn-submit');
-        
+
         // Visual indicator for sending state
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<span>메시지 전송 중...</span> <i class="fa-solid fa-spinner fa-spin"></i>';
-        
+
         // If Google Apps Script URL is not set, fallback to Mockup
         if (!APPS_SCRIPT_URL) {
             console.log('Google Apps Script URL이 설정되지 않아 모의(Mock) 전송을 실행합니다.');
@@ -1588,32 +1588,32 @@ function setupContactForm() {
             }, 1500);
             return;
         }
-        
+
         const params = new URLSearchParams();
         params.append('name', name);
         params.append('email', email);
         params.append('phone', phone);
         params.append('subject', subject);
         params.append('message', message);
-        
+
         // Post content to Google Apps Script Web App
         fetch(APPS_SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors', // standard workaround for redirection and CORS on Google Web Apps
             body: params
         })
-        .then(() => {
-            alert(`감사합니다, ${name}님! 문의 내용이 Google 스프레드시트에 성공적으로 기록되었습니다.`);
-            form.reset();
-        })
-        .catch(error => {
-            console.error('Google Apps Script 전송 에러:', error);
-            alert('메시지 전송에 실패했습니다. 다시 시도해 주세요.');
-        })
-        .finally(() => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = '<span>메시지 전송하기</span> <i class="fa-solid fa-paper-plane"></i>';
-        });
+            .then(() => {
+                alert(`감사합니다, ${name}님! 문의 내용이 Google 스프레드시트에 성공적으로 기록되었습니다.`);
+                form.reset();
+            })
+            .catch(error => {
+                console.error('Google Apps Script 전송 에러:', error);
+                alert('메시지 전송에 실패했습니다. 다시 시도해 주세요.');
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span>메시지 전송하기</span> <i class="fa-solid fa-paper-plane"></i>';
+            });
     });
 }
 
@@ -1637,10 +1637,10 @@ function setupAdminMode() {
     const adminBanner = document.getElementById('admin-banner');
     const adminPortfolioActions = document.getElementById('admin-portfolio-actions');
     const adminJourneyActions = document.getElementById('admin-journey-actions');
-    
+
     // Only show timeline actions in admin mode
     if (adminJourneyActions) adminJourneyActions.style.display = 'none';
-    
+
     const savedAdmin = (sessionStorage.getItem('isAdminMode') === 'true') || (localStorage.getItem('isAdminMode') === 'true');
     if (savedAdmin) {
         isAdminMode = true;
@@ -1656,13 +1656,13 @@ function setupAdminMode() {
         const navProjectMgmt = document.getElementById('nav-project-mgmt');
         if (navProjectMgmt) navProjectMgmt.style.display = 'block';
         document.body.classList.add('admin-active');
-        
+
         // Re-render to show admin actions on page load
         renderCompetencies();
         renderPortfolioGrid(currentPortfolioFilter, currentPortfolioPage);
         renderTimeline(getActiveJourneyFilter());
     }
-    
+
     if (adminToggle) {
         adminToggle.addEventListener('click', () => {
             if (isAdminMode) {
@@ -1670,7 +1670,7 @@ function setupAdminMode() {
                 isAdminMode = false;
                 sessionStorage.removeItem('isAdminMode');
                 localStorage.removeItem('isAdminMode');
-                
+
                 adminToggle.classList.remove('active');
                 adminToggle.innerHTML = '<i class="fa-solid fa-lock"></i>';
                 if (adminBanner) adminBanner.style.display = 'none';
@@ -1679,7 +1679,7 @@ function setupAdminMode() {
                 const navProjectMgmt = document.getElementById('nav-project-mgmt');
                 if (navProjectMgmt) navProjectMgmt.style.display = 'none';
                 document.body.classList.remove('admin-active');
-                
+
                 renderCompetencies();
                 renderPortfolioGrid(currentPortfolioFilter, currentPortfolioPage);
                 renderTimeline(getActiveJourneyFilter());
@@ -1689,7 +1689,7 @@ function setupAdminMode() {
             }
         });
     }
-    
+
     const navProjectMgmt = document.getElementById('nav-project-mgmt');
     if (navProjectMgmt) {
         const link = navProjectMgmt.querySelector('a');
@@ -1697,7 +1697,7 @@ function setupAdminMode() {
             link.addEventListener('click', openProjectMgmtDashboard);
         }
     }
-    
+
     const closeAdminBtn = document.getElementById('btn-close-admin-modal');
     if (closeAdminBtn) {
         closeAdminBtn.addEventListener('click', closeAdminModal);
@@ -1708,22 +1708,22 @@ function setupAdminMode() {
     if (closeAuthBtn) {
         closeAuthBtn.addEventListener('click', closeAuthModal);
     }
-    
+
     const sendCodeBtn = document.getElementById('btn-send-code');
     if (sendCodeBtn) {
         sendCodeBtn.addEventListener('click', sendVerificationCode);
     }
-    
+
     const resendCodeBtn = document.getElementById('btn-resend-code');
     if (resendCodeBtn) {
         resendCodeBtn.addEventListener('click', sendVerificationCode);
     }
-    
+
     const verifyCodeBtn = document.getElementById('btn-verify-code');
     if (verifyCodeBtn) {
         verifyCodeBtn.addEventListener('click', verifyAuthCode);
     }
-    
+
     const emailInput = document.getElementById('auth-email-input');
     if (emailInput) {
         emailInput.addEventListener('keydown', (e) => {
@@ -1732,7 +1732,7 @@ function setupAdminMode() {
             }
         });
     }
-    
+
     const codeInput = document.getElementById('auth-code-input');
     if (codeInput) {
         codeInput.addEventListener('keydown', (e) => {
@@ -1741,7 +1741,7 @@ function setupAdminMode() {
             }
         });
     }
-    
+
     const authOverlay = document.getElementById('admin-auth-modal');
     if (authOverlay) {
         authOverlay.addEventListener('click', (e) => {
@@ -1760,9 +1760,9 @@ function openAuthModal() {
     const emailErrorMsg = document.getElementById('auth-email-error-msg');
     const emailInput = document.getElementById('auth-email-input');
     const input = document.getElementById('auth-code-input');
-    
+
     if (!modal) return;
-    
+
     stepSend.style.display = 'block';
     stepVerify.style.display = 'none';
     if (errorMsg) errorMsg.style.display = 'none';
@@ -1772,16 +1772,16 @@ function openAuthModal() {
         emailInput.disabled = false;
     }
     if (input) input.value = '';
-    
+
     if (authTimerInterval) {
         clearInterval(authTimerInterval);
         authTimerInterval = null;
     }
-    
+
     modal.classList.add('active');
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
-    
+
     if (emailInput) {
         setTimeout(() => emailInput.focus(), 100);
     }
@@ -1790,11 +1790,11 @@ function openAuthModal() {
 function closeAuthModal() {
     const modal = document.getElementById('admin-auth-modal');
     if (!modal) return;
-    
+
     modal.classList.remove('active');
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
-    
+
     if (authTimerInterval) {
         clearInterval(authTimerInterval);
         authTimerInterval = null;
@@ -1805,12 +1805,12 @@ function sendVerificationCode() {
     const emailInput = document.getElementById('auth-email-input');
     const emailErrorMsg = document.getElementById('auth-email-error-msg');
     if (!emailInput) return;
-    
+
     const enteredEmail = emailInput.value.trim().toLowerCase();
-    
+
     // Check if email is in allowed list
     const isAllowed = EMAILJS_CONFIG.allowedEmails.some(email => email.trim().toLowerCase() === enteredEmail);
-    
+
     if (!isAllowed) {
         if (emailErrorMsg) {
             emailErrorMsg.style.display = 'block';
@@ -1823,14 +1823,14 @@ function sendVerificationCode() {
             emailErrorMsg.style.display = 'none';
         }
     }
-    
+
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     generatedAuthCode = code;
     authCodeExpiry = Date.now() + 3 * 60 * 1000; // 3 minutes expiration
-    
+
     const sendBtn = document.getElementById('btn-send-code');
     const resendBtn = document.getElementById('btn-resend-code');
-    
+
     if (sendBtn) {
         sendBtn.disabled = true;
         sendBtn.innerHTML = '발송 중... <i class="fa-solid fa-spinner fa-spin"></i>';
@@ -1838,17 +1838,17 @@ function sendVerificationCode() {
     if (resendBtn) {
         resendBtn.disabled = true;
     }
-    
+
     emailInput.disabled = true; // Lock the email input during verification
-    
+
     const templateParams = {
         to_email: enteredEmail,
         to_name: '관리자',
-        code: code
+        auth_code: code
     };
-    
+
     const isConfigured = EMAILJS_CONFIG.publicKey && EMAILJS_CONFIG.serviceId && EMAILJS_CONFIG.templateId;
-    
+
     if (isConfigured) {
         emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateId, templateParams)
             .then(() => {
@@ -1877,7 +1877,7 @@ function showVerificationStep() {
     const sendBtn = document.getElementById('btn-send-code');
     const resendBtn = document.getElementById('btn-resend-code');
     const input = document.getElementById('auth-code-input');
-    
+
     if (sendBtn) {
         sendBtn.disabled = false;
         sendBtn.innerHTML = '인증번호 발송';
@@ -1885,17 +1885,17 @@ function showVerificationStep() {
     if (resendBtn) {
         resendBtn.disabled = false;
     }
-    
+
     if (stepSend && stepVerify) {
         stepSend.style.display = 'none';
         stepVerify.style.display = 'block';
     }
-    
+
     if (input) {
         input.value = '';
         input.focus();
     }
-    
+
     startAuthTimer();
 }
 
@@ -1904,29 +1904,29 @@ function startAuthTimer() {
     if (authTimerInterval) {
         clearInterval(authTimerInterval);
     }
-    
+
     function updateTimer() {
         const remaining = Math.max(0, authCodeExpiry - Date.now());
         const seconds = Math.floor(remaining / 1000);
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
-        
+
         if (timerSpan) {
             timerSpan.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }
-        
+
         if (remaining <= 0) {
             clearInterval(authTimerInterval);
             authTimerInterval = null;
             alert('인증번호 유효시간이 만료되었습니다. 다시 요청해 주세요.');
             generatedAuthCode = '';
-            
+
             const stepSend = document.getElementById('auth-step-send');
             const stepVerify = document.getElementById('auth-step-verify');
             if (stepSend && stepVerify) {
                 stepSend.style.display = 'block';
                 stepVerify.style.display = 'none';
-                
+
                 const emailInput = document.getElementById('auth-email-input');
                 if (emailInput) {
                     emailInput.disabled = false;
@@ -1935,7 +1935,7 @@ function startAuthTimer() {
             }
         }
     }
-    
+
     updateTimer();
     authTimerInterval = setInterval(updateTimer, 1000);
 }
@@ -1944,24 +1944,24 @@ function verifyAuthCode() {
     const input = document.getElementById('auth-code-input');
     const errorMsg = document.getElementById('auth-error-msg');
     if (!input) return;
-    
+
     const enteredCode = input.value.trim();
-    
+
     if (!generatedAuthCode || Date.now() > authCodeExpiry) {
         alert('인증 코드가 만료되었거나 생성되지 않았습니다. 인증번호를 다시 발송해 주세요.');
         return;
     }
-    
+
     if (enteredCode === generatedAuthCode) {
         isAdminMode = true;
         sessionStorage.setItem('isAdminMode', 'true');
         localStorage.setItem('isAdminMode', 'true');
-        
+
         const adminToggle = document.getElementById('admin-toggle');
         const adminBanner = document.getElementById('admin-banner');
         const adminPortfolioActions = document.getElementById('admin-portfolio-actions');
         const adminJourneyActions = document.getElementById('admin-journey-actions');
-        
+
         if (adminToggle) {
             adminToggle.classList.add('active');
             adminToggle.innerHTML = '<i class="fa-solid fa-lock-open"></i>';
@@ -1972,11 +1972,11 @@ function verifyAuthCode() {
         const navProjectMgmt = document.getElementById('nav-project-mgmt');
         if (navProjectMgmt) navProjectMgmt.style.display = 'block';
         document.body.classList.add('admin-active');
-        
+
         renderCompetencies();
         renderPortfolioGrid(currentPortfolioFilter, currentPortfolioPage);
         renderTimeline(getActiveJourneyFilter());
-        
+
         closeAuthModal();
         alert('관리자 인증이 성공했습니다. 관리자 편집 모드가 활성화됩니다.');
     } else {
@@ -1992,14 +1992,14 @@ function renderCompetencies() {
     const grid = document.getElementById('competencies-grid');
     if (!grid) return;
     grid.innerHTML = '';
-    
+
     competenciesData.forEach(comp => {
         const card = document.createElement('div');
         card.className = 'skill-category-card';
         card.style.position = 'relative';
-        
+
         let skillItems = comp.skills.map(skill => `<li>${skill}</li>`).join('');
-        
+
         let adminBtns = '';
         if (isAdminMode) {
             adminBtns = `
@@ -2008,7 +2008,7 @@ function renderCompetencies() {
                 </div>
             `;
         }
-        
+
         card.innerHTML = `
             ${adminBtns}
             <div class="skill-cat-header text-${comp.category}">
@@ -2027,7 +2027,7 @@ function openAdminModal(title, contentHtml) {
     const modal = document.getElementById('admin-modal');
     const modalTitle = document.getElementById('admin-modal-title');
     const modalBody = document.getElementById('admin-modal-body');
-    
+
     if (modal && modalTitle && modalBody) {
         modalTitle.textContent = title;
         modalBody.innerHTML = contentHtml;
@@ -2036,7 +2036,7 @@ function openAdminModal(title, contentHtml) {
     }
 }
 
-window.closeAdminModal = function() {
+window.closeAdminModal = function () {
     const modal = document.getElementById('admin-modal');
     if (modal) {
         modal.classList.remove('active');
@@ -2044,17 +2044,17 @@ window.closeAdminModal = function() {
     }
 };
 
-window.openEditCompModal = function(compId) {
+window.openEditCompModal = function (compId) {
     const comp = competenciesData.find(c => c.id === compId);
     if (!comp) return;
-    
+
     let skillsListHtml = comp.skills.map((skill, index) => `
         <div class="form-group" style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem; align-items: center;" id="skill-row-${index}">
             <input type="text" class="form-control skill-input" value="${skill}" style="flex: 1; padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" required>
             <button type="button" onclick="document.getElementById('skill-row-${index}').remove()" style="background: none; border: none; color: #f43f5e; font-size: 1.2rem; cursor: pointer;" title="삭제"><i class="fa-solid fa-trash-can"></i></button>
         </div>
     `).join('');
-    
+
     const formHtml = `
         <form id="edit-comp-form" style="display: flex; flex-direction: column; gap: 1.5rem;">
             <div class="form-group">
@@ -2080,12 +2080,12 @@ window.openEditCompModal = function(compId) {
             </div>
         </form>
     `;
-    
+
     let skillIndex = comp.skills.length;
-    window.addSkillRow = function() {
+    window.addSkillRow = function () {
         const container = document.getElementById('skills-list-container');
         if (!container) return;
-        
+
         const row = document.createElement('div');
         row.id = `skill-row-${skillIndex}`;
         row.style = "display: flex; gap: 0.5rem; margin-bottom: 0.75rem; align-items: center;";
@@ -2096,23 +2096,23 @@ window.openEditCompModal = function(compId) {
         container.appendChild(row);
         skillIndex++;
     };
-    
+
     openAdminModal(`핵심 역량 편집 - ${comp.title}`, formHtml);
-    
+
     const form = document.getElementById('edit-comp-form');
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        
+
         const newTitle = document.getElementById('comp-title').value.trim();
         const newIcon = document.getElementById('comp-icon').value.trim();
-        
+
         const skillInputs = document.querySelectorAll('.skill-input');
         const newSkills = Array.from(skillInputs).map(input => input.value.trim()).filter(val => val !== '');
-        
+
         comp.title = newTitle;
         comp.icon = newIcon;
         comp.skills = newSkills;
-        
+
         saveAllData();
         renderCompetencies();
         closeAdminModal();
@@ -2123,10 +2123,10 @@ window.openEditCompModal = function(compId) {
 function compressAndResizeImage(img, maxWidth = 1024, maxHeight = 1024, quality = 0.8) {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    
+
     let width = img.width;
     let height = img.height;
-    
+
     if (width > height) {
         if (width > maxWidth) {
             height = Math.round((height * maxWidth) / width);
@@ -2138,7 +2138,7 @@ function compressAndResizeImage(img, maxWidth = 1024, maxHeight = 1024, quality 
             height = maxHeight;
         }
     }
-    
+
     canvas.width = width;
     canvas.height = height;
     ctx.fillStyle = '#ffffff';
@@ -2153,36 +2153,36 @@ function resizeAndCropImage(img, targetWidth, targetHeight) {
     canvas.width = targetWidth;
     canvas.height = targetHeight;
     const ctx = canvas.getContext('2d');
-    
+
     // 비율 맞춤용 스케일 팩터 계산 (Cover)
     const scale = Math.max(targetWidth / img.width, targetHeight / img.height);
     const scaledWidth = img.width * scale;
     const scaledHeight = img.height * scale;
-    
+
     // 중앙 정렬 오프셋 계산 (초과되는 부분은 캔버스 경계 밖으로 나가 잘리게 됨)
     const x = (targetWidth - scaledWidth) / 2;
     const y = (targetHeight - scaledHeight) / 2;
-    
+
     // 이미지 그리기
     ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
-    
+
     return canvas.toDataURL('image/jpeg', 0.85); // 퀄리티 0.85로 선명하게 저장
 }
 
-window.openEditProjectModal = function(projectId) {
+window.openEditProjectModal = function (projectId) {
     const project = portfolioData.find(p => p.id === projectId);
     if (!project) return;
-    
+
     renderProjectForm(project, `프로젝트 편집 - ${project.title}`);
 };
 
-window.openAddProjectModal = function() {
+window.openAddProjectModal = function () {
     renderProjectForm(null, '새 프로젝트 추가');
 };
 
 function renderProjectForm(project = null, modalTitleStr) {
     const isEdit = !!project;
-    
+
     const formHtml = `
         <form id="project-form" style="display: flex; flex-direction: column; gap: 1.2rem;">
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
@@ -2272,27 +2272,27 @@ function renderProjectForm(project = null, modalTitleStr) {
             </div>
         </form>
     `;
-    
+
     openAdminModal(modalTitleStr, formHtml);
-    
+
     // 이미지 파일 비동기 변환 바인딩
     let selectedImageBase64 = isEdit && project.imageUrl ? project.imageUrl : '';
     let selectedImageBase64_2 = isEdit && project.imageUrl2 ? project.imageUrl2 : '';
-    
+
     function alignImageSizes(callback) {
         if (!selectedImageBase64 || !selectedImageBase64_2) {
             if (callback) callback();
             return;
         }
-        
+
         const img1 = new Image();
         const img2 = new Image();
         img1.crossOrigin = 'anonymous';
         img2.crossOrigin = 'anonymous';
-        
+
         let loadedCount = 0;
         let failed = false;
-        
+
         const onImgLoad = () => {
             if (failed) return;
             loadedCount++;
@@ -2302,24 +2302,24 @@ function renderProjectForm(project = null, modalTitleStr) {
                     const h1 = img1.height;
                     const w2 = img2.width;
                     const h2 = img2.height;
-                    
+
                     if (w1 === w2 && h1 === h2) {
                         if (callback) callback();
                         return;
                     }
-                    
+
                     const targetWidth = Math.min(w1, w2);
                     const targetHeight = Math.min(h1, h2);
-                    
+
                     selectedImageBase64 = resizeAndCropImage(img1, targetWidth, targetHeight);
                     selectedImageBase64_2 = resizeAndCropImage(img2, targetWidth, targetHeight);
-                    
+
                     // Update preview display on form
                     const previewImg = document.getElementById('proj-image-preview');
                     const previewImg2 = document.getElementById('proj-image-preview2');
                     if (previewImg) previewImg.src = selectedImageBase64;
                     if (previewImg2) previewImg2.src = selectedImageBase64_2;
-                    
+
                     console.log(`[Image Alignment] Successfully aligned form images to ${targetWidth}x${targetHeight}`);
                 } catch (err) {
                     console.error('[Image Alignment] Failed to align image sizes:', err);
@@ -2327,22 +2327,22 @@ function renderProjectForm(project = null, modalTitleStr) {
                 if (callback) callback();
             }
         };
-        
+
         const onImgError = (err) => {
             console.warn('[Image Alignment] Image load error during size alignment:', err);
             failed = true;
             if (callback) callback();
         };
-        
+
         img1.onload = onImgLoad;
         img2.onload = onImgLoad;
         img1.onerror = onImgError;
         img2.onerror = onImgError;
-        
+
         img1.src = selectedImageBase64;
         img2.src = selectedImageBase64_2;
     }
-    
+
     setTimeout(() => {
         // 이미지 1 처리
         const fileInput = document.getElementById('proj-image');
@@ -2350,7 +2350,7 @@ function renderProjectForm(project = null, modalTitleStr) {
         const previewWrapper = document.getElementById('proj-image-preview-wrapper');
         const previewImg = document.getElementById('proj-image-preview');
         const deleteBtn = document.getElementById('btn-delete-proj-image');
-        
+
         if (fileInput) {
             fileInput.addEventListener('change', (e) => {
                 const file = e.target.files[0];
@@ -2371,7 +2371,7 @@ function renderProjectForm(project = null, modalTitleStr) {
                 }
             });
         }
-        
+
         if (deleteBtn) {
             deleteBtn.addEventListener('click', () => {
                 selectedImageBase64 = '';
@@ -2389,7 +2389,7 @@ function renderProjectForm(project = null, modalTitleStr) {
         const previewWrapper2 = document.getElementById('proj-image-preview-wrapper2');
         const previewImg2 = document.getElementById('proj-image-preview2');
         const deleteBtn2 = document.getElementById('btn-delete-proj-image2');
-        
+
         if (fileInput2) {
             fileInput2.addEventListener('change', (e) => {
                 const file = e.target.files[0];
@@ -2410,7 +2410,7 @@ function renderProjectForm(project = null, modalTitleStr) {
                 }
             });
         }
-        
+
         if (deleteBtn2) {
             deleteBtn2.addEventListener('click', () => {
                 selectedImageBase64_2 = '';
@@ -2422,17 +2422,17 @@ function renderProjectForm(project = null, modalTitleStr) {
             });
         }
     }, 100);
-    
+
     const form = document.getElementById('project-form');
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        
+
         const saveBtn = form.querySelector('button[type="submit"]');
         if (saveBtn) {
             saveBtn.disabled = true;
             saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin icon-left"></i>저장 중...';
         }
-        
+
         alignImageSizes(() => {
             const categoryVal = document.getElementById('proj-category').value;
             const titleVal = document.getElementById('proj-title').value.trim();
@@ -2443,11 +2443,11 @@ function renderProjectForm(project = null, modalTitleStr) {
             const youtubeStartVal = convertTimeToSeconds(document.getElementById('proj-youtube-start').value.trim());
             const youtubeEndVal = convertTimeToSeconds(document.getElementById('proj-youtube-end').value.trim());
             const googleDriveUrlVal = document.getElementById('proj-google-drive').value.trim();
-            
+
             const descriptionVal = isEdit ? project.description : '';
             const highlightsVal = isEdit ? project.highlights : [];
             const techStackVal = isEdit ? project.techStack : [];
-            
+
             let iconVal = 'fa-code';
             if (categoryVal === 'career') {
                 iconVal = 'fa-graduation-cap';
@@ -2457,14 +2457,14 @@ function renderProjectForm(project = null, modalTitleStr) {
             if (isEdit && project.icon) {
                 iconVal = project.icon;
             }
-            
+
             const yearMatch = periodVal.match(/\d{4}/);
             const yearVal = yearMatch ? yearMatch[0] : new Date().getFullYear().toString();
-            
+
             let colorVal = 'var(--color-it-end)';
             let bgVal = 'rgba(225, 0, 255, 0.1)';
             let borderVal = 'rgba(225, 0, 255, 0.2)';
-            
+
             if (categoryVal === 'career') {
                 colorVal = 'var(--color-career-end)';
                 bgVal = 'rgba(79, 172, 254, 0.1)';
@@ -2474,7 +2474,7 @@ function renderProjectForm(project = null, modalTitleStr) {
                 bgVal = 'rgba(248, 87, 166, 0.1)';
                 borderVal = 'rgba(248, 87, 166, 0.2)';
             }
-            
+
             if (isEdit) {
                 project.category = categoryVal;
                 project.title = titleVal;
@@ -2520,7 +2520,7 @@ function renderProjectForm(project = null, modalTitleStr) {
                 };
                 portfolioData.push(newProj);
             }
-            
+
             saveAllData();
             renderPortfolioGrid(currentPortfolioFilter, currentPortfolioPage);
             closeAdminModal();
@@ -2528,7 +2528,7 @@ function renderProjectForm(project = null, modalTitleStr) {
     });
 }
 
-window.deleteProject = function(projectId) {
+window.deleteProject = function (projectId) {
     if (confirm('이 프로젝트를 삭제하시겠습니까?')) {
         portfolioData = portfolioData.filter(p => p.id !== projectId);
         saveAllData();
@@ -2536,18 +2536,18 @@ window.deleteProject = function(projectId) {
     }
 };
 
-window.resetAllToDefault = function() {
+window.resetAllToDefault = function () {
     if (confirm('모든 데이터를 원래 템플릿의 초기값으로 초기화하시겠습니까? 작성하거나 수정한 데이터는 모두 소실됩니다.')) {
         localStorage.removeItem('competenciesData');
         localStorage.removeItem('portfolioData');
         localStorage.removeItem('journeyData');
-        
+
         const payload = {
             portfolioData: defaultPortfolioData,
             journeyData: defaultJourneyData,
             competenciesData: defaultCompetenciesData
         };
-        
+
         fetch('/api/save', {
             method: 'POST',
             headers: {
@@ -2555,24 +2555,24 @@ window.resetAllToDefault = function() {
             },
             body: JSON.stringify(payload)
         })
-        .finally(() => {
-            window.location.reload();
-        });
+            .finally(() => {
+                window.location.reload();
+            });
     }
 };
 
-window.openEditJourneyModal = function(journeyId) {
+window.openEditJourneyModal = function (journeyId) {
     if (!isAdminMode) {
         alert('관리자 권한이 필요합니다.');
         return;
     }
     const item = journeyData.find(j => j.id === journeyId);
     if (!item) return;
-    
+
     renderJourneyForm(item, `타임라인 편집 - ${item.title}`);
 };
 
-window.openAddJourneyModal = function() {
+window.openAddJourneyModal = function () {
     if (!isAdminMode) {
         alert('관리자 권한이 필요합니다.');
         return;
@@ -2586,7 +2586,7 @@ function renderJourneyForm(journeyItem = null, modalTitleStr) {
         return;
     }
     const isEdit = !!journeyItem;
-    
+
     const formHtml = `
         <form id="journey-form" style="display: flex; flex-direction: column; gap: 1.2rem;">
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
@@ -2627,19 +2627,19 @@ function renderJourneyForm(journeyItem = null, modalTitleStr) {
             </div>
         </form>
     `;
-    
+
     openAdminModal(modalTitleStr, formHtml);
-    
+
     const form = document.getElementById('journey-form');
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        
+
         const categoryVal = document.getElementById('journ-category').value;
         const periodVal = document.getElementById('journ-period').value.trim();
         const titleVal = document.getElementById('journ-title').value.trim();
         const institutionVal = document.getElementById('journ-institution').value.trim();
         const descriptionVal = document.getElementById('journ-description').value.trim();
-        
+
         if (isEdit) {
             journeyItem.category = categoryVal;
             journeyItem.period = periodVal;
@@ -2657,14 +2657,14 @@ function renderJourneyForm(journeyItem = null, modalTitleStr) {
             };
             journeyData.push(newItem);
         }
-        
+
         saveAllData();
         renderTimeline(getActiveJourneyFilter());
         closeAdminModal();
     });
 }
 
-window.deleteJourneyItem = function(journeyId) {
+window.deleteJourneyItem = function (journeyId) {
     if (!isAdminMode) {
         alert('관리자 권한이 필요합니다.');
         return;
@@ -2680,7 +2680,7 @@ window.deleteJourneyItem = function(journeyId) {
 // GitHub Integration and Server Update Persistence (via PAT)
 // ==========================================================================
 
-window.openGithubConfigModal = function() {
+window.openGithubConfigModal = function () {
     let config = JSON.parse(localStorage.getItem('githubConfig')) || {
         pat: '',
         owner: '',
@@ -2688,7 +2688,7 @@ window.openGithubConfigModal = function() {
         branch: 'main',
         path: 'data.json'
     };
-    
+
     const formHtml = `
         <form id="github-config-form" style="display: flex; flex-direction: column; gap: 1.2rem;">
             <div class="form-group">
@@ -2725,9 +2725,9 @@ window.openGithubConfigModal = function() {
             </div>
         </form>
     `;
-    
+
     openAdminModal('GitHub 연동 설정', formHtml);
-    
+
     const form = document.getElementById('github-config-form');
     form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -2744,7 +2744,7 @@ window.openGithubConfigModal = function() {
     });
 };
 
-window.clearGithubConfig = function() {
+window.clearGithubConfig = function () {
     if (confirm('저장된 모든 GitHub 연동 설정을 삭제하시겠습니까? (로컬 브라우저에 저장 중인 토큰과 저장소 정보가 완전히 제거됩니다.)')) {
         localStorage.removeItem('githubConfig');
         alert('GitHub 연동 설정이 성공적으로 삭제되었습니다.');
@@ -2752,48 +2752,48 @@ window.clearGithubConfig = function() {
     }
 };
 
-window.updateServerGithub = function() {
+window.updateServerGithub = function () {
     const config = JSON.parse(localStorage.getItem('githubConfig'));
     if (!config || !config.pat || !config.owner || !config.repo || !config.branch || !config.path) {
         alert('먼저 "GitHub 연동 설정"을 완료해 주세요.');
         openGithubConfigModal();
         return;
     }
-    
+
     const syncBtn = document.getElementById('btn-github-sync');
     const originalText = syncBtn.innerHTML;
     syncBtn.disabled = true;
     syncBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right: 0.25rem;"></i>서버 업데이트 중...';
-    
+
     const headers = {
         'Authorization': `token ${config.pat}`,
         'Accept': 'application/vnd.github.v3+json',
         'Content-Type': 'application/json'
     };
-    
+
     // Step 1: GitHub 저장소의 images 폴더로 업로드할 이미지들을 확인하고 처리하는 헬퍼 함수
     const syncImagesToGithub = () => {
         const pathParts = config.path.split('/');
         pathParts.pop(); // Remove data.json filename
         const parentPath = pathParts.length > 0 ? pathParts.join('/') + '/' : '';
-        
+
         const syncPromises = [];
-        
+
         portfolioData.forEach(item => {
             // 개별 이미지 파일 동기화 헬퍼 함수
             const syncSingleImage = (urlField, filenameSuffix) => {
                 const imgUrl = item[urlField];
                 if (!imgUrl) return Promise.resolve();
-                
+
                 // 이미지 데이터가 Base64 형태인 경우
                 if (imgUrl.startsWith('data:image/')) {
                     const matches = imgUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
                     if (!matches || matches.length !== 3) return Promise.resolve();
-                    
+
                     const base64Data = matches[2];
                     const githubImagePath = `${parentPath}images/project-${item.id}${filenameSuffix}.jpg`;
                     const imageApiUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${githubImagePath}`;
-                    
+
                     // 해당 파일이 저장소에 이미 존재하는지 SHA 확인
                     return fetch(`${imageApiUrl}?ref=${config.branch}`, { headers })
                         .then(res => {
@@ -2809,7 +2809,7 @@ window.updateServerGithub = function() {
                                 branch: config.branch
                             };
                             if (sha) commitPayload.sha = sha;
-                            
+
                             return fetch(imageApiUrl, {
                                 method: 'PUT',
                                 headers,
@@ -2826,7 +2826,7 @@ window.updateServerGithub = function() {
                 else if (imgUrl.startsWith('images/')) {
                     const githubImagePath = `${parentPath}${imgUrl}`;
                     const imageApiUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${githubImagePath}`;
-                    
+
                     // GitHub 저장소에 이미 이미지가 존재하는지 확인
                     return fetch(`${imageApiUrl}?ref=${config.branch}`, { headers })
                         .then(res => {
@@ -2869,13 +2869,13 @@ window.updateServerGithub = function() {
                 }
                 return Promise.resolve();
             };
-            
+
             // 대표 이미지 1 동기화 프로미스 추가
             syncPromises.push(syncSingleImage('imageUrl', ''));
             // 대표 이미지 2 동기화 프로미스 추가
             syncPromises.push(syncSingleImage('imageUrl2', '-2'));
         });
-        
+
         // 팝업 이미지 동기화 추가
         if (popupConfig && popupConfig.imageUrl && popupConfig.imageUrl.startsWith('data:image/')) {
             const matches = popupConfig.imageUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
@@ -2883,7 +2883,7 @@ window.updateServerGithub = function() {
                 const base64Data = matches[2];
                 const githubImagePath = `${parentPath}images/popup-image.jpg`;
                 const imageApiUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${githubImagePath}`;
-                
+
                 const popupImgPromise = fetch(`${imageApiUrl}?ref=${config.branch}`, { headers })
                     .then(res => {
                         if (res.status === 404) return { sha: null };
@@ -2898,7 +2898,7 @@ window.updateServerGithub = function() {
                             branch: config.branch
                         };
                         if (sha) commitPayload.sha = sha;
-                        
+
                         return fetch(imageApiUrl, {
                             method: 'PUT',
                             headers,
@@ -2917,7 +2917,7 @@ window.updateServerGithub = function() {
                 syncPromises.push(popupImgPromise);
             }
         }
-        
+
         // 다중 강좌 배너 및 세부내용 이미지 동기화 추가
         coursesData.forEach(c => {
             // 1. 배너 이미지 동기화
@@ -2927,7 +2927,7 @@ window.updateServerGithub = function() {
                     const base64Data = matches[2];
                     const githubImagePath = `${parentPath}images/course-banner-${c.id}.jpg`;
                     const imageApiUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${githubImagePath}`;
-                    
+
                     const courseImgPromise = fetch(`${imageApiUrl}?ref=${config.branch}`, { headers })
                         .then(res => {
                             if (res.status === 404) return { sha: null };
@@ -2942,7 +2942,7 @@ window.updateServerGithub = function() {
                                 branch: config.branch
                             };
                             if (sha) commitPayload.sha = sha;
-                            
+
                             return fetch(imageApiUrl, {
                                 method: 'PUT',
                                 headers,
@@ -2957,7 +2957,7 @@ window.updateServerGithub = function() {
                     syncPromises.push(courseImgPromise);
                 }
             }
-            
+
             // 2. 세부내용 이미지 동기화
             if (c.detailImageUrl && c.detailImageUrl.startsWith('data:image/')) {
                 const matches = c.detailImageUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
@@ -2965,7 +2965,7 @@ window.updateServerGithub = function() {
                     const base64Data = matches[2];
                     const githubImagePath = `${parentPath}images/course-detail-${c.id}.jpg`;
                     const imageApiUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${githubImagePath}`;
-                    
+
                     const courseDetailImgPromise = fetch(`${imageApiUrl}?ref=${config.branch}`, { headers })
                         .then(res => {
                             if (res.status === 404) return { sha: null };
@@ -2980,7 +2980,7 @@ window.updateServerGithub = function() {
                                 branch: config.branch
                             };
                             if (sha) commitPayload.sha = sha;
-                            
+
                             return fetch(imageApiUrl, {
                                 method: 'PUT',
                                 headers,
@@ -2996,7 +2996,7 @@ window.updateServerGithub = function() {
                 }
             }
         });
-        
+
         return Promise.all(syncPromises).then(() => {
             // 변경된 상대경로들을 로컬 스토리지에 최종 반영하고 목록 다시 렌더링
             safeSaveToLocalStorage('portfolioData', portfolioData);
@@ -3005,7 +3005,7 @@ window.updateServerGithub = function() {
             renderPortfolioGrid(currentPortfolioFilter, currentPortfolioPage);
         });
     };
-    
+
     // Step 2: 이미지 업로드 완료 후, 최종 정제된 data.json 업로드 실행
     syncImagesToGithub()
         .then(() => {
@@ -3023,7 +3023,7 @@ window.updateServerGithub = function() {
         })
         .then(fileMeta => {
             const sha = fileMeta.sha;
-            
+
             const dataPayload = {
                 portfolioData,
                 journeyData,
@@ -3035,7 +3035,7 @@ window.updateServerGithub = function() {
             const jsonStr = JSON.stringify(dataPayload, null, 2);
             // Safe UTF-8 Base64 encoding
             const base64Content = btoa(unescape(encodeURIComponent(jsonStr)));
-            
+
             const commitPayload = {
                 message: `chore: update portfolio data.json via admin interface [${new Date().toLocaleDateString()}]`,
                 content: base64Content,
@@ -3044,7 +3044,7 @@ window.updateServerGithub = function() {
             if (sha) {
                 commitPayload.sha = sha;
             }
-            
+
             return fetch(`https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.path}`, {
                 method: 'PUT',
                 headers,
@@ -3059,11 +3059,11 @@ window.updateServerGithub = function() {
         })
         .then(commitResult => {
             safeSaveToLocalStorage('hasUnsavedChanges', 'false'); // saved successfully!
-            
+
             // Remove warning banner if it exists
             const banner = document.getElementById('unsaved-warning-banner');
             if (banner) banner.remove();
-            
+
             alert('성공적으로 GitHub 저장소에 데이터와 신규 이미지를 업로드했습니다!\nGitHub Pages가 빌드된 후(보통 1~2분 소요) 다른 기기에서도 업데이트가 실시간 반영됩니다.');
         })
         .catch(err => {
@@ -3076,16 +3076,16 @@ window.updateServerGithub = function() {
         });
 };
 
-window.downloadUploadedDataJson = function() {
+window.downloadUploadedDataJson = function () {
     const config = JSON.parse(localStorage.getItem('githubConfig'));
     let downloadUrl = 'data.json'; // Default: local static url
-    
+
     if (config && config.owner && config.repo && config.branch && config.path) {
         downloadUrl = `https://raw.githubusercontent.com/${config.owner}/${config.repo}/${config.branch}/${config.path}?t=${Date.now()}`;
     }
-    
+
     console.log('다운로드할 데이터 파일 경로:', downloadUrl);
-    
+
     fetch(downloadUrl)
         .then(res => {
             if (!res.ok) throw new Error(`데이터 파일 다운로드 실패 (상태 코드: ${res.status})`);
@@ -3112,7 +3112,7 @@ window.downloadUploadedDataJson = function() {
 
 function checkAndShowPopup() {
     if (!popupConfig || !popupConfig.enabled) return;
-    
+
     // Check local storage for "today hide" timestamp
     const hideTime = localStorage.getItem('popupHideTime');
     if (hideTime) {
@@ -3122,22 +3122,22 @@ function checkAndShowPopup() {
             return;
         }
     }
-    
+
     const modal = document.getElementById('load-popup-modal');
     const titleEl = document.getElementById('popup-title');
     const contentEl = document.getElementById('popup-content');
     const imgContainer = document.getElementById('popup-image-container');
     const imgEl = document.getElementById('popup-image');
-    
+
     const linkContainer = document.getElementById('popup-link-container');
     const applyLinkEl = document.getElementById('popup-apply-link');
     const detailBtnEl = document.getElementById('popup-detail-btn');
-    
+
     if (!modal || !titleEl || !contentEl || !linkContainer || !applyLinkEl || !detailBtnEl) return;
-    
+
     titleEl.textContent = popupConfig.title || '공지사항';
     contentEl.textContent = popupConfig.content || '';
-    
+
     if (popupConfig.imageUrl) {
         imgEl.src = popupConfig.imageUrl;
         imgContainer.style.display = 'block';
@@ -3145,9 +3145,9 @@ function checkAndShowPopup() {
         imgContainer.style.display = 'none';
         imgEl.src = '';
     }
-    
+
     let hasButtons = false;
-    
+
     // 1. "접수하러 가기" 버튼 설정
     if (popupConfig.linkUrl) {
         applyLinkEl.href = popupConfig.linkUrl;
@@ -3157,32 +3157,32 @@ function checkAndShowPopup() {
         applyLinkEl.style.display = 'none';
         applyLinkEl.href = '';
     }
-    
+
     // 2. "자세히 보기" 버튼 설정 (프로젝트 관리 강좌 상세 페이지 이동)
     detailBtnEl.style.display = 'flex';
-    
+
     // 중복 클릭 이벤트 방지를 위해 클론을 만들어서 리스너 재등록
     const newDetailBtnEl = detailBtnEl.cloneNode(true);
     detailBtnEl.parentNode.replaceChild(newDetailBtnEl, detailBtnEl);
-    
+
     newDetailBtnEl.addEventListener('click', () => {
         closePopupModal();
         window.location.href = popupConfig.linkUrl || 'project-contents.html';
     });
     hasButtons = true;
-    
+
     // 버튼 컨테이너 표시 여부 결정
     if (hasButtons) {
         linkContainer.style.display = 'flex';
     } else {
         linkContainer.style.display = 'none';
     }
-    
+
     // Open modal
     modal.classList.add('active');
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
-    
+
     // Close button event
     document.getElementById('popup-close-btn').addEventListener('click', closePopupModal);
     modal.addEventListener('click', (e) => {
@@ -3192,17 +3192,17 @@ function checkAndShowPopup() {
     });
 }
 
-window.closePopupModal = function() {
+window.closePopupModal = function () {
     const modal = document.getElementById('load-popup-modal');
     if (!modal) return;
-    
+
     const todayHide = document.getElementById('popup-today-hide');
     if (todayHide && todayHide.checked) {
         // Set timestamp for 24 hours later
         const expireTime = new Date().getTime() + (24 * 60 * 60 * 1000);
         localStorage.setItem('popupHideTime', expireTime.toString());
     }
-    
+
     modal.classList.remove('active');
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
@@ -3210,7 +3210,7 @@ window.closePopupModal = function() {
 
 
 
-window.openProjectMgmtDashboard = function(e) {
+window.openProjectMgmtDashboard = function (e) {
     if (e) e.preventDefault();
     if (!isAdminMode) {
         alert('관리자 권한이 필요합니다.');
@@ -3219,22 +3219,22 @@ window.openProjectMgmtDashboard = function(e) {
     window.location.href = 'project-management-admin.html';
 };
 
-window.closeCourseAdminSection = function() {
+window.closeCourseAdminSection = function () {
     const adminSec = document.getElementById('course-admin-section');
     if (adminSec) adminSec.style.display = 'none';
-    
+
     // Show all main page sections
     const mainSections = ['#hero', '#about', '#competencies', '#portfolio', '#experience', '#contact'];
     mainSections.forEach(sel => {
         const el = document.querySelector(sel);
         if (el) el.style.display = '';
     });
-    
+
     // Re-render components to ensure visual consistency
     renderCompetencies();
     renderPortfolioGrid(currentPortfolioFilter, currentPortfolioPage);
     renderTimeline(getActiveJourneyFilter());
-    
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
@@ -3249,7 +3249,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-window.renderCourseAdminDashboard = function() {
+window.renderCourseAdminDashboard = function () {
     fetch('/api/applications')
         .then(res => {
             if (!res.ok) throw new Error('서버 신청 목록 로드 실패');
@@ -3268,7 +3268,7 @@ window.renderCourseAdminDashboard = function() {
 function renderCourseAdminDashboardWithApps(apps) {
     const dashboardContainer = document.getElementById('course-admin-dashboard');
     if (!dashboardContainer) return;
-    
+
     // Build Course Cards List
     let coursesHtml = '';
     coursesData.forEach(c => {
@@ -3297,13 +3297,13 @@ function renderCourseAdminDashboardWithApps(apps) {
             </div>
         `;
     });
-    
+
     // Dropdown to filter applicants by course
     let selectOptionsHtml = '<option value="all">전체 신청 내역 보기</option>';
     coursesData.forEach(c => {
         selectOptionsHtml += `<option value="${c.title}">${c.title}</option>`;
     });
-    
+
     dashboardContainer.innerHTML = `
         <!-- Courses Grid Container -->
         <div style="margin-bottom: 3rem;">
@@ -3350,26 +3350,26 @@ function renderCourseAdminDashboardWithApps(apps) {
             </div>
         </div>
     `;
-    
+
     // Store applications array on window for filtering access
     window.currentApplicants = apps;
-    
+
     // Populate table initially
     filterApplicantsTable();
 }
 
-window.filterApplicantsTable = function() {
+window.filterApplicantsTable = function () {
     const filterSelect = document.getElementById('applicants-filter');
     const tableBody = document.getElementById('applicants-table-body');
     if (!tableBody || !window.currentApplicants) return;
-    
+
     const filterVal = filterSelect ? filterSelect.value : 'all';
     const filteredApps = window.currentApplicants.filter(app => {
         if (filterVal === 'all') return true;
         // Match course name (e.g. app.course)
         return app.course === filterVal;
     });
-    
+
     let rowsHtml = '';
     if (filteredApps.length === 0) {
         rowsHtml = `<tr><td colspan="7" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">신청 내역이 존재하지 않습니다.</td></tr>`;
@@ -3394,17 +3394,17 @@ window.filterApplicantsTable = function() {
             `;
         });
     }
-    
+
     tableBody.innerHTML = rowsHtml;
 };
 
-window.showCourseForm = function(courseId) {
+window.showCourseForm = function (courseId) {
     const dashboardContainer = document.getElementById('course-admin-dashboard');
     if (!dashboardContainer) return;
-    
+
     const isEdit = !!courseId;
     const course = isEdit ? coursesData.find(c => c.id === courseId) : null;
-    
+
     const config = course || {
         id: 'course-' + Date.now(),
         tag: 'IT & PM 실무 특강',
@@ -3421,12 +3421,12 @@ window.showCourseForm = function(courseId) {
             { week: 'Week 4', title: '', desc: '' }
         ]
     };
-    
+
     const cur = config.curriculum || [];
     while (cur.length < 4) {
         cur.push({ week: `Week ${cur.length + 1}`, title: '', desc: '' });
     }
-    
+
     dashboardContainer.innerHTML = `
         <div class="glass-panel" style="padding: 2.5rem; border-radius: 20px; background: var(--bg-secondary); border: 1px solid var(--border-color); max-width: 800px; margin: 0 auto;">
             <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 1.5rem; border-left: 4px solid var(--color-it-end); padding-left: 0.75rem;">
@@ -3519,11 +3519,11 @@ window.showCourseForm = function(courseId) {
     `;
 };
 
-window.saveCourse = function(e, courseId) {
+window.saveCourse = function (e, courseId) {
     e.preventDefault();
-    
+
     const previewImg = document.getElementById('course-banner-preview');
-    
+
     // Compile curriculum data
     const updatedCurriculum = [];
     for (let i = 0; i < 4; i++) {
@@ -3533,7 +3533,7 @@ window.saveCourse = function(e, courseId) {
             desc: document.getElementById(`curriculum-desc-${i}`).value
         });
     }
-    
+
     const coursePayload = {
         id: courseId,
         tag: document.getElementById('course-input-tag').value,
@@ -3545,7 +3545,7 @@ window.saveCourse = function(e, courseId) {
         description: document.getElementById('course-input-desc').value,
         curriculum: updatedCurriculum
     };
-    
+
     // Check if course already exists
     const idx = coursesData.findIndex(c => c.id === courseId);
     if (idx !== -1) {
@@ -3553,44 +3553,44 @@ window.saveCourse = function(e, courseId) {
     } else {
         coursesData.push(coursePayload);
     }
-    
+
     // Sync fallback reference
     courseConfig = coursesData[0];
-    
+
     // Save locally
     safeSaveToLocalStorage('coursesData', coursesData);
-    
+
     // Save to server
     saveAllData();
-    
+
     alert('강좌 데이터가 성공적으로 저장되었습니다.');
     renderCourseAdminDashboard();
 };
 
-window.deleteCourse = function(courseId) {
+window.deleteCourse = function (courseId) {
     if (coursesData.length <= 1) {
         alert('최소 1개 이상의 강좌가 유지되어야 하므로 이 강좌를 삭제할 수 없습니다.');
         return;
     }
     if (!confirm('이 강좌를 삭제하시겠습니까? (강좌의 모든 내용이 완전히 삭제됩니다.)')) return;
-    
+
     coursesData = coursesData.filter(c => c.id !== courseId);
     courseConfig = coursesData[0];
-    
+
     // Save locally
     safeSaveToLocalStorage('coursesData', coursesData);
-    
+
     // Save to server
     saveAllData();
-    
+
     alert('강좌가 성공적으로 삭제되었습니다.');
     renderCourseAdminDashboard();
 };
 
-window.handleCourseBannerFileChange = function(event) {
+window.handleCourseBannerFileChange = function (event) {
     const file = event.target.files[0];
     if (!file) return;
-    
+
     compressImageToJpeg(file)
         .then(compressedBase64 => {
             const previewContainer = document.getElementById('course-banner-preview-container');
@@ -3604,33 +3604,33 @@ window.handleCourseBannerFileChange = function(event) {
         });
 };
 
-window.deleteApplication = function(index) {
+window.deleteApplication = function (index) {
     if (!confirm('이 수강 신청 내역을 완전히 삭제하시겠습니까?')) return;
-    
+
     fetch('/api/applications/delete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ index })
     })
-    .then(res => {
-        if (!res.ok) throw new Error('서버 삭제 실패');
-        return res.json();
-    })
-    .then(data => {
-        renderCourseAdminDashboard(); // Reload dashboard
-    })
-    .catch(err => {
-        console.warn('서버 삭제 실패, 로컬 스토리지에서 삭제합니다:', err);
-        try {
-            let localApps = JSON.parse(localStorage.getItem('courseApplications') || '[]');
-            if (index >= 0 && index < localApps.length) {
-                localApps.splice(index, 1);
-                safeSaveToLocalStorage('courseApplications', localApps);
+        .then(res => {
+            if (!res.ok) throw new Error('서버 삭제 실패');
+            return res.json();
+        })
+        .then(data => {
+            renderCourseAdminDashboard(); // Reload dashboard
+        })
+        .catch(err => {
+            console.warn('서버 삭제 실패, 로컬 스토리지에서 삭제합니다:', err);
+            try {
+                let localApps = JSON.parse(localStorage.getItem('courseApplications') || '[]');
+                if (index >= 0 && index < localApps.length) {
+                    localApps.splice(index, 1);
+                    safeSaveToLocalStorage('courseApplications', localApps);
+                }
+            } catch (e) {
+                console.error(e);
             }
-        } catch (e) {
-            console.error(e);
-        }
-        renderCourseAdminDashboard(); // Reload dashboard
-    });
+            renderCourseAdminDashboard(); // Reload dashboard
+        });
 };
 
