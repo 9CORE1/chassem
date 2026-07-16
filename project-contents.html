@@ -1,27 +1,30 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>프로젝트 관리(Project Management) 실무 과정 | 차은정</title>
-    
+
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="프로젝트 관리(Project Management) 실무 과정 | 차은정">
     <meta property="og:description" content="성공적인 프로젝트 수행을 위한 일정, 리스크 관리 및 협업 툴(Jira) 활용까지 포함된 실무 마스터 과정.">
     <meta property="og:image" content="images/project_management_banner.jpg">
-    
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
+
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Stylesheet -->
     <link rel="stylesheet" href="styles.css">
-    
+
     <style>
         .course-layout {
             padding-top: 100px;
@@ -70,6 +73,7 @@
                 gap: 1.5rem;
                 padding: 1.5rem;
             }
+
             .course-header-banner {
                 max-width: 320px;
                 margin: 0 auto;
@@ -118,6 +122,7 @@
             .course-header-details .info-card-grid {
                 grid-template-columns: 1fr;
             }
+
             .course-header-details .info-card-text p {
                 white-space: normal;
             }
@@ -272,7 +277,8 @@
             color: var(--text-secondary);
         }
 
-        .form-group input, .form-group textarea {
+        .form-group input,
+        .form-group textarea {
             width: 100%;
             padding: 0.75rem 1rem;
             border-radius: 8px;
@@ -284,7 +290,8 @@
             transition: var(--transition-smooth);
         }
 
-        .form-group input:focus, .form-group textarea:focus {
+        .form-group input:focus,
+        .form-group textarea:focus {
             outline: none;
             border-color: var(--color-it-end);
             box-shadow: 0 0 10px rgba(2, 132, 199, 0.15);
@@ -304,8 +311,13 @@
         }
 
         @keyframes scaleIn {
-            0% { transform: scale(0); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(0);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
 
         .back-btn {
@@ -325,10 +337,11 @@
         }
     </style>
 </head>
+
 <body class="dark-mode">
     <script>
         // Apply theme immediately on load to prevent flash of wrong theme
-        (function() {
+        (function () {
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'light') {
                 document.body.classList.remove('dark-mode');
@@ -347,14 +360,19 @@
     </script>
 
     <!-- Admin Mode Banner -->
-    <div id="admin-banner" style="display: none; position: fixed; top: 0; left: 0; width: 100%; background: linear-gradient(90deg, var(--color-career-start), var(--color-career-end)); color: white; text-align: center; padding: 0.5rem 1rem; font-size: 0.9rem; font-weight: 600; z-index: 9999; box-shadow: 0 4px 10px rgba(0,0,0,0.25); align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; box-sizing: border-box;">
+    <div id="admin-banner"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; background: linear-gradient(90deg, var(--color-career-start), var(--color-career-end)); color: white; text-align: center; padding: 0.5rem 1rem; font-size: 0.9rem; font-weight: 600; z-index: 9999; box-shadow: 0 4px 10px rgba(0,0,0,0.25); align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; box-sizing: border-box;">
         <span>🛠️ 관리자 모드 활성화 중 (상세 강좌 내용 확인)</span>
         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
-            <button onclick="window.location.href='project-management-admin.html'" class="btn btn-outline" style="border-color: rgba(255,255,255,0.4); color: white; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem; background: rgba(255,255,255,0.1); cursor: pointer;"><i class="fa-solid fa-sliders"></i>관리자 콘솔</button>
-            <button onclick="window.location.href='index.html'" class="btn btn-outline" style="border-color: rgba(255,255,255,0.4); color: white; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem; background: rgba(255,255,255,0.1); cursor: pointer;"><i class="fa-solid fa-house"></i>홈페이지 관리</button>
+            <button onclick="window.location.href='project-management-admin.html'" class="btn btn-outline"
+                style="border-color: rgba(255,255,255,0.4); color: white; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem; background: rgba(255,255,255,0.1); cursor: pointer;"><i
+                    class="fa-solid fa-sliders"></i>관리자 콘솔</button>
+            <button onclick="window.location.href='index.html'" class="btn btn-outline"
+                style="border-color: rgba(255,255,255,0.4); color: white; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem; background: rgba(255,255,255,0.1); cursor: pointer;"><i
+                    class="fa-solid fa-house"></i>홈페이지 관리</button>
         </div>
     </div>
-    
+
     <!-- background decorative elements -->
     <div class="bg-blur-orbs">
         <div class="orb orb-1" style="background: rgba(79, 70, 229, 0.15);"></div>
@@ -379,7 +397,7 @@
     <!-- Main Content -->
     <main class="course-layout">
         <div class="course-container">
-            
+
             <a href="index.html" class="back-btn" id="back-to-home-link">
                 <i class="fa-solid fa-arrow-left"></i> <span>포트폴리오 홈으로 가기</span>
             </a>
@@ -396,7 +414,7 @@
                         <span class="course-tag" id="course-tag">IT & PM 실무 특강</span>
                         <h1 id="course-title">프로젝트 관리(Project Management) 실무 마스터 과정</h1>
                     </div>
-                    
+
                     <!-- Group cards and target to fix their relative spacing -->
                     <div style="display: flex; flex-direction: column; gap: 0.6rem; width: 100%; margin-top: auto;">
                         <div class="info-card-grid">
@@ -422,14 +440,20 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Education Target Block -->
-                        <div id="course-target-container" style="display: none; align-items: center; gap: 0.75rem; background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 0.8rem 1.2rem; border-radius: 16px;">
-                            <i class="fa-solid fa-users" style="color: var(--color-it-end); font-size: 1.1rem; flex-shrink: 0;"></i>
-                            <div style="font-size: 0.9rem; line-height: 1.5; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                                <span style="color: var(--text-muted); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;">교육 대상</span>
+                        <div id="course-target-container"
+                            style="display: none; align-items: center; gap: 0.75rem; background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 0.8rem 1.2rem; border-radius: 16px;">
+                            <i class="fa-solid fa-users"
+                                style="color: var(--color-it-end); font-size: 1.1rem; flex-shrink: 0;"></i>
+                            <div
+                                style="font-size: 0.9rem; line-height: 1.5; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                                <span
+                                    style="color: var(--text-muted); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;">교육
+                                    대상</span>
                                 <span style="color: var(--border-color); font-size: 0.85rem;">|</span>
-                                <span id="course-target" style="color: var(--text-primary); font-weight: 600;">기획자, PM 지망생 등</span>
+                                <span id="course-target" style="color: var(--text-primary); font-weight: 600;">기획자, PM
+                                    지망생 등</span>
                             </div>
                         </div>
                     </div>
@@ -438,21 +462,25 @@
 
             <!-- Course Grid Layout -->
             <div class="course-grid">
-                
+
                 <!-- Left: Course Details -->
                 <div class="course-left">
 
                     <!-- Course Description Section (과정 소개) -->
                     <div class="course-content-block">
                         <h2><i class="fa-solid fa-info-circle"></i> 과정 소개</h2>
-                        
+
                         <!-- 1. 팝업 내용/팝업 요약글 -->
-                        <div id="popup-content-container" style="margin-top: 1.2rem; margin-bottom: 1.5rem; display: none;">
-                            <p id="popup-content-text" style="line-height: 1.6; color: var(--text-primary); font-size: 0.95rem; white-space: pre-wrap; margin: 0;"></p>
+                        <div id="popup-content-container"
+                            style="margin-top: 1.2rem; margin-bottom: 1.5rem; display: none;">
+                            <p id="popup-content-text"
+                                style="line-height: 1.6; color: var(--text-primary); font-size: 0.95rem; white-space: pre-wrap; margin: 0;">
+                            </p>
                         </div>
-                        
+
                         <!-- 2. 세부내용 이미지 -->
-                        <div id="course-detail-img-container" style="margin-top: 1.5rem; display: none; width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); margin-bottom: 2rem;">
+                        <div id="course-detail-img-container"
+                            style="margin-top: 1.5rem; display: none; width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); margin-bottom: 2rem;">
                             <img id="course-detail-img" src="" style="width: 100%; height: auto; display: block;">
                         </div>
                     </div>
@@ -464,22 +492,26 @@
                             <div class="curriculum-item">
                                 <div class="curriculum-week">Week 1</div>
                                 <div class="curriculum-title">PM 기초 및 프로젝트 범위(Scope) 설정</div>
-                                <div class="curriculum-desc">프로젝트 라이프사이클의 이해, 프로젝트 헌장 작성, 이해관계자 관리 및 범위 정의서 작성, 범위 관리를 위한 WBS(작업분할구조도) 실습.</div>
+                                <div class="curriculum-desc">프로젝트 라이프사이클의 이해, 프로젝트 헌장 작성, 이해관계자 관리 및 범위 정의서 작성, 범위 관리를
+                                    위한 WBS(작업분할구조도) 실습.</div>
                             </div>
                             <div class="curriculum-item">
                                 <div class="curriculum-week">Week 2</div>
                                 <div class="curriculum-title">프로젝트 일정 및 리스크 관리</div>
-                                <div class="curriculum-desc">의존성 분석을 통한 일정 네트워크도 설계, 주공정표(CPM) 분석과 간트차트 작성 실습, 리스크 식별 및 정량/정성 평가 기법, 리스크 대응 계획 설계.</div>
+                                <div class="curriculum-desc">의존성 분석을 통한 일정 네트워크도 설계, 주공정표(CPM) 분석과 간트차트 작성 실습, 리스크 식별 및
+                                    정량/정성 평가 기법, 리스크 대응 계획 설계.</div>
                             </div>
                             <div class="curriculum-item">
                                 <div class="curriculum-week">Week 3</div>
                                 <div class="curriculum-title">애자일 방법론 & 스크럼 실무</div>
-                                <div class="curriculum-desc">폭포수(Waterfall) 모델과의 차이 분석, 애자일 선언과 4대 가치 이해, 스크럼 프레임워크(스프린트 기획, 데일리 스크럼, 스프린트 리뷰 및 회고) 롤플레잉.</div>
+                                <div class="curriculum-desc">폭포수(Waterfall) 모델과의 차이 분석, 애자일 선언과 4대 가치 이해, 스크럼 프레임워크(스프린트
+                                    기획, 데일리 스크럼, 스프린트 리뷰 및 회고) 롤플레잉.</div>
                             </div>
                             <div class="curriculum-item">
                                 <div class="curriculum-week">Week 4</div>
                                 <div class="curriculum-title">협업 툴 실습 (Jira & Confluence)</div>
-                                <div class="curriculum-desc">Jira 소프트웨어를 활용한 프로젝트 백로그 작성 및 스프린트 구동, 칸반 보드 설정과 번다운 차트 분석, Confluence를 사용한 요구사항 분석서 작성 및 문서 협업.</div>
+                                <div class="curriculum-desc">Jira 소프트웨어를 활용한 프로젝트 백로그 작성 및 스프린트 구동, 칸반 보드 설정과 번다운 차트 분석,
+                                    Confluence를 사용한 요구사항 분석서 작성 및 문서 협업.</div>
                             </div>
                         </div>
                     </div>
@@ -487,8 +519,11 @@
                     <!-- 4. 세부내용 텍스트 (상세 내용) -->
                     <div class="course-content-block">
                         <h2><i class="fa-solid fa-file-text"></i> 기타 사항</h2>
-                        <p id="course-description" style="line-height: 1.7; color: var(--text-secondary); font-size: 1rem; white-space: pre-wrap; margin: 0;">
-                            성공적인 프로젝트 수행을 위해 필수적인 일정 관리, 자원 배분, 리스크 완화 전략뿐만 아니라 현업에서 널리 활용되고 있는 애자일(Agile) 및 스크럼(Scrum) 방법론, 그리고 글로벌 협업 도구인 Jira 실습까지 올인원으로 아우르는 실무형 PM 양성 과정입니다. 기업의 디지털 전환(DX) 프로젝트를 기획하거나 팀의 작업 생산성을 비약적으로 높이고 싶은 실무자에게 즉각적인 솔루션을 제공합니다.
+                        <p id="course-description"
+                            style="line-height: 1.7; color: var(--text-secondary); font-size: 1rem; white-space: pre-wrap; margin: 0;">
+                            성공적인 프로젝트 수행을 위해 필수적인 일정 관리, 자원 배분, 리스크 완화 전략뿐만 아니라 현업에서 널리 활용되고 있는 애자일(Agile) 및 스크럼(Scrum)
+                            방법론, 그리고 글로벌 협업 도구인 Jira 실습까지 올인원으로 아우르는 실무형 PM 양성 과정입니다. 기업의 디지털 전환(DX) 프로젝트를 기획하거나 팀의 작업
+                            생산성을 비약적으로 높이고 싶은 실무자에게 즉각적인 솔루션을 제공합니다.
                         </p>
                     </div>
 
@@ -497,11 +532,11 @@
                 <!-- Right: Application Form Card -->
                 <div class="course-right">
                     <div class="apply-card glass-panel">
-                        
+
                         <div id="form-container">
                             <h3>수강 신청하기</h3>
                             <p>과정에 대한 상세 안내 및 접수를 진행합니다. 정보를 입력하시면 담당자가 확인 후 안내 연락을 드립니다.</p>
-                            
+
                             <form id="apply-form">
                                 <div class="form-group">
                                     <label for="applicant-name">이름 <span style="color: #f43f5e;">*</span></label>
@@ -517,9 +552,11 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="applicant-message">기타 문의사항</label>
-                                    <textarea id="applicant-message" rows="3" placeholder="질문 사항이나 특이사항이 있다면 입력하세요."></textarea>
+                                    <textarea id="applicant-message" rows="3"
+                                        placeholder="질문 사항이나 특이사항이 있다면 입력하세요."></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-block" style="background: linear-gradient(135deg, var(--color-it-start), var(--color-it-end)); border: none; color: white; padding: 0.8rem; font-weight: 600; cursor: pointer; margin-top: 1rem;">
+                                <button type="submit" class="btn btn-primary btn-block"
+                                    style="background: linear-gradient(135deg, var(--color-it-start), var(--color-it-end)); border: none; color: white; padding: 0.8rem; font-weight: 600; cursor: pointer; margin-top: 1rem;">
                                     수강 신청서 제출하기 <i class="fa-solid fa-paper-plane" style="margin-left: 0.4rem;"></i>
                                 </button>
                             </form>
@@ -533,7 +570,8 @@
                                 수강 신청서가 정상적으로 접수되었습니다.<br>
                                 입력하신 연락처 및 이메일로 빠른 시일 내에 수강료 납부 방법 및 오리엔테이션 안내를 발송해 드리겠습니다. 감사합니다.
                             </p>
-                            <a href="index.html" class="btn btn-outline" style="margin-top: 2rem; display: inline-block; padding: 0.6rem 1.5rem;">홈으로 돌아가기</a>
+                            <a href="index.html" class="btn btn-outline"
+                                style="margin-top: 2rem; display: inline-block; padding: 0.6rem 1.5rem;">홈으로 돌아가기</a>
                         </div>
 
                     </div>
@@ -544,28 +582,62 @@
         </div>
     </main>
 
-    <footer style="padding: 3rem 0; border-top: 1px solid var(--border-color); text-align: center; font-size: 0.9rem; color: var(--text-muted); background: var(--bg-primary); position: relative; z-index: 1;">
+    <footer
+        style="padding: 3rem 0; border-top: 1px solid var(--border-color); text-align: center; font-size: 0.9rem; color: var(--text-muted); background: var(--bg-primary); position: relative; z-index: 1;">
         <p>&copy; 2026 Cha Eun-jung. All rights reserved.</p>
     </footer>
 
     <!-- Form Script -->
     <script>
-        document.getElementById('apply-form').addEventListener('submit', function(e) {
+        // ==========================================================================
+        // 수강 신청서 전용 Google Apps Script Web App URL 설정
+        // (별도 구성하신 수강신청용 Apps Script 웹앱 배포 URL을 아래에 입력하시면 됩니다.)
+        // ==========================================================================
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxW34SwoGNyqM6NaNXrfzTu17UlsV-mfjLPqle7-0-fItTpmPtxuylLGJ07-k332524kA/exec';
+
+        document.getElementById('apply-form').addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             const submitBtn = this.querySelector('button[type="submit"]');
             submitBtn.disabled = true;
             submitBtn.innerHTML = '전송 중... <i class="fa-solid fa-spinner fa-spin"></i>';
-            
+
+            const name = document.getElementById('applicant-name').value;
+            const phone = document.getElementById('applicant-phone').value;
+            const email = document.getElementById('applicant-email').value;
+            const message = document.getElementById('applicant-message').value;
+            const course = document.getElementById('course-title').textContent;
+
             const payload = {
-                name: document.getElementById('applicant-name').value,
-                phone: document.getElementById('applicant-phone').value,
-                email: document.getElementById('applicant-email').value,
-                message: document.getElementById('applicant-message').value,
-                course: document.getElementById('course-title').textContent,
+                name: name,
+                phone: phone,
+                email: email,
+                message: message,
+                course: course,
                 appliedAt: new Date().toLocaleString()
             };
-            
+
+            // Google Apps Script 전송 파라미터 매핑
+            const params = new URLSearchParams();
+            params.append('name', name);
+            params.append('phone', phone);
+            params.append('email', email);
+            params.append('subject', `[수강 신청] ${course}`);
+            params.append('message', message);
+            params.append('course', course);
+
+            const sendToAppsScript = () => {
+                if (!APPS_SCRIPT_URL) {
+                    console.log('Google Apps Script URL이 설정되지 않았습니다.');
+                    return Promise.resolve();
+                }
+                return fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: params
+                });
+            };
+
             // 1. 서버 저장 시도 (Node.js 실행 환경)
             fetch('/api/apply', {
                 method: 'POST',
@@ -574,27 +646,39 @@
                 },
                 body: JSON.stringify(payload)
             })
-            .then(res => {
-                if (!res.ok) throw new Error('서버 저장 실패');
-                return res.json();
-            })
-            .then(data => {
-                showSuccess();
-            })
-            .catch(err => {
-                console.warn('서버 저장 실패, 로컬 스토리지 백업에 저장합니다:', err);
-                
-                // 2. 정적 호스팅 환경일 경우 브라우저에 임시 누적 저장
-                try {
-                    let localApps = JSON.parse(localStorage.getItem('courseApplications') || '[]');
-                    localApps.push(payload);
-                    localStorage.setItem('courseApplications', JSON.stringify(localApps));
-                } catch (e) {
-                    console.error('로컬스토리지 백업 실패:', e);
-                }
-                
-                showSuccess();
-            });
+                .then(res => {
+                    if (!res.ok) throw new Error('서버 저장 실패');
+                    return res.json();
+                })
+                .then(() => {
+                    return sendToAppsScript();
+                })
+                .then(() => {
+                    showSuccess();
+                })
+                .catch(err => {
+                    console.warn('서버 저장 실패, 구글 시트 전송 및 로컬 백업을 수행합니다:', err);
+
+                    // 2. 구글 시트 직접 전송 시도
+                    sendToAppsScript()
+                        .then(() => {
+                            // 정적 호스팅 환경일 경우 브라우저에 임시 누적 저장
+                            try {
+                                let localApps = JSON.parse(localStorage.getItem('courseApplications') || '[]');
+                                localApps.push(payload);
+                                localStorage.setItem('courseApplications', JSON.stringify(localApps));
+                            } catch (e) {
+                                console.error('로컬스토리지 백업 실패:', e);
+                            }
+                            showSuccess();
+                        })
+                        .catch(e => {
+                            console.error('구글 시트 전송 실패:', e);
+                            alert('신청서 제출에 실패했습니다. 다시 시도해 주세요.');
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = '수강 신청서 제출하기 <i class="fa-solid fa-paper-plane" style="margin-left: 0.4rem;"></i>';
+                        });
+                });
         });
 
         function showSuccess() {
@@ -606,7 +690,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const courseId = urlParams.get('id');
-            
+
             // Check admin mode
             const isAdmin = (sessionStorage.getItem('isAdminMode') === 'true') || (localStorage.getItem('isAdminMode') === 'true');
             if (isAdmin) {
@@ -615,7 +699,7 @@
                 if (banner) {
                     banner.style.display = 'flex';
                 }
-                
+
                 // Update back button dynamically for admins
                 const backLink = document.getElementById('back-to-home-link');
                 if (backLink) {
@@ -626,7 +710,7 @@
                     }
                 }
             }
-            
+
             // 미동기화 로컬 변경사항이 있다면 우선 복원
             const hasUnsaved = localStorage.getItem('hasUnsavedChanges') === 'true';
             if (hasUnsaved) {
@@ -634,7 +718,7 @@
                 loadFromLocal(courseId);
                 return;
             }
-            
+
             fetch('data.json?t=' + Date.now())
                 .then(res => {
                     if (!res.ok) throw new Error('서버 데이터 로드 실패');
@@ -653,7 +737,7 @@
                             matchedCourse = data.courseConfig;
                         }
                     }
-                    
+
                     if (matchedCourse) {
                         applyCourseConfig(matchedCourse, data ? data.popupConfig : null);
                     } else {
@@ -700,7 +784,7 @@
 
         function applyCourseConfig(config, popupConfig) {
             if (!config) return;
-            
+
             if (config.tag) document.getElementById('course-tag').textContent = config.tag;
             if (config.title) {
                 document.getElementById('course-title').textContent = config.title;
@@ -734,7 +818,7 @@
                     popupContainer.style.display = 'none';
                 }
             }
-            
+
             if (config.detailImageUrl) {
                 const detailImg = document.getElementById('course-detail-img');
                 const detailImgContainer = document.getElementById('course-detail-img-container');
@@ -748,7 +832,7 @@
                     detailImgContainer.style.display = 'none';
                 }
             }
-            
+
             const curriculumContainer = document.getElementById('curriculum-container');
             const curriculumList = document.getElementById('curriculum-list');
             if (config.curriculum && config.curriculum.length > 0) {
@@ -772,4 +856,5 @@
         }
     </script>
 </body>
+
 </html>
