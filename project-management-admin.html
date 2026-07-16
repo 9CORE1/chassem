@@ -132,6 +132,12 @@
             localStorage.setItem('isAdminMode', 'true');
         }
 
+        // ==========================================================================
+        // 수강 신청서 전용 Google Apps Script Web App URL 설정
+        // (수강신청용 Apps Script 웹앱 배포 URL을 아래에 입력하시면 구글 시트 데이터를 연동하여 가져올 수 있습니다.)
+        // ==========================================================================
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxW34SwoGNyqM6NaNXrfzTu17UlsV-mfjLPqle7-0-fItTpmPtxuylLGJ07-k332524kA/exec';
+
         // Global State variables
         let coursesData = [];
         let portfolioData = [];
@@ -425,6 +431,45 @@
                 });
         }
 
+        window.fetchApplicantsFromGoogleSheet = function() {
+            if (!APPS_SCRIPT_URL) {
+                alert('수강 신청서 전용 구글 앱스 스크립트 URL이 설정되지 않았습니다.');
+                return;
+            }
+            
+            const btn = document.getElementById('btn-fetch-sheet');
+            if (!btn) return;
+            
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right: 0.25rem;"></i>가져오는 중...';
+            
+            fetch(APPS_SCRIPT_URL)
+                .then(res => {
+                    if (!res.ok) throw new Error('구글 시트 데이터를 가져오지 못했습니다.');
+                    return res.json();
+                })
+                .then(data => {
+                    if (Array.isArray(data)) {
+                        window.currentApplicants = data;
+                        filterApplicantsTable();
+                        alert(`구글 시트로부터 총 ${data.length}건의 신청 내역을 성공적으로 동기화했습니다.`);
+                    } else if (data.error) {
+                        throw new Error(data.error);
+                    } else {
+                        throw new Error('정상적인 데이터 구조가 아닙니다.');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('구글 시트 데이터를 가져오는 중 오류가 발생했습니다.\n배포된 Apps Script에 doGet(e)이 구현되어 있고, 웹앱 액세스 권한이 "Anyone(모든 사용자)"으로 설정되어 배포되었는지 확인해 주세요.\n\n오류 내용: ' + err.message);
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                });
+        };
+
         function renderCourseAdminDashboardWithApps(apps) {
             const dashboardContainer = document.getElementById('course-admin-dashboard');
             if (!dashboardContainer) return;
@@ -540,10 +585,13 @@
                         <h3 style="font-size: 1.35rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
                             <span style="display:inline-block; width:4px; height:18px; background:var(--color-it-end); border-radius:2px;"></span> 수강 신청 현황
                         </h3>
-                        <div>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
                             <select id="applicants-filter" onchange="filterApplicantsTable()" style="padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); font-size: 0.85rem; font-weight: 600; cursor: pointer; outline: none;">
                                 ${selectOptionsHtml}
                             </select>
+                            <button id="btn-fetch-sheet" onclick="fetchApplicantsFromGoogleSheet()" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 0.35rem; border-radius: 8px; cursor: pointer;">
+                                <i class="fa-solid fa-cloud-arrow-down"></i> 구글 시트내용 가져오기
+                            </button>
                         </div>
                     </div>
                     
