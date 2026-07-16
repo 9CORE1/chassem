@@ -681,52 +681,19 @@
                 return Promise.resolve();
             };
 
-            // 1. 서버 저장 시도 (Node.js 실행 환경)
-            fetch('/api/apply', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload)
-            })
-                .then(res => {
-                    if (!res.ok) throw new Error('서버 저장 실패');
-                    return res.json();
-                })
-                .then(() => {
-                    return sendToAppsScript();
-                })
+            // 구글 시트 직접 전송 및 EmailJS 메일 발송 실행 (로컬 파일 저장 및 로컬 백업 금지)
+            sendToAppsScript()
                 .then(() => {
                     return sendEmailJS();
                 })
                 .then(() => {
                     showSuccess();
                 })
-                .catch(err => {
-                    console.warn('서버 저장 실패, 구글 시트 전송 및 로컬 백업을 수행합니다:', err);
-
-                    // 2. 구글 시트 직접 전송 시도
-                    sendToAppsScript()
-                        .then(() => {
-                            return sendEmailJS();
-                        })
-                        .then(() => {
-                            // 정적 호스팅 환경일 경우 브라우저에 임시 누적 저장
-                            try {
-                                let localApps = JSON.parse(localStorage.getItem('courseApplications') || '[]');
-                                localApps.push(payload);
-                                localStorage.setItem('courseApplications', JSON.stringify(localApps));
-                            } catch (e) {
-                                console.error('로컬스토리지 백업 실패:', e);
-                            }
-                            showSuccess();
-                        })
-                        .catch(e => {
-                            console.error('구글 시트 전송 실패:', e);
-                            alert('신청서 제출에 실패했습니다. 다시 시도해 주세요.');
-                            submitBtn.disabled = false;
-                            submitBtn.innerHTML = '수강 신청서 제출하기 <i class="fa-solid fa-paper-plane" style="margin-left: 0.4rem;"></i>';
-                        });
+                .catch(e => {
+                    console.error('구글 시트 전송 실패:', e);
+                    alert('신청서 제출에 실패했습니다. 다시 시도해 주세요.');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '수강 신청서 제출하기 <i class="fa-solid fa-paper-plane" style="margin-left: 0.4rem;"></i>';
                 });
         });
 
