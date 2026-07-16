@@ -711,7 +711,7 @@
     }
   ],
   "popupConfig": {
-    "enabled": true,
+    "enabled": false,
     "title": "Antigravity & GitHub를 활용한 개인 포트폴리오 웹페이지 제작 및 배포",
     "content": "세부내용 텍스트",
     "imageUrl": "https://chassem.ai.kr/images/popup-image.jpg",
