@@ -625,16 +625,15 @@
                     
                     <div class="glass-panel" style="border-radius: 16px; background: var(--bg-secondary); border: 1px solid var(--border-color); overflow: hidden;">
                         <div style="width: 100%; overflow-x: auto;">
-                            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+                            <table style="width: 100%; min-width: 950px; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
                                 <thead>
                                     <tr style="border-bottom: 2px solid var(--border-color); color: var(--text-secondary); font-weight: 600; background: rgba(0,0,0,0.15);">
-                                        <th style="padding: 0.9rem 1rem;">이름</th>
-                                        <th style="padding: 0.9rem 1rem;">연락처</th>
-                                        <th style="padding: 0.9rem 1rem;">이메일</th>
-                                        <th style="padding: 0.9rem 1rem;">신청 강좌</th>
-                                        <th style="padding: 0.9rem 1rem;">문의사항</th>
-                                        <th style="padding: 0.9rem 1rem;">신청일시</th>
-                                        <th style="padding: 0.9rem 1rem; text-align: center;">관리</th>
+                                        <th style="padding: 0.9rem 1rem; width: 10%; white-space: nowrap;">이름</th>
+                                        <th style="padding: 0.9rem 1rem; width: 15%; white-space: nowrap;">연락처</th>
+                                        <th style="padding: 0.9rem 1rem; width: 20%;">이메일</th>
+                                        <th style="padding: 0.9rem 1rem; width: 25%;">신청 강좌</th>
+                                        <th style="padding: 0.9rem 1rem; width: 20%;">문의사항</th>
+                                        <th style="padding: 0.9rem 1rem; width: 10%; white-space: nowrap;">신청일시</th>
                                     </tr>
                                 </thead>
                                 <tbody id="applicants-table-body">
@@ -657,7 +656,7 @@
 
             // 아직 구글 시트 데이터를 가져오기 전 상태(null)인 경우, 안내 행 렌더링
             if (window.currentApplicants === null) {
-                tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 3rem; color: var(--text-muted); font-weight: 600;"><i class="fa-solid fa-circle-info" style="color: var(--color-it-end); margin-right: 0.35rem; font-size: 1.1rem;"></i> [구글 시트내용 가져오기] 단추를 클릭하면 수강 신청 현황 데이터를 실시간으로 가져옵니다.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-muted); font-weight: 600;"><i class="fa-solid fa-circle-info" style="color: var(--color-it-end); margin-right: 0.35rem; font-size: 1.1rem;"></i> [구글 시트내용 가져오기] 단추를 클릭하면 수강 신청 현황 데이터를 실시간으로 가져옵니다.</td></tr>`;
                 return;
             }
 
@@ -669,23 +668,18 @@
 
             let rowsHtml = '';
             if (filteredApps.length === 0) {
-                rowsHtml = `<tr><td colspan="7" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">신청 내역이 존재하지 않습니다.</td></tr>`;
+                rowsHtml = `<tr><td colspan="6" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">신청 내역이 존재하지 않습니다.</td></tr>`;
             } else {
                 filteredApps.forEach((app, index) => {
                     const absIndex = window.currentApplicants.indexOf(app);
                     rowsHtml += `
                         <tr style="border-bottom: 1px solid var(--border-color); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.01)'" onmouseout="this.style.background='transparent'">
-                            <td style="padding: 1rem; font-weight: 600; color: var(--text-primary);">${app.name}</td>
-                            <td style="padding: 1rem; color: var(--text-primary);">${app.phone}</td>
+                            <td style="padding: 1rem; font-weight: 600; color: var(--text-primary); white-space: nowrap;">${app.name}</td>
+                            <td style="padding: 1rem; color: var(--text-primary); white-space: nowrap;">${app.phone}</td>
                             <td style="padding: 1rem;"><a href="mailto:${app.email}" style="color: var(--color-it-end); text-decoration: underline;">${app.email}</a></td>
                             <td style="padding: 1rem; font-weight: 600; color: var(--color-it-end); font-size: 0.85rem;">${app.course || '일반 과정'}</td>
                             <td style="padding: 1rem; font-size: 0.85rem; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-secondary);" title="${app.message || ''}">${app.message || '-'}</td>
-                            <td style="padding: 1rem; font-size: 0.8rem; color: var(--text-muted);">${app.appliedAt || '-'}</td>
-                            <td style="padding: 1rem; text-align: center;">
-                                <button onclick="deleteApplication(${absIndex})" style="background: none; border: none; color: #f43f5e; cursor: pointer; padding: 0.25rem 0.5rem; transition: color 0.2s;" title="삭제">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </td>
+                            <td style="padding: 1rem; font-size: 0.8rem; color: var(--text-muted); white-space: nowrap;">${app.appliedAt || '-'}</td>
                         </tr>
                     `;
                 });
