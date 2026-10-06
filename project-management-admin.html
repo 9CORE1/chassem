@@ -1377,6 +1377,7 @@
             pathParts.pop();
             const parentPath = pathParts.length > 0 ? pathParts.join('/') + '/' : '';
 
+<<<<<<< HEAD
             const syncPromises = [];
 
             // 1. 팝업 이미지 동기화
@@ -1484,6 +1485,96 @@
             });
 
             Promise.all(syncPromises)
+=======
+            const sleep = ms => new Promise(res => setTimeout(res, ms));
+
+            const uploadSingleFile = async (githubImagePath, base64Data, commitMsg, maxRetries = 2) => {
+                const imageApiUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${githubImagePath}`;
+                for (let attempt = 0; attempt <= maxRetries; attempt++) {
+                    try {
+                        const metaRes = await fetch(`${imageApiUrl}?ref=${encodeURIComponent(config.branch)}&_=${Date.now()}`, {
+                            headers,
+                            cache: 'no-store'
+                        });
+                        let sha = null;
+                        if (metaRes.ok) {
+                            const meta = await metaRes.json();
+                            sha = meta.sha;
+                        } else if (metaRes.status !== 404) {
+                            const errText = await metaRes.text();
+                            throw new Error(`이미지 SHA 조회 실패 (코드: ${metaRes.status}, 사유: ${errText})`);
+                        }
+
+                        const commitPayload = {
+                            message: commitMsg,
+                            content: base64Data,
+                            branch: config.branch
+                        };
+                        if (sha) commitPayload.sha = sha;
+
+                        const putRes = await fetch(imageApiUrl, { method: 'PUT', headers, body: JSON.stringify(commitPayload) });
+                        if (putRes.ok) {
+                            await sleep(300);
+                            return true;
+                        }
+
+                        const putErrText = await putRes.text();
+                        if (putRes.status === 409 && attempt < maxRetries) {
+                            console.warn(`[Admin Upload] 409 충돌 감지, 재시도 (${attempt + 1}/${maxRetries})...`);
+                            await sleep(1000);
+                            continue;
+                        }
+                        throw new Error(`GitHub 이미지 업로드 실패 (코드: ${putRes.status}, 사유: ${putErrText})`);
+                    } catch (err) {
+                        if (attempt === maxRetries) throw err;
+                        await sleep(1000);
+                    }
+                }
+            };
+
+            const syncAllImagesSequentially = async () => {
+                // 1. 팝업 이미지 동기화
+                if (popupConfig && popupConfig.imageUrl && popupConfig.imageUrl.startsWith('data:image/')) {
+                    const matches = popupConfig.imageUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+                    if (matches && matches.length === 3) {
+                        const base64Data = matches[2];
+                        const githubImagePath = `${parentPath}images/popup-image.jpg`;
+                        await uploadSingleFile(githubImagePath, base64Data, 'upload popup image: popup-image.jpg');
+                        popupConfig.imageUrl = `images/popup-image.jpg`;
+                        safeSaveToLocalStorage('popupConfig', popupConfig);
+                    }
+                }
+
+                // 2. 강좌 배너 및 세부내용 이미지 순차 동기화
+                for (const c of coursesData) {
+                    // 2-1. 배너 이미지
+                    if (c.bannerUrl && c.bannerUrl.startsWith('data:image/')) {
+                        const matches = c.bannerUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+                        if (matches && matches.length === 3) {
+                            const base64Data = matches[2];
+                            const githubImagePath = `${parentPath}images/course-banner-${c.id}.jpg`;
+                            await uploadSingleFile(githubImagePath, base64Data, `upload course banner: course-banner-${c.id}.jpg`);
+                            c.bannerUrl = `images/course-banner-${c.id}.jpg`;
+                            safeSaveToLocalStorage('coursesData', coursesData);
+                        }
+                    }
+
+                    // 2-2. 세부내용 이미지
+                    if (c.detailImageUrl && c.detailImageUrl.startsWith('data:image/')) {
+                        const matches = c.detailImageUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+                        if (matches && matches.length === 3) {
+                            const base64Data = matches[2];
+                            const githubImagePath = `${parentPath}images/course-detail-${c.id}.jpg`;
+                            await uploadSingleFile(githubImagePath, base64Data, `upload course detail image: course-detail-${c.id}.jpg`);
+                            c.detailImageUrl = `images/course-detail-${c.id}.jpg`;
+                            safeSaveToLocalStorage('coursesData', coursesData);
+                        }
+                    }
+                }
+            };
+
+            syncAllImagesSequentially()
+>>>>>>> c40900d (포트폴리오 추가시 사진업로드 오류 수정)
                 .then(() => {
                     const url = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.path}?ref=${config.branch}`;
                     return fetch(url, { headers });
