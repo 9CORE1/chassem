@@ -559,6 +559,28 @@
       "googleDriveUrl": "",
       "imageUrl": "images/project-it-1782997113907.jpg",
       "imageUrl2": ""
+    },
+    {
+      "id": "it-1791267613136",
+      "category": "it",
+      "title": "AI활용 포트폴리오 페이지 제작",
+      "period": "2026.07.03",
+      "year": "2026",
+      "summary": "부산인력개발원 인턴과정 참여자 대상\n포트폴리오 페이지 제작 과정",
+      "description": "",
+      "role": "부산인력개발원",
+      "highlights": [],
+      "techStack": [],
+      "accentColor": "var(--color-it-end)",
+      "accentBg": "rgba(225, 0, 255, 0.1)",
+      "accentBorder": "rgba(225, 0, 255, 0.2)",
+      "icon": "fa-code",
+      "youtubeUrl": "",
+      "youtubeStart": "",
+      "youtubeEnd": "",
+      "googleDriveUrl": "",
+      "imageUrl": "images/project_management_banner.jpg",
+      "imageUrl2": ""
     }
   ],
   "journeyData": [
