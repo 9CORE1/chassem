@@ -691,6 +691,28 @@
       "googleDriveUrl": "",
       "imageUrl": "images/project-it-1791271876681.jpg",
       "imageUrl2": ""
+    },
+    {
+      "id": "it-1791441626119",
+      "category": "it",
+      "title": "중소기업 AI 업무자동화",
+      "period": "2026.10.07",
+      "year": "2026",
+      "summary": "울산소재 (주)삼광케미컬 실무자를 위한 AI 활용과 업무자동화 2h",
+      "description": "",
+      "role": "경남경영자총협",
+      "highlights": [],
+      "techStack": [],
+      "accentColor": "var(--color-it-end)",
+      "accentBg": "rgba(225, 0, 255, 0.1)",
+      "accentBorder": "rgba(225, 0, 255, 0.2)",
+      "icon": "fa-code",
+      "youtubeUrl": "",
+      "youtubeStart": "",
+      "youtubeEnd": "",
+      "googleDriveUrl": "",
+      "imageUrl": "images/project-it-1791441626119.jpg",
+      "imageUrl2": ""
     }
   ],
   "journeyData": [
