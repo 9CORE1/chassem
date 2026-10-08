@@ -2,7 +2,9 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#3d150b">
+    <meta name="format-detection" content="telephone=no">
     <title>@CHAEUNJUNG9 링크트리 | 차은정</title>
     
     <!-- SEO Meta Tags -->
@@ -24,6 +26,9 @@
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Favicon -->
+    <link rel="icon" href="images/favicon.png" type="image/png">
+    
     <style>
         :root {
             --font-family-ko: 'Noto Sans KR', sans-serif;
@@ -42,6 +47,11 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            -webkit-text-size-adjust: 100%;
         }
 
         body {
@@ -49,12 +59,13 @@
             background: var(--bg-gradient);
             background-attachment: fixed;
             min-height: 100vh;
+            min-height: 100dvh;
             color: var(--text-primary);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding: 1rem 1.25rem 1rem 1.25rem;
+            padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1.5rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
             overflow-x: hidden;
             position: relative;
             -ms-overflow-style: none; /* IE and Edge */
@@ -68,7 +79,7 @@
         /* Container */
         .container {
             width: 100%;
-            max-width: 480px;
+            max-width: 640px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -80,13 +91,13 @@
         /* Home Return Button (Top Left) */
         .home-btn {
             position: absolute;
-            top: 1rem;
-            left: 1.25rem;
+            top: max(1rem, env(safe-area-inset-top));
+            left: max(1.25rem, env(safe-area-inset-left));
             background: rgba(255, 255, 255, 0.15);
             color: var(--text-primary);
             border: none;
-            width: 36px;
-            height: 36px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -95,15 +106,11 @@
             text-decoration: none;
             transition: var(--transition);
             z-index: 10;
-        }
-
-        .home-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: scale(1.08);
+            touch-action: manipulation;
         }
 
         .home-btn i {
-            font-size: 1rem;
+            font-size: 1.05rem;
         }
 
         /* Profile Section */
@@ -113,6 +120,7 @@
             align-items: center;
             margin-bottom: 1.25rem;
             text-align: center;
+            width: 100%;
         }
 
         .avatar-wrapper {
@@ -155,6 +163,8 @@
             display: flex;
             gap: 1.25rem;
             margin-bottom: 0.5rem;
+            align-items: center;
+            justify-content: center;
         }
 
         .social-icon {
@@ -165,13 +175,18 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 32px;
-            height: 32px;
+            width: 38px;
+            height: 38px;
+            touch-action: manipulation;
         }
 
-        .social-icon:hover {
-            transform: scale(1.15);
-            color: #ffaca0; /* Soft warm coral/red matching the inner shirt red for hover effect */
+        .social-icon svg {
+            width: 1.75rem;
+            height: 1.75rem;
+            aspect-ratio: 1 / 1;
+            flex-shrink: 0;
+            fill: currentColor;
+            transition: var(--transition);
         }
 
         /* Links List */
@@ -179,35 +194,71 @@
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 0.8rem;
+            gap: 1rem;
             margin-bottom: 0.5rem;
+        }
+
+        /* 2-Column Grid Layout (Desktop & Tablet) */
+        .two-column-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            width: 100%;
+            align-items: start;
+        }
+
+        .link-column {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .column-header {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            margin-bottom: 0.65rem;
+            padding: 0.4rem 0.85rem;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: var(--text-primary);
+            font-size: 0.92rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(4px);
+        }
+
+        .column-header i {
+            font-size: 0.95rem;
+            color: #ffd8d0;
+        }
+
+        .column-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            width: 100%;
         }
 
         /* Link Card */
         .link-card {
             width: 100%;
-            height: 64px;
+            min-height: 64px;
+            height: auto;
             background: var(--button-bg);
             border-radius: 12px;
             color: var(--button-text);
             text-decoration: none;
             display: flex;
             align-items: center;
-            padding: 0.5rem 1rem;
+            padding: 0.6rem 0.85rem;
             border: 2px solid var(--button-border);
             box-shadow: var(--card-shadow);
             transition: var(--transition);
             position: relative;
-        }
-
-        .link-card:hover {
-            transform: translate(-2px, -2px);
-            box-shadow: 6px 6px 0px #000000;
-        }
-
-        .link-card:active {
-            transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0px #000000;
+            touch-action: manipulation;
         }
 
         .link-thumb {
@@ -238,6 +289,7 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
             line-height: 1.35;
+            word-break: keep-all;
         }
 
         .more-btn {
@@ -251,19 +303,51 @@
             width: 20px;
         }
 
-        .link-card:hover .more-btn {
-            color: #000000;
+        /* Desktop Hover Effects */
+        @media (hover: hover) {
+            .home-btn:hover {
+                background: rgba(255, 255, 255, 0.25);
+                transform: scale(1.08);
+            }
+
+            .social-icon:hover {
+                transform: scale(1.15);
+                color: #ffaca0;
+            }
+
+            .link-card:hover {
+                transform: translate(-2px, -2px);
+                box-shadow: 6px 6px 0px #000000;
+            }
+
+            .link-card:hover .more-btn {
+                color: #000000;
+            }
         }
 
+        /* Touch & Active Instant Feedback */
+        .home-btn:active {
+            transform: scale(0.94);
+            background: rgba(255, 255, 255, 0.3);
+        }
 
+        .social-icon:active {
+            transform: scale(0.92);
+            color: #ffaca0;
+        }
+
+        .link-card:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #000000;
+        }
 
         /* Toast notification for sharing */
         .toast {
             position: fixed;
-            bottom: 2rem;
+            bottom: max(1.5rem, calc(env(safe-area-inset-bottom) + 1rem));
             left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.88);
             color: white;
             padding: 0.75rem 1.5rem;
             border-radius: 30px;
@@ -276,10 +360,80 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            max-width: 90vw;
+            text-align: center;
         }
 
         .toast.show {
             transform: translateX(-50%) translateY(0);
+        }
+
+        /* Responsive Layout for Mobile Devices (<= 600px) */
+        @media (max-width: 600px) {
+            .container {
+                padding-top: 2.2rem;
+            }
+
+            .home-btn {
+                top: max(0.85rem, env(safe-area-inset-top));
+                left: max(0.85rem, env(safe-area-inset-left));
+                width: 38px;
+                height: 38px;
+            }
+
+            .avatar-wrapper {
+                width: 82px;
+                height: 82px;
+                margin-bottom: 0.6rem;
+            }
+
+            .username {
+                font-size: 1.45rem;
+            }
+
+            .subtitle {
+                font-size: 0.92rem;
+                margin-bottom: 0.85rem;
+            }
+
+            .social-icons {
+                gap: 1rem;
+                margin-bottom: 0.85rem;
+            }
+
+            /* 스마트폰 화면에서는 두 섹션을 세로 1열 스택으로 전환하여
+               카드가 좁아져서 텍스트가 깨지지 않고, 터치하기 매우 쾌적하도록 최적화 */
+            .two-column-grid {
+                grid-template-columns: 1fr;
+                gap: 1.25rem;
+            }
+
+            .column-header {
+                font-size: 0.9rem;
+                padding: 0.4rem 0.8rem;
+                margin-bottom: 0.6rem;
+            }
+
+            .link-card {
+                min-height: 64px;
+                padding: 0.65rem 0.9rem;
+            }
+
+            .link-thumb {
+                width: 40px;
+                height: 40px;
+                margin-right: 0.85rem;
+            }
+
+            .link-text {
+                font-size: 0.95rem;
+                line-height: 1.35;
+            }
+
+            .more-btn {
+                font-size: 1.1rem;
+                margin-left: 0.5rem;
+            }
         }
     </style>
 </head>
@@ -304,70 +458,104 @@
                 <a href="https://instagram.com/chaeunjung9" class="social-icon" target="_blank" title="Instagram" id="link-instagram">
                     <i class="fa-brands fa-instagram"></i>
                 </a>
-                <a href="mailto:teacha99@gmail.com" class="social-icon" title="Email" id="link-email">
+                <a href="mailto:jjung9935@naver.com" class="social-icon" title="이메일 주소 복사 (jjung9935@naver.com)" id="link-email" onclick="copyEmail(event)">
                     <i class="fa-solid fa-envelope"></i>
                 </a>
                 <a href="https://www.youtube.com/hrdmaker" class="social-icon" target="_blank" title="YouTube" id="link-youtube">
                     <i class="fa-brands fa-youtube"></i>
+                </a>
+                <a href="https://blog.naver.com/upggle_life" class="social-icon" target="_blank" title="네이버 블로그" id="link-blog">
+                    <svg viewBox="0 0 200 200" width="1.75rem" height="1.75rem" fill="currentColor" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+                        <path fill-rule="evenodd" d="M10 58C10 31.49 31.49 10 58 10H142C168.51 10 190 31.49 190 58V142C190 168.51 168.51 190 142 190H58C31.49 190 10 168.51 10 142V58ZM42 47H61V80.5C66.8 74.8 74.8 71.5 83.5 71.5C105.8 71.5 124 89.8 124 113.5C124 137.2 105.8 155.5 83.5 155.5C74.8 155.5 66.8 152 61 146.5V155.5H42V47ZM85 91C72.5 91 62.5 101.1 62.5 113.5C62.5 125.9 72.5 136 85 136C97.5 136 107.5 125.9 107.5 113.5C107.5 101.1 97.5 91 85 91ZM150 39H157.5V163H150V39Z"/>
+                    </svg>
                 </a>
             </div>
         </div>
 
         <!-- Links List -->
         <div class="links-list">
-            <!-- Link 1 (Profile) -->
+            <!-- Link 1 (Profile) - 상단 전체 너비 -->
             <a href="portfolio.html" class="link-card" target="_blank" id="link-profile">
                 <img src="images/favicon.png" alt="차은정 강사 프로필 로고" class="link-thumb logo-img">
                 <span class="link-text">차은정 강사 프로필</span>
                 <i class="fa-solid fa-ellipsis-vertical more-btn"></i>
             </a>
 
-            <!-- Link 2 (MFG_lec) -->
-            <a href="https://cha-ssem.github.io/MFG_lec" class="link-card" target="_blank" id="link-MFG-lec">
-                <img src="images/barcode-logo-black.png" alt="OA Master 로고" class="link-thumb logo-img">
-                <span class="link-text">중소기업 제조업 - 생성형AI 활용 업무자동화</span>
-                <i class="fa-solid fa-ellipsis-vertical more-btn"></i>
-            </a>
-            
-            <!-- Link 3 (OA Master) -->
-            <a href="https://9core1.github.io/oa_master" class="link-card" target="_blank" id="link-oa-master">
-                <img src="images/logo-oa-master.png" alt="OA Master 로고" class="link-thumb logo-img">
-                <span class="link-text">OA Master - 사무자동화 마스터</span>
-                <i class="fa-solid fa-ellipsis-vertical more-btn"></i>
-            </a>
-
-            <!-- Link 4 (AI Video Marketing) -->
-            <a href="https://9core1.github.io/contents/" class="link-card" target="_blank" id="link-ai-marketing">
-                <div class="link-thumb logo-img" style="display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
-                    <i class="fa-solid fa-video" style="font-size: 1.2rem; color: #8a3f29;"></i>
-                </div>
-                <span class="link-text">AI 영상 마케팅 실무</span>
-                <i class="fa-solid fa-ellipsis-vertical more-btn"></i>
-            </a>
-
-            <!-- Link 5 (Biz) -->
-            <a href="https://cha-ssem.github.io/biz/" class="link-card" target="_blank" id="link-biz">
-                <img src="images/logo-biz.jpg" alt="biz 로고" class="link-thumb logo-img">
-                <span class="link-text">생성형 AI 비즈니스 활용</span>
-                <i class="fa-solid fa-ellipsis-vertical more-btn"></i>
-            </a>
+            <!-- 2-Column Grid -->
+            <div class="two-column-grid">
+                <!-- 1열: 강의자료 WEB -->
+                <div class="link-column">
+                    <div class="column-header">
+                        <i class="fa-solid fa-globe"></i>
+                        <span>강의자료 WEB</span>
+                    </div>
+                    <div class="column-cards">
+                        <!-- Link 2 (MFG_lec) -->
+                        <a href="https://cha-ssem.github.io/MFG_lec" class="link-card" target="_blank" id="link-MFG-lec">
+                            <img src="images/barcode-logo-black.png" alt="중소기업 제조업 로고" class="link-thumb logo-img">
+                            <span class="link-text">중소기업 제조업 - 생성형AI 활용 업무자동화</span>
+                            <i class="fa-solid fa-ellipsis-vertical more-btn"></i>
+                        </a>
                         
-            <!-- Link 6 (PROMPTORIES) -->
-            <a href="https://9core1.github.io/promptories" class="link-card" target="_blank" id="link-promptories">
-                <img src="images/logo-promptories.jpg" alt="PROMPTORIES 로고" class="link-thumb">
-                <span class="link-text">PROMPTORIES - 나만의 프롬프트 라이브러리</span>
-                <i class="fa-solid fa-ellipsis-vertical more-btn"></i>
-            </a>
+                        <!-- Link 3 (OA Master) -->
+                        <a href="https://9core1.github.io/oa_master" class="link-card" target="_blank" id="link-oa-master">
+                            <img src="images/logo-oa-master.png" alt="OA Master 로고" class="link-thumb logo-img">
+                            <span class="link-text">OA Master - 사무자동화 마스터</span>
+                            <i class="fa-solid fa-ellipsis-vertical more-btn"></i>
+                        </a>
 
-            <!-- Link 7 (Prompt Studio) -->
-            <a href="https://9core1.github.io/promptmaker/" class="link-card" target="_blank" id="link-prompt-studio">
-                <div class="link-thumb logo-img" style="display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
-                    <i class="fa-solid fa-wand-magic-sparkles" style="font-size: 1.2rem; color: #8a3f29;"></i>
+                        <!-- Link 5 (Biz) -->
+                        <a href="https://cha-ssem.github.io/biz/" class="link-card" target="_blank" id="link-biz">
+                            <img src="images/logo-biz.jpg" alt="biz 로고" class="link-thumb logo-img">
+                            <span class="link-text">생성형 AI 비즈니스 활용</span>
+                            <i class="fa-solid fa-ellipsis-vertical more-btn"></i>
+                        </a>
+
+                        <!-- Link 4 (AI Video Marketing) -->
+                        <a href="https://9core1.github.io/contents/" class="link-card" target="_blank" id="link-ai-marketing">
+                            <div class="link-thumb logo-img" style="display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
+                                <i class="fa-solid fa-video" style="font-size: 1.2rem; color: #8a3f29;"></i>
+                            </div>
+                            <span class="link-text">AI 영상 마케팅 실무</span>
+                            <i class="fa-solid fa-ellipsis-vertical more-btn"></i>
+                        </a>
+                    </div>
                 </div>
-                <span class="link-text">Prompt Studio - 영상·이미지 전용 프롬프트 메이커</span>
-                <i class="fa-solid fa-ellipsis-vertical more-btn"></i>
-            </a>
 
+                <!-- 2열: 서비스 APP -->
+                <div class="link-column">
+                    <div class="column-header">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>서비스 APP</span>
+                    </div>
+                    <div class="column-cards">
+                        <!-- Link 6 (PROMPTORIES) -->
+                        <a href="https://9core1.github.io/promptories" class="link-card" target="_blank" id="link-promptories">
+                            <img src="images/logo-promptories.jpg" alt="PROMPTORIES 로고" class="link-thumb">
+                            <span class="link-text">PROMPTORIES - 나만의 프롬프트 라이브러리</span>
+                            <i class="fa-solid fa-ellipsis-vertical more-btn"></i>
+                        </a>
+
+                        <!-- Link 7 (Prompt Studio) -->
+                        <a href="https://9core1.github.io/promptmaker/" class="link-card" target="_blank" id="link-prompt-studio">
+                            <div class="link-thumb logo-img" style="display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
+                                <i class="fa-solid fa-wand-magic-sparkles" style="font-size: 1.2rem; color: #8a3f29;"></i>
+                            </div>
+                            <span class="link-text">Prompt Studio - 영상·이미지 전용 프롬프트 메이커</span>
+                            <i class="fa-solid fa-ellipsis-vertical more-btn"></i>
+                        </a>
+
+                        <!-- Link 8 (BGM Extender) -->
+                        <a href="https://colab.research.google.com/drive/1wjWDl0fjyg3ST5JbX-PNd6u--Zx77knZ?usp=sharing" class="link-card" target="_blank" id="link-bgm-ext">
+                            <div class="link-thumb logo-img" style="display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
+                                <i class="fa-solid fa-music" style="font-size: 1.2rem; color: #8a3f29;"></i>
+                            </div>
+                            <span class="link-text">배경음악 확장시키기</span>
+                            <i class="fa-solid fa-ellipsis-vertical more-btn"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
 
 
@@ -380,28 +568,75 @@
     </div>
 
     <script>
-        function copyLinkTreeUrl() {
-            const dummy = document.createElement('input');
-            const text = window.location.href;
+        function showToast(message) {
+            const toast = document.getElementById('share-toast');
+            if (!toast) return;
+            const toastText = toast.querySelector('span');
+            if (toastText && message) {
+                toastText.textContent = message;
+            }
+            toast.classList.add('show');
             
-            document.body.appendChild(dummy);
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        function copyEmail(event) {
+            if (event) {
+                event.preventDefault();
+            }
+            const email = 'jjung9935@naver.com';
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(email)
+                    .then(() => {
+                        showToast(`이메일 주소(${email})가 복사되었습니다!`);
+                    })
+                    .catch(() => {
+                        fallbackCopyText(email, `이메일 주소(${email})가 복사되었습니다!`);
+                    });
+            } else {
+                fallbackCopyText(email, `이메일 주소(${email})가 복사되었습니다!`);
+            }
+        }
+
+        function fallbackCopyText(text, successMessage) {
+            const dummy = document.createElement('textarea');
             dummy.value = text;
+            dummy.style.position = 'fixed';
+            dummy.style.left = '-9999px';
+            dummy.style.top = '0';
+            document.body.appendChild(dummy);
+            dummy.focus();
             dummy.select();
             
             try {
                 document.execCommand('copy');
-                const toast = document.getElementById('share-toast');
-                toast.classList.add('show');
-                
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 2000);
+                showToast(successMessage || '복사되었습니다!');
             } catch (err) {
-                console.error('URL 복사 실패:', err);
+                console.error('텍스트 복사 실패:', err);
+                prompt('아래 이메일 주소를 복사해 주세요:', text);
             } finally {
                 document.body.removeChild(dummy);
             }
         }
+
+        function copyLinkTreeUrl() {
+            const text = window.location.href;
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text)
+                    .then(() => {
+                        showToast('링크가 클립보드에 복사되었습니다!');
+                    })
+                    .catch(() => {
+                        fallbackCopyText(text, '링크가 클립보드에 복사되었습니다!');
+                    });
+            } else {
+                fallbackCopyText(text, '링크가 클립보드에 복사되었습니다!');
+            }
+        }
+
         function handleHomeClick(event) {
             if (window.self !== window.top) {
                 event.preventDefault();
